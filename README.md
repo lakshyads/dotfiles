@@ -233,6 +233,8 @@ Quick reference for what you'll actually use every day. Full references are in t
 | `Alt+C` | Fuzzy pick a directory (preview via eza) |
 | `→` (right arrow) | Accept autosuggestion |
 
+> **On Mac, `Alt` is the same key as `Option` (⌥).** Tool documentation (fzf, readline) uses the Alt label historically; press the key labeled Option on your keyboard.
+
 ### zoxide (jump anywhere)
 
 ```bash
