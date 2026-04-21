@@ -22,6 +22,7 @@ A reproducible macOS development environment. Clone this repo onto a fresh Mac, 
 - [Troubleshooting](#troubleshooting)
 - [Cheat Sheets & References](#cheat-sheets--references)
 - [Repository Layout](#repository-layout)
+- [Design Decisions (Short Version)](#design-decisions-short-version)
 
 ---
 
