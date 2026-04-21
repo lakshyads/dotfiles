@@ -84,9 +84,41 @@ if [[ "$SHELL" != *"zsh"* ]]; then
 fi
 
 echo
-done_ "Setup complete. Open Ghostty and run: exec zsh"
+done_ "Setup complete."
 echo
-info "Next steps:"
-echo "  - (Optional) atuin register -u <username> -e <email>   # enable shell history sync"
-echo "  - Sign into 1Password, Chrome, etc."
-echo "  - Set Ghostty as your default terminal if desired"
+info "Next steps (in order):"
+echo
+echo "  1. Verify everything installed correctly:"
+echo "       ./verify.sh"
+echo
+echo "  2. Reload your shell so new PATH and aliases take effect:"
+echo "       exec zsh"
+echo
+echo "  3. Set your git identity (required before any commits):"
+echo "       git config --global user.name  \"Your Name\""
+echo "       git config --global user.email \"you@example.com\""
+echo
+echo "  4. Authenticate GitHub CLI (easiest path: uses SSH under the hood):"
+echo "       gh auth login"
+echo
+echo "  5. Grant Accessibility permission to Maccy and Rectangle:"
+echo "       System Settings > Privacy & Security > Accessibility"
+echo "       (without this, their global hotkeys will not work)"
+echo
+echo "  6. Launch Docker Desktop once to complete its install:"
+echo "       open -a Docker"
+echo
+echo "  7. Sign into GUI apps (1Password, Chrome, Cursor, VS Code)"
+echo
+echo "  8. Authenticate Claude Code:"
+echo "       claude"
+echo "       (follow the browser OAuth flow on first run)"
+echo
+echo "  9. (Optional) Enable Atuin shell history sync:"
+echo "       atuin register -u <username> -e <email>"
+echo "       atuin sync"
+echo
+echo "  10. (Optional) Authenticate cloud CLIs as needed:"
+echo "        gcloud auth login"
+echo
+echo "  See README.md 'Manual Steps' section for full details."
