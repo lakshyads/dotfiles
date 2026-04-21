@@ -38,12 +38,15 @@ xcode-select --install
 # 2. Clone and bootstrap
 git clone git@github.com:<you>/dotfiles.git ~/dotfiles
 cd ~/dotfiles
+chmod +x setup.sh        # first time only; see note below
 ./setup.sh
 ```
 
 `setup.sh` is idempotent and safe to re-run. It installs Homebrew (if missing), everything in the `Brewfile`, language runtimes from `.tool-versions`, symlinks all config files, and sets up fzf key bindings.
 
 When it finishes, open Ghostty, run `exec zsh`, and you're in the new environment.
+
+> **Why `chmod +x`?** Depending on how you cloned or downloaded the repo, the executable bit on `setup.sh` may not be preserved (macOS Gatekeeper strips it for quarantined files, and some git configs do too). Running `chmod +x setup.sh` once fixes it permanently. If you cloned via plain `git clone` into a trusted directory, it may already be executable and this step is a no-op.
 
 ---
 
@@ -326,6 +329,24 @@ asdf plugin update --all
 ---
 
 ## Troubleshooting
+
+### `./setup.sh` returns "permission denied"
+
+The executable bit wasn't preserved. One-time fix:
+
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+To make the fix permanent so other machines cloning the repo don't hit this, commit the mode change:
+
+```bash
+chmod +x setup.sh
+git add setup.sh              # `git status` should show "mode change 100644 → 100755"
+git commit -m "chore: make setup.sh executable"
+git push
+```
 
 ### "command not found" on a tool that should exist
 
