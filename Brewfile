@@ -54,7 +54,7 @@ brew "xz"                         # Compression library (Python build)
 cask "docker-desktop"
 
 # ---- Cloud tooling ----
-brew "google-cloud-sdk"           # gcloud, gsutil, bq (kubectl installed on demand)
+cask "gcloud-cli"           # gcloud, gsutil, bq (kubectl installed on demand)
 
 # ---- Terminal emulator & editors ----
 cask "ghostty"                    # Native GPU-accelerated terminal (replaces iTerm2 in 2026)
