@@ -46,6 +46,14 @@ chmod +x setup.sh        # first time only; see note below
 
 When it finishes, open Ghostty, run `exec zsh`, and you're in the new environment.
 
+To verify everything installed correctly in a new shell:
+
+```bash
+./verify.sh
+```
+
+This runs non-destructive smoke tests: checks every CLI tool resolves, every symlink is in place, every GUI app installed, language runtimes match `.tool-versions`, fonts are detected, and Git is configured. Exit 0 on success, 1 with a failure summary otherwise.
+
 > **Why `chmod +x`?** Depending on how you cloned or downloaded the repo, the executable bit on `setup.sh` may not be preserved (macOS Gatekeeper strips it for quarantined files, and some git configs do too). Running `chmod +x setup.sh` once fixes it permanently. If you cloned via plain `git clone` into a trusted directory, it may already be executable and this step is a no-op.
 
 ---
@@ -438,6 +446,7 @@ Each is written as a skimmable reference, not a tutorial. Use them when you need
 dotfiles/
 ├── README.md                  # this file (orientation + daily reference)
 ├── setup.sh                   # one-command bootstrap (idempotent)
+├── verify.sh                  # end-to-end smoke test (run after setup.sh)
 ├── Brewfile                   # Homebrew packages (formulae + casks)
 ├── .tool-versions             # asdf runtime versions (Node, Python, Go)
 ├── .zshrc                     # shell config (aliases, tool integration)
