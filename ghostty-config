@@ -1,0 +1,60 @@
+# ~/.config/ghostty/config
+# Ghostty terminal config: modern defaults for macOS 2026.
+# Reload in-app: Cmd+Shift+,
+# View all options: ghostty +show-config --default --docs
+
+# ---- Typography ----
+font-family = JetBrainsMono Nerd Font
+font-size = 14
+
+# ---- Theme ----
+# Auto light/dark switching follows macOS system appearance.
+theme = light:Catppuccin Latte,dark:Catppuccin Mocha
+
+# ---- Window appearance ----
+macos-titlebar-style = tabs
+window-padding-x = 10
+window-padding-y = 10
+background-opacity = 0.97
+
+# Restore window layout and session state after restart.
+window-save-state = always
+
+# ---- Interaction ----
+# Select text, it's automatically copied (Linux-style, feels natural once used to it).
+copy-on-select = clipboard
+
+# Cursor hides while typing so it doesn't obscure the text you're reading.
+mouse-hide-while-typing = true
+
+# ---- Quick Terminal (Quake-style dropdown) ----
+# Press Ctrl+backtick anywhere on macOS to summon a terminal from the top of the screen.
+# Press again to hide. Works system-wide, not just inside Ghostty.
+quick-terminal-position = top
+quick-terminal-screen = mouse
+quick-terminal-autohide = true
+keybind = global:ctrl+grave_accent=toggle_quick_terminal
+
+# ---- Split navigation ----
+# Not default on macOS, added here because they're genuinely useful.
+keybind = cmd+d=new_split:right
+keybind = cmd+shift+d=new_split:down
+keybind = cmd+alt+left=goto_split:left
+keybind = cmd+alt+right=goto_split:right
+keybind = cmd+alt+up=goto_split:top
+keybind = cmd+alt+down=goto_split:bottom
+keybind = cmd+shift+e=equalize_splits
+keybind = cmd+shift+f=toggle_split_zoom
+
+# ---- Scrollback ----
+# 25M lines. Generous buffer for AI coding agents that dump large diffs.
+scrollback-limit = 25000000
+
+# ---- Auto-update ----
+# "stable" = weekly-ish lag behind, skipping regressions. Use "tip" for latest.
+auto-update-channel = stable
+
+# ---- SSH compatibility ----
+# Ghostty uses xterm-ghostty as its TERM, which older remote hosts don't recognize.
+# Fall back to xterm-256color over SSH.
+term = xterm-256color

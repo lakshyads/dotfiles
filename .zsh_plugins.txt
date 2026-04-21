@@ -1,0 +1,12 @@
+# ~/.zsh_plugins.txt
+# Antidote plugin bundle. Kept intentionally minimal; each plugin earns its
+# place by solving a specific problem. Add more as needed.
+
+# Command autosuggestions based on history (press the right arrow to accept)
+zsh-users/zsh-autosuggestions
+
+# Syntax highlighting as you type (valid commands green, invalid red)
+zsh-users/zsh-syntax-highlighting
+
+# Extra completion definitions for common tools (git, docker, kubectl, etc.)
+zsh-users/zsh-completions
