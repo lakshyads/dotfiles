@@ -47,6 +47,7 @@ These ship with Ghostty and don't require config. All use the `Cmd` modifier to 
 | `Cmd+Alt+←/→/↑/↓` | Navigate between splits *(requires config)* |
 | `Cmd+Shift+Enter` | Toggle zoom on current split (tmux-style) |
 | `Cmd+Shift+E` | Equalize splits |
+| `Cmd+Shift+F` | Zooms into one panel (press again to restore) |
 
 Note: Split *creation* keybindings aren't default; they're in your `ghostty-config`. Navigation between existing splits is fully default on macOS. (`Alt` in shortcuts above = the key labeled Option `⌥`.)
 
