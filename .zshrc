@@ -12,6 +12,9 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # style (asdf 0.16+); the old `source asdf.sh` approach is deprecated.
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
+# ---- 2b. Claude Code (native installer puts binary here) ----
+export PATH="$HOME/.local/bin:$PATH"
+
 # ---- 3. Antidote plugin manager ----
 # Loads the static plugin bundle. Plugin list lives in ~/.zsh_plugins.txt.
 source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh
