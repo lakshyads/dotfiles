@@ -437,6 +437,8 @@ Full command references for the tools that get the most daily use. These live in
 - **[Git cheat sheet](docs/git-cheatsheet.md)**: daily workflow commands, branching, rebasing, undoing mistakes, stash, tags, `.gitignore` essentials, troubleshooting
 - **[Lazygit cheat sheet](docs/lazygit-cheatsheet.md)**: panel navigation, default keybindings, line-staging, interactive rebase workflows, custom commands
 - **[Modern CLI tools cheat sheet](docs/modern-cli-cheatsheet.md)**: ripgrep, fd, bat, eza, zoxide, fzf, atuin, delta, dust, btop, tldr. Usage per tool plus composition examples
+- **[Claude Code cheat sheet](docs/claude-code-cheatsheet.md)**: CLI flags, slash commands, keyboard shortcuts, permission modes, CLAUDE.md, hooks, MCP, subagents, models and cost
+- **[Cursor CLI cheat sheet](docs/cursor-cli-cheatsheet.md)**: agent modes (Agent/Plan/Ask), slash commands, cloud handoff, MCP integration, rules and skills, subagents
 
 Each is written as a skimmable reference, not a tutorial. Use them when you need to look something up.
 
@@ -461,7 +463,9 @@ dotfiles/
     ├── ghostty-cheatsheet.md
     ├── git-cheatsheet.md
     ├── lazygit-cheatsheet.md
-    └── modern-cli-cheatsheet.md
+    ├── modern-cli-cheatsheet.md
+    ├── claude-code-cheatsheet.md
+    └── cursor-cli-cheatsheet.md
 ```
 
 ---
