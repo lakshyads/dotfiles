@@ -15,34 +15,39 @@ export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 # ---- 2b. Claude Code (native installer puts binary here) ----
 export PATH="$HOME/.local/bin:$PATH"
 
-# ---- 3. Antidote plugin manager ----
+# ---- 3. Atuin (SQLite shell history) ----
+# MUST load before antidote, so that zsh-syntax-highlighting (loaded LAST by
+# antidote) can hook atuin's rebound Ctrl+R widget. Reversing this order causes
+# autosuggestions/syntax-highlighting to silently fail.
+# Replaces Ctrl+R with a full-screen history search UI.
+eval "$(atuin init zsh)"
+
+# ---- 4. Antidote plugin manager ----
 # Loads the static plugin bundle. Plugin list lives in ~/.zsh_plugins.txt.
+# Plugin order inside that file matters: zsh-syntax-highlighting MUST be last.
 source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh
 antidote load
 
-# ---- 4. Starship prompt ----
+# ---- 5. Starship prompt ----
 # Must come after plugins so it renders on top of their setup. Config lives
 # in ~/.config/starship.toml.
 eval "$(starship init zsh)"
 
-# ---- 5. zoxide (smarter cd) ----
+# ---- 6. zoxide (smarter cd) ----
 # `z <partial>` jumps to any directory you've visited. Kept as a separate command
 # from `cd` on purpose: aliasing `cd` to `z` breaks scripts that expect POSIX cd behavior.
 eval "$(zoxide init zsh)"
 
-# ---- 6. fzf (fuzzy finder) ----
+# ---- 7. fzf (fuzzy finder) ----
 # Binds Ctrl+R (history), Ctrl+T (file picker), Alt+C (directory picker).
+# Note: atuin (loaded earlier) also binds Ctrl+R. Whichever loads LAST wins;
+# here fzf wins at binding, but atuin's UI is invoked by fzf's Ctrl+R hook.
 # Requires `$(brew --prefix)/opt/fzf/install` to have been run once.
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # fzf preview integration. Uses bat for file contents, eza for directory trees.
 export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
 export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
-
-# ---- 7. Atuin (SQLite shell history) ----
-# Replaces Ctrl+R with a full-screen history search UI across all your machines.
-# Comment out if you haven't run `atuin import auto` yet.
-eval "$(atuin init zsh)"
 
 # ---- 8. Modern CLI aliases ----
 # Drop-in replacements. The classics remain available under their original names.
