@@ -326,6 +326,8 @@ fzf is the general-purpose fuzzy finder. The Brewfile installs it, and `setup.sh
 | `Alt+C` | `cd` into a fuzzy-selected directory |
 | `**<Tab>` | Fuzzy completion trigger (e.g. `vim **<Tab>`) |
 
+> **Mac keyboard note:** `Alt` is the key labeled `Option` (⌥). fzf's docs use the Alt name historically; the physical key to press is Option.
+
 ### Inside the fzf picker
 
 | Key | Action |
