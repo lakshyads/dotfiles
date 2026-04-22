@@ -15,11 +15,44 @@ A reproducible macOS development environment. Clone this repo onto a fresh Mac, 
 
 - [Quick Start](#quick-start)
 - [What the Setup Gives You](#what-the-setup-gives-you)
+  - [Terminal & Shell](#terminal--shell)
+  - [Modern CLI Tools](#modern-cli-tools-aliased-so-you-get-them-without-thinking)
+  - [Fuzzy Finder Key Bindings](#fuzzy-finder-key-bindings)
+  - [Language Runtimes (via asdf)](#language-runtimes-via-asdf)
+  - [Applications Installed](#applications-installed)
 - [Manual Steps (After `./setup.sh`)](#manual-steps-after-setupsh)
+  - [1. Grant Accessibility Permissions](#1-grant-accessibility-permissions-one-time-per-app)
+  - [2. Configure Git Identity](#2-configure-git-identity)
+  - [3. Authenticate GitHub CLI](#3-authenticate-github-cli)
+  - [4. Launch Docker Desktop Once](#4-launch-docker-desktop-once)
+  - [5. Sign Into GUI Apps](#5-sign-into-gui-apps)
+  - [6. Authenticate Cloud CLIs](#6-authenticate-cloud-clis-as-needed)
+  - [7. Authenticate Claude Code](#7-authenticate-claude-code)
+  - [8. Optional: Enable Atuin History Sync](#8-optional-enable-atuin-history-sync)
+  - [9. Optional: Set Ghostty as Default Terminal](#9-optional-set-ghostty-as-default-terminal)
+  - [10. Optional: Personalize Theme & Font](#10-optional-personalize-theme--font)
 - [Daily Usage: Keybindings & Commands](#daily-usage-keybindings--commands)
+  - [Ghostty (Terminal)](#ghostty-terminal)
+  - [Shell (fzf / Atuin)](#shell-fzf--atuin)
+  - [zoxide (jump anywhere)](#zoxide-jump-anywhere)
+  - [Modern CLI essentials](#modern-cli-essentials)
+  - [Language runtimes (asdf)](#language-runtimes-asdf)
 - [Customization](#customization)
 - [Updating Your Setup](#updating-your-setup)
+  - [Update everything](#update-everything)
+  - [Update just Homebrew packages](#update-just-homebrew-packages)
+  - [Update Claude Code](#update-claude-code)
+  - [Update asdf plugins](#update-asdf-plugins)
 - [Troubleshooting](#troubleshooting)
+  - [`./setup.sh` returns "permission denied"](#setupsh-returns-permission-denied)
+  - ["command not found" on a tool that should exist](#command-not-found-on-a-tool-that-should-exist)
+  - [Icons show as squares in Starship / eza](#icons-show-as-squares-in-starship--eza)
+  - [Ghostty Quick Terminal doesn't respond](#ghostty-quick-terminal-doesnt-respond)
+  - [SSH session looks broken](#ssh-session-looks-broken-vim--less-render-incorrectly)
+  - [asdf says "No version is set"](#asdf-says-no-version-is-set-for-command-x)
+  - [`brew bundle` fails with permissions errors](#brew-bundle-fails-with-permissions-errors)
+  - [Atuin doesn't import my old history](#atuin-doesnt-import-my-old-history)
+  - [Starting over on a single tool](#starting-over-on-a-single-tool)
 - [Cheat Sheets & References](#cheat-sheets--references)
 - [Repository Layout](#repository-layout)
 - [Design Decisions (Short Version)](#design-decisions-short-version)
@@ -55,6 +88,8 @@ To verify everything installed correctly in a new shell:
 This runs non-destructive smoke tests: checks every CLI tool resolves, every symlink is in place, every GUI app installed, language runtimes match `.tool-versions`, fonts are detected, and Git is configured. Exit 0 on success, 1 with a failure summary otherwise.
 
 > **Why `chmod +x`?** Depending on how you cloned or downloaded the repo, the executable bit on `setup.sh` may not be preserved (macOS Gatekeeper strips it for quarantined files, and some git configs do too). Running `chmod +x setup.sh` once fixes it permanently. If you cloned via plain `git clone` into a trusted directory, it may already be executable and this step is a no-op.
+
+<p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
 
 ---
 
@@ -107,7 +142,9 @@ Change versions by editing that file and running `asdf install`.
 
 ### Applications Installed
 
-Docker Desktop, VS Code, Cursor, Google Chrome, Rectangle, 1Password, AppCleaner, Maccy. Plus Claude Code via the native auto-updating installer (not Homebrew).
+Docker Desktop, VS Code, Cursor, Google Chrome, Rectangle, 1Password, AppCleaner, Maccy, LinearMouse. Plus Claude Code via the native auto-updating installer (not Homebrew).
+
+<p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
 
 ---
 
@@ -124,6 +161,7 @@ Some apps need Accessibility permission to function. macOS will prompt on first 
 - **Maccy**: required to read clipboard (app won't work without it)
 - **Ghostty**: required only if you use the Quake-style Quick Terminal global hotkey (`Ctrl+\``)
 - **Rectangle**: required for window snapping to work
+- **LinearMouse**: required to intercept mouse events (side buttons, scroll customization)
 
 ### 2. Configure Git Identity
 
@@ -204,6 +242,8 @@ The defaults are chosen carefully, but if you want to customize:
 
 All configs live in this repo and are symlinked, so changes are preserved in git.
 
+<p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
+
 ---
 
 ## Daily Usage: Keybindings & Commands
@@ -282,6 +322,8 @@ asdf list all python 3.12        # show installable 3.12.x versions
 
 For full command reference: [`docs/asdf-cheatsheet.md`](docs/asdf-cheatsheet.md).
 
+<p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
+
 ---
 
 ## Customization
@@ -296,9 +338,12 @@ This repo is meant to be forked and personalized. The files worth editing:
 | `.zsh_plugins.txt` | Zsh plugins loaded by Antidote. |
 | `starship.toml` | Prompt appearance. |
 | `ghostty-config` | Terminal appearance and keybindings. Reload with `Cmd+Shift+,`. |
+| `linearmouse.json` | Mouse settings (side buttons, scroll direction, acceleration). Edit via the LinearMouse GUI; changes write back to the file automatically. |
 | `setup.sh` | Bootstrap steps. Only touch if you add new tools needing custom setup. |
 
 After any changes, commit them to your dotfiles repo. Other machines pick up changes with `git pull && ./setup.sh`.
+
+<p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
 
 ---
 
@@ -336,6 +381,8 @@ claude doctor
 asdf plugin update --all
 ```
 
+<p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
+
 ---
 
 ## Troubleshooting
@@ -365,7 +412,7 @@ git push
 3. Check the tool is actually installed: `brew list | grep <tool>`.
 4. For language tools (node, python, go): run `asdf current` to verify the active version is installed.
 
-### Icons show as squares (`▯ ▯ ▯`) in Starship / eza
+### Icons show as squares in Starship / eza
 
 Your terminal isn't using a Nerd Font. Check `ghostty-config`:
 
@@ -375,7 +422,7 @@ font-family = JetBrainsMono Nerd Font
 
 The spaces matter. See [`docs/ghostty-cheatsheet.md`](docs/ghostty-cheatsheet.md#themes--fonts) for details.
 
-### Ghostty Quick Terminal doesn't respond to `Ctrl+\``
+### Ghostty Quick Terminal doesn't respond
 
 Accessibility permission not granted. Go to System Settings > Privacy & Security > Accessibility, add Ghostty, restart Ghostty.
 
@@ -425,6 +472,8 @@ asdf install python 3.13.13
 reload
 ```
 
+<p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
+
 ---
 
 ## Cheat Sheets & References
@@ -442,6 +491,8 @@ Full command references for the tools that get the most daily use. These live in
 
 Each is written as a skimmable reference, not a tutorial. Use them when you need to look something up.
 
+<p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
+
 ---
 
 ## Repository Layout
@@ -457,6 +508,7 @@ dotfiles/
 ├── .zsh_plugins.txt           # Antidote plugin list
 ├── starship.toml              # Starship prompt config
 ├── ghostty-config             # Ghostty terminal config
+├── linearmouse.json           # Mouse customization (side buttons, acceleration)
 └── docs/
     ├── homebrew-cheatsheet.md
     ├── asdf-cheatsheet.md
@@ -467,6 +519,8 @@ dotfiles/
     ├── claude-code-cheatsheet.md
     └── cursor-cli-cheatsheet.md
 ```
+
+<p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
 
 ---
 
@@ -481,3 +535,5 @@ A few choices that drive the rest of the setup. Full context is in the cheat she
 - **Zsh kept as login shell**: POSIX-compatible (unlike Fish) and already the macOS default
 - **Claude Code via native installer, not Homebrew**: the native installer auto-updates; the brew cask does not
 - **Docker for all local databases**: Brewfile intentionally omits `postgresql` / `redis` so they don't conflict with container-based local environments
+
+<p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
