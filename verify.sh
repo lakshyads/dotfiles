@@ -181,6 +181,7 @@ check_symlink "$HOME/.zsh_plugins.txt" "~/.zsh_plugins.txt"
 check_symlink "$HOME/.tool-versions" "~/.tool-versions"
 check_symlink "$HOME/.config/ghostty/config" "~/.config/ghostty/config"
 check_symlink "$HOME/.config/starship.toml" "~/.config/starship.toml"
+check_symlink "$HOME/.config/linearmouse/linearmouse.json" "~/.config/linearmouse/linearmouse.json"
 echo
 
 # ---- 8. GUI Applications ----
@@ -195,6 +196,7 @@ APPS=(
   "Rectangle"
   "AppCleaner"
   "Maccy"
+  "LinearMouse"
 )
 for app in "${APPS[@]}"; do
   if [[ -d "/Applications/$app.app" ]]; then
