@@ -54,7 +54,8 @@ brew "xz"                         # Compression library (Python build)
 cask "docker-desktop"
 
 # ---- Cloud tooling ----
-cask "gcloud-cli"           # gcloud, gsutil, bq (kubectl installed on demand)
+cask "gcloud-cli"                 # gcloud, gsutil, bq (kubectl installed on demand)
+                                  # Formerly the "google-cloud-sdk" formula; renamed + moved to cask in 2025.
 
 # ---- Terminal emulator & editors ----
 cask "ghostty"                    # Native GPU-accelerated terminal (replaces iTerm2 in 2026)
@@ -69,6 +70,9 @@ cask "rectangle"                  # Window management (keyboard-driven tiling)
 cask "1password"                  # Password manager
 cask "appcleaner"                 # Clean app uninstalls
 cask "maccy"                      # Clipboard history manager (Cmd+Shift+C)
+cask "linearmouse"                # Mouse customization: extra buttons, per-device scroll/accel
+                                  # Essential for third-party mice with side/extra buttons.
+                                  # Fixes macOS's patchy handling of back/forward buttons.
 
 # ---- Developer fonts ----
 # Nerd Fonts include glyphs required by Starship, eza icons, and modern TUI tools.
