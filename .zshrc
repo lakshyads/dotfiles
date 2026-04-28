@@ -78,3 +78,13 @@ alias lg='lazygit'
 
 # ---- 11. Reload helper ----
 alias reload='exec zsh'
+
+# ---- 12. Docker CLI completions ----
+# Markers kept verbatim so Docker Desktop detects them and skips re-appending on first launch.
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+if [[ -d "$HOME/.docker/completions" ]]; then
+  fpath=($HOME/.docker/completions $fpath)
+fi
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions

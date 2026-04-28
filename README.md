@@ -136,9 +136,10 @@ Declared in `.tool-versions`. Currently:
 nodejs  24.15.0
 python  3.13.13
 golang  1.26.2
+java    openjdk-25.0.2
 ```
 
-Change versions by editing that file and running `asdf install`.
+Change versions by editing that file and running `asdf install`. Java versions use distributor-prefixed names (e.g. `openjdk-25.0.2`); run `asdf list all java` to browse available options.
 
 ### Applications Installed
 
@@ -186,6 +187,8 @@ gh auth login                   # follow prompts, choose SSH or HTTPS
 ### 4. Launch Docker Desktop Once
 
 First launch triggers a macOS prompt to install a privileged helper. Click through it. After that, `docker` and `docker compose` work from any terminal.
+
+Docker Desktop also appends a CLI completions block to `~/.zshrc` on first launch. This is already committed to the dotfiles `.zshrc`; don't let it get added a second time if you re-run setup on a machine where Docker Desktop has already launched.
 
 ### 5. Sign Into GUI Apps
 

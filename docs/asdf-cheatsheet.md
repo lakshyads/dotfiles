@@ -30,6 +30,7 @@ Plugins are how asdf learns about a language or tool. Each runtime (Node, Python
 asdf plugin add nodejs
 asdf plugin add python
 asdf plugin add golang
+asdf plugin add java
 
 # Add a plugin from an arbitrary git URL
 asdf plugin add terraform https://github.com/asdf-community/asdf-hashicorp.git
@@ -157,10 +158,13 @@ Plain text, one tool per line, `name space version`:
 nodejs  24.15.0
 python  3.13.13
 golang  1.26.2
+java    openjdk-25.0.2
 
 # Comments are supported
 # rust  1.75.0   # uncomment to enable Rust
 ```
+
+**Java version naming:** the Java plugin uses distributor-prefixed version strings (e.g. `openjdk-25.0.2`, `temurin-21.0.4+7.0.LTS`). Run `asdf list all java` to see available versions. The prefix matters — `25.0.2` alone will not match.
 
 **Supported version formats:**
 
