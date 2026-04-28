@@ -1,0 +1,38 @@
+---
+description: Prefer this dotfiles repo as the knowledge base; extend docs when the web fills gaps
+alwaysApply: true
+---
+
+# Dotfiles repo first, then the web, then capture knowledge
+
+## 1. Answer from this repository before the open web
+
+For this Mac dev setup, shell tools, or anything documented here:
+
+- Read **`README.md`** for orientation, daily commands, updating, troubleshooting, and links to cheat sheets.
+- Search **`docs/`** (primary references): `homebrew-cheatsheet.md`, `asdf-cheatsheet.md`, `ghostty-cheatsheet.md`, `git-cheatsheet.md`, `lazygit-cheatsheet.md`, `modern-cli-cheatsheet.md`, `claude-code-cheatsheet.md`, `cursor-cli-cheatsheet.md`.
+- For “what is installed / how is it wired?” use **`setup.sh`**, **`verify.sh`**, **`Brewfile`**, **`.tool-versions`**, and root configs (e.g. **`.zshrc`**, **`starship.toml`**, **`ghostty-config`**).
+
+Use repo search across these paths before relying on memory or the web.
+
+## 2. If the repo does not contain the answer
+
+- Use **current upstream or official docs** (release notes when versions matter: Homebrew, asdf, Cursor, Ghostty, etc.).
+- State clearly when the answer comes **from outside** this repo.
+
+## 3. Keep the knowledge base in sync
+
+When the answer came from the web or experimentation and is **stable and reusable**:
+
+- **Place it** in the most relevant `docs/*-cheatsheet.md`, or a short **`README.md`** subsection for very common workflows, or a new **`docs/`** file if it is a new topic.
+- **Match** existing cheat-sheet tone: skimmable, commands first, gotchas where they matter.
+
+Prefer **making that edit** in Agent sessions unless the user asked for guidance only.
+
+## 4. Search hygiene
+
+| Question type | Start here |
+|---------------|------------|
+| How-to / CLI reference | `docs/`, `README.md` |
+| Bootstrap / inventory | `setup.sh`, `verify.sh`, `Brewfile` |
+| Live config / “what is set?” | Root dotfiles (`ghostty-config`, `.zshrc`, etc.) |
