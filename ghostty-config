@@ -15,7 +15,7 @@ theme = light:Catppuccin Latte,dark:Catppuccin Mocha
 macos-titlebar-style = tabs
 window-padding-x = 10
 window-padding-y = 10
-background-opacity = 0.97
+background-opacity = 0.98
 
 # Restore window layout and session state after restart.
 window-save-state = always
@@ -32,7 +32,7 @@ mouse-hide-while-typing = true
 # Press again to hide. Works system-wide, not just inside Ghostty.
 quick-terminal-position = top
 quick-terminal-screen = mouse
-quick-terminal-autohide = true
+quick-terminal-autohide = false
 keybind = global:ctrl+grave_accent=toggle_quick_terminal
 
 # ---- Split navigation ----

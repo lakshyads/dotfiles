@@ -164,11 +164,13 @@ A terminal that drops down from the top of the screen on a global hotkey, regard
 ```
 quick-terminal-position = top
 quick-terminal-screen = mouse
-quick-terminal-autohide = true
+quick-terminal-autohide = false
 keybind = global:ctrl+grave_accent=toggle_quick_terminal
 ```
 
 **First launch** will prompt for Accessibility permission in System Settings > Privacy & Security > Accessibility. This is required for `global:` keybinds to work. Without it, the hotkey silently does nothing.
+
+**`quick-terminal-autohide`:** when `true`, the terminal hides automatically when any other window receives focus. When `false`, it stays visible until you explicitly press the hotkey again. Use `false` if you frequently switch focus away and back without wanting to re-summon it each time.
 
 **Position options:** `top`, `bottom`, `left`, `right`, `center`.
 
@@ -189,7 +191,7 @@ font-family = JetBrainsMono Nerd Font
 font-size = 14
 font-thicken = false            # makes fonts bold; can look muddy on HiDPI
 
-background-opacity = 0.97
+background-opacity = 0.98
 background-blur-radius = 20     # frosted-glass effect behind the window
 
 macos-titlebar-style = tabs     # tabs | transparent | native | hidden
