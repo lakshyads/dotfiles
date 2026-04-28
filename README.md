@@ -69,7 +69,7 @@ On a fresh Mac:
 xcode-select --install
 
 # 2. Clone and bootstrap
-git clone git@github.com:<you>/dotfiles.git ~/dotfiles
+git clone [https://github.com/lakshyads/dotfiles.git](https://github.com/lakshyads/dotfiles.git) ~/dotfiles
 cd ~/dotfiles
 chmod +x setup.sh        # first time only; see note below
 ./setup.sh
