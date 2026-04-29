@@ -10,8 +10,8 @@ alwaysApply: true
 For this Mac dev setup, shell tools, or anything documented here:
 
 - Read **`README.md`** for orientation, daily commands, updating, troubleshooting, and links to cheat sheets.
-- Search **`docs/`** (primary references): `homebrew-cheatsheet.md`, `asdf-cheatsheet.md`, `ghostty-cheatsheet.md`, `git-cheatsheet.md`, `lazygit-cheatsheet.md`, `modern-cli-cheatsheet.md`, `claude-code-cheatsheet.md`, `cursor-cli-cheatsheet.md`.
-- For “what is installed / how is it wired?” use **`setup.sh`**, **`verify.sh`**, **`Brewfile`**, **`.tool-versions`**, and root configs (e.g. **`.zshrc`**, **`starship.toml`**, **`ghostty-config`**).
+- Search **`docs/`** (primary references) — see [`README.md` Cheat Sheets section](../README.md#cheat-sheets--references) for the full annotated index. Key files: `inventory.md` (what's installed), `homebrew-cheatsheet.md`, `asdf-cheatsheet.md`, `ghostty-cheatsheet.md`, `git-cheatsheet.md`, `lazygit-cheatsheet.md`, `modern-cli-cheatsheet.md`, `claude-code-cheatsheet.md`, `cursor-cli-cheatsheet.md`.
+- For “what is installed / how is it wired?” use **`docs/inventory.md`** (human-readable mirror), **`Brewfile`** (authoritative package list), **`.tool-versions`** (authoritative runtime versions), **`setup.sh`**, **`verify.sh`**, and root configs (e.g. **`.zshrc`**, **`starship.toml`**, **`ghostty-config`**).
 
 Use repo search across these paths before relying on memory or the web.
 
@@ -28,6 +28,16 @@ When the answer came from the web or experimentation and is **stable and reusabl
 - **Match** existing cheat-sheet tone: skimmable, commands first, gotchas where they matter.
 
 Prefer **making that edit** in Agent sessions unless the user asked for guidance only.
+
+## 4. Keep the inventory in sync
+
+Whenever `Brewfile` or `.tool-versions` changes, **also update `docs/inventory.md`**:
+
+- Adding a cask → add a row to the GUI Applications table in `docs/inventory.md`.
+- Adding a formula → add a row to the appropriate CLI tools section in `docs/inventory.md`.
+- Adding a language → add a row to the Language Runtimes table in `docs/inventory.md`; versions stay only in `.tool-versions`.
+- Removing anything → remove the corresponding row from `docs/inventory.md`.
+- Also update `verify.sh` if the change affects what gets smoke-tested.
 
 ## 4. Search hygiene
 
