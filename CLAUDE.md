@@ -15,14 +15,19 @@ Before answering any question about this Mac dev setup, shell tools, CLI tools, 
 
 ### docs/ index
 
-- `docs/homebrew-cheatsheet.md` — install, update, upgrade, uninstall, Brewfile, casks, cleanup
-- `docs/asdf-cheatsheet.md` — plugin management, version install/set, `.tool-versions`, CI
-- `docs/ghostty-cheatsheet.md` — keybindings, splits, Quick Terminal, themes, SSH, troubleshooting
-- `docs/git-cheatsheet.md` — daily workflow, branching, rebasing, undoing, stashing, tags
-- `docs/lazygit-cheatsheet.md` — panel model, staging, interactive rebase, line-level staging
-- `docs/modern-cli-cheatsheet.md` — ripgrep, fd, bat, eza, zoxide, fzf, atuin, delta, dust, btop, tldr
-- `docs/claude-code-cheatsheet.md` — CLI flags, slash commands, keybindings, CLAUDE.md, hooks, MCP
-- `docs/cursor-cli-cheatsheet.md` — agent modes, slash commands, MCP, rules, subagents, scripting
+See [`README.md` — Cheat Sheets & References](README.md#cheat-sheets--references) for the full annotated index. Key lookup:
+
+| Topic | File |
+|-------|------|
+| Installed software (what, how) | `docs/inventory.md` |
+| Homebrew / Brewfile | `docs/homebrew-cheatsheet.md` |
+| Language runtimes | `docs/asdf-cheatsheet.md` |
+| Terminal keybindings / config | `docs/ghostty-cheatsheet.md` |
+| Git workflows | `docs/git-cheatsheet.md` |
+| Git TUI | `docs/lazygit-cheatsheet.md` |
+| Modern CLI tools | `docs/modern-cli-cheatsheet.md` |
+| Claude Code CLI | `docs/claude-code-cheatsheet.md` |
+| Cursor IDE | `docs/cursor-cli-cheatsheet.md` |
 
 ### How to search
 
@@ -49,3 +54,13 @@ When the answer is stable and reusable (not one-off), **add it to the knowledge 
 - For a brand-new topic not covered by any existing cheat sheet, create `docs/<topic>-cheatsheet.md`.
 - Match existing tone: skimmable, commands first, gotchas where they matter.
 - Do this proactively in Agent sessions unless the user asked for guidance only.
+
+## 4. Keep the inventory in sync
+
+Whenever `Brewfile` or `.tool-versions` changes (add, remove, or version bump), **also update `docs/inventory.md`**:
+
+- Adding a cask → add a row to the GUI Applications table in `docs/inventory.md`.
+- Adding a formula → add a row to the appropriate CLI tools section in `docs/inventory.md`.
+- Adding a language → add a row to the Language Runtimes table in `docs/inventory.md`; versions stay only in `.tool-versions`.
+- Removing anything → remove the corresponding row from `docs/inventory.md`.
+- Also update `verify.sh` if the change affects what gets smoke-tested (GUI apps array or CLI tools list).
