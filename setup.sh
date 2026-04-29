@@ -248,6 +248,45 @@ fi
 ln -sf "$DOTFILES_DIR/linearmouse.json" "$LINEARMOUSE_TARGET"
 done_ "Dotfiles linked"
 
+# ── Git Configuration ─────────────────────────────────────────────────────────
+section "Git Configuration"
+
+# Default branch is always set — not personal, main is the universal default.
+_branch=main
+if ! $FULL; then
+  _cur_branch=$(git config --global init.defaultBranch 2>/dev/null || echo "main")
+  printf "  Default branch [%s]: " "$_cur_branch"
+  read -r _branch </dev/tty
+  _branch="${_branch:-$_cur_branch}"
+fi
+git config --global init.defaultBranch "$_branch"
+done_ "git init.defaultBranch = $_branch"
+
+# Name and email are personal — prompt in interactive mode, report state in --full.
+_cur_name=$(git config --global user.name 2>/dev/null || echo "")
+_cur_email=$(git config --global user.email 2>/dev/null || echo "")
+
+if ! $FULL; then
+  printf "  Name"
+  [[ -n "$_cur_name" ]] && printf " [%s]" "$_cur_name"
+  printf ": "
+  read -r _name </dev/tty
+  _name="${_name:-$_cur_name}"
+
+  printf "  Email"
+  [[ -n "$_cur_email" ]] && printf " [%s]" "$_cur_email"
+  printf ": "
+  read -r _email </dev/tty
+  _email="${_email:-$_cur_email}"
+
+  if [[ -n "$_name" ]];  then git config --global user.name  "$_name";  done_ "git user.name  = $_name";  else warn "git user.name not set — run: git config --global user.name \"Your Name\"";  fi
+  if [[ -n "$_email" ]]; then git config --global user.email "$_email"; done_ "git user.email = $_email"; else warn "git user.email not set — run: git config --global user.email \"you@example.com\""; fi
+else
+  # --full mode: can't prompt, just report current state.
+  [[ -n "$_cur_name" ]]  && done_ "git user.name  = $_cur_name"  || warn "git user.name not set — run: git config --global user.name \"Your Name\""
+  [[ -n "$_cur_email" ]] && done_ "git user.email = $_cur_email" || warn "git user.email not set — run: git config --global user.email \"you@example.com\""
+fi
+
 # ── fzf shell integration ─────────────────────────────────────────────────────
 if $DID_FZF; then
   section "fzf Shell Integration"
@@ -299,28 +338,24 @@ echo
 echo "  2. Reload your shell so new PATH and aliases take effect:"
 echo "       exec zsh"
 echo
-echo "  3. Set your git identity (required before any commits):"
-echo "       git config --global user.name  \"Your Name\""
-echo "       git config --global user.email \"you@example.com\""
-echo
-echo "  4. Authenticate GitHub CLI:"
+echo "  3. Authenticate GitHub CLI:"
 echo "       gh auth login"
 echo
-echo "  5. Grant Accessibility permission to Maccy, Rectangle, and LinearMouse:"
+echo "  4. Grant Accessibility permission to Maccy, Rectangle, and LinearMouse:"
 echo "       System Settings > Privacy & Security > Accessibility"
 echo
-echo "  6. Launch Docker Desktop once to complete its install:"
+echo "  5. Launch Docker Desktop once to complete its install:"
 echo "       open -a Docker"
 echo
-echo "  7. Sign into GUI apps (1Password, Chrome, Cursor, VS Code)"
+echo "  6. Sign into GUI apps (1Password, Chrome, Cursor, VS Code)"
 echo
-echo "  8. Authenticate Claude Code:"
+echo "  7. Authenticate Claude Code:"
 echo "       claude"
 echo
-echo "  9. (Optional) Enable Atuin shell history sync:"
+echo "  8. (Optional) Enable Atuin shell history sync:"
 echo "       atuin register -u <username> -e <email>"
 echo
-echo "  10. (Optional) Authenticate cloud CLIs:"
+echo "  9. (Optional) Authenticate cloud CLIs:"
 echo "        gcloud auth login"
 echo
 echo "  See README.md 'Manual Steps' section for full details."
