@@ -1,0 +1,50 @@
+{
+  "$schema" : "https:\/\/schema.linearmouse.app\/0.10.4",
+  "schemes" : [
+    {
+      "buttons" : {
+        "mappings" : [
+          {
+            "action" : "missionControl.spaceRight",
+            "button" : 3,
+            "command" : false,
+            "control" : false,
+            "option" : false,
+            "repeat" : true,
+            "shift" : false
+          },
+          {
+            "action" : "missionControl.spaceLeft",
+            "button" : 4,
+            "command" : false,
+            "control" : false,
+            "option" : false,
+            "repeat" : true,
+            "shift" : false
+          }
+        ],
+        "universalBackForward" : false
+      },
+      "if" : {
+        "device" : {
+          "category" : "mouse",
+          "productID" : "0x619f",
+          "productName" : "Yoga Pro Mouse",
+          "serialNumber" : "000000000000000",
+          "vendorID" : "0x17ef"
+        }
+      },
+      "pointer" : {
+        "acceleration" : "unset",
+        "disableAcceleration" : false,
+        "redirectsToScroll" : false,
+        "speed" : "unset"
+      },
+      "scrolling" : {
+        "reverse" : {
+          "vertical" : false
+        }
+      }
+    }
+  ]
+}

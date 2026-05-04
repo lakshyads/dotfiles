@@ -3,11 +3,12 @@
 A reproducible macOS development environment. Clone this repo onto a fresh Mac, run one script, and you get:
 
 - A modern terminal (Ghostty) with an actively-maintained cross-shell prompt (Starship)
-- Language runtimes pinned per-project via asdf (Node, Python, Go)
-- Modern CLI tools (`ripgrep`, `fd`, `bat`, `eza`, `zoxide`, `fzf`, `atuin`, `lazygit`, `delta`, `btop`, `dust`, `tldr`)
-- Editors: VS Code + Cursor + Claude Code
-- Docker Desktop, Google Cloud SDK, GitHub CLI
+- Language runtimes pinned per-project via asdf
+- Rust-based CLI replacements for classic Unix tools, all aliased transparently
+- Code editors, containers, cloud tools, and developer utilities
 - Everything wired together via `.zshrc`, Starship, Antidote, and a bootstrap script
+
+See [`docs/inventory.md`](docs/inventory.md) for the complete list of every installed tool, app, and runtime — including how each one is installed.
 
 ---
 
@@ -16,8 +17,7 @@ A reproducible macOS development environment. Clone this repo onto a fresh Mac, 
 - [Quick Start](#quick-start)
 - [What the Setup Gives You](#what-the-setup-gives-you)
   - [Terminal & Shell](#terminal--shell)
-  - [Modern CLI Tools](#modern-cli-tools-aliased-so-you-get-them-without-thinking)
-  - [Fuzzy Finder Key Bindings](#fuzzy-finder-key-bindings)
+  - [CLI Tools & Aliases](#cli-tools--aliases)
   - [Language Runtimes (via asdf)](#language-runtimes-via-asdf)
   - [Applications Installed](#applications-installed)
 - [Manual Steps (After `./setup.sh`)](#manual-steps-after-setupsh)
@@ -32,11 +32,6 @@ A reproducible macOS development environment. Clone this repo onto a fresh Mac, 
   - [9. Optional: Set Ghostty as Default Terminal](#9-optional-set-ghostty-as-default-terminal)
   - [10. Optional: Personalize Theme & Font](#10-optional-personalize-theme--font)
 - [Daily Usage: Keybindings & Commands](#daily-usage-keybindings--commands)
-  - [Ghostty (Terminal)](#ghostty-terminal)
-  - [Shell (fzf / Atuin)](#shell-fzf--atuin)
-  - [zoxide (jump anywhere)](#zoxide-jump-anywhere)
-  - [Modern CLI essentials](#modern-cli-essentials)
-  - [Language runtimes (asdf)](#language-runtimes-asdf)
 - [Customization](#customization)
 - [Updating Your Setup](#updating-your-setup)
   - [Update everything](#update-everything)
@@ -75,7 +70,13 @@ chmod +x setup.sh        # first time only; see note below
 ./setup.sh
 ```
 
-`setup.sh` is idempotent and safe to re-run. It installs Homebrew (if missing), everything in the `Brewfile`, language runtimes from `.tool-versions`, symlinks all config files, and sets up fzf key bindings.
+`setup.sh` launches an interactive wizard — it walks you through each category (core tools, CLI tools, editors, apps, fonts, etc.) and asks whether to install all, customize, or skip. Pass `--full` to skip all prompts and install everything non-interactively:
+
+```bash
+./setup.sh --full
+```
+
+The script is idempotent and safe to re-run at any time. Already-installed packages are detected and skipped.
 
 When it finishes, open Ghostty, run `exec zsh`, and you're in the new environment.
 
@@ -95,55 +96,27 @@ This runs non-destructive smoke tests: checks every CLI tool resolves, every sym
 
 ## What the Setup Gives You
 
-Everything below works out of the box after `./setup.sh`. **No manual configuration required.**
+See [`docs/inventory.md`](docs/inventory.md) for a full list of what's provisioned automatically. Everything below is set up for you—no manual configuration required after running `./setup.sh`.
 
 ### Terminal & Shell
 
 - **Ghostty** with JetBrains Mono Nerd Font, Catppuccin theme (auto light/dark switching), 25M-line scrollback, and split keybindings
-- **Quick Terminal** (Quake-style dropdown) bound to `Ctrl+\``; see manual steps for required permission
-- **Zsh** with Antidote loading three plugins: autosuggestions, syntax highlighting, completions
+- **Quick Terminal** (Quake-style dropdown) bound to ```Ctrl+` ```; see manual steps for required permission
+- **Zsh** with Antidote — see [Zsh plugins](docs/inventory.md#zsh-plugins)
 - **Starship** prompt showing directory, git branch + status, active language version, and command duration
 - **Atuin** replacing `Ctrl+R` with a full-screen SQLite-backed history search
 
-### Modern CLI Tools (aliased, so you get them without thinking)
+### CLI Tools & Aliases
 
-| Command | Maps to | What changes |
-|---|---|---|
-| `ls` | `eza --icons --group-directories-first` | Colors, icons, git status |
-| `ll` | `eza -lah --git --icons` | Long format with git info |
-| `lt` | `eza --tree --level=2 --icons` | Tree view |
-| `cat` | `bat --paging=never` | Syntax highlighting + line numbers |
-| `top` | `btop` | Modern resource monitor with graphs |
-| `du` | `dust` | Tree-based disk usage |
-| `g` | `git` | Shorter git invocation |
-| `gs` / `gd` / `gl` | `git status/diff/log` | Common git shortcuts |
-| `lg` | `lazygit` | Full git TUI |
-| `reload` | `exec zsh` | Reload shell after config changes |
-
-**Deliberately NOT aliased** (they have different flag semantics from their classics and would break scripts): `rg` (ripgrep), `fd`, `z` (zoxide). Use them as their own commands.
-
-### Fuzzy Finder Key Bindings
-
-- `Ctrl+R`: full-screen history search via Atuin
-- `Ctrl+T`: fzf file picker (with bat preview)
-- `Alt+C`: fzf directory picker (with eza tree preview)
+Classic commands (`ls`, `cat`, `top`, `du`, `git`) are aliased to their modern replacements. Shell key bindings for history search and fuzzy file/directory picking are wired up. See [`docs/modern-cli-cheatsheet.md`](docs/modern-cli-cheatsheet.md) for the full alias map, key bindings, and usage reference.
 
 ### Language Runtimes (via asdf)
 
-Declared in `.tool-versions`. Currently:
-
-```
-nodejs  24.15.0
-python  3.13.13
-golang  1.26.2
-java    openjdk-25.0.2
-```
-
-Change versions by editing that file and running `asdf install`. Java versions use distributor-prefixed names (e.g. `openjdk-25.0.2`); run `asdf list all java` to browse available options.
+Versions are pinned in `.tool-versions` — that is the only place versions are defined. See [`docs/inventory.md`](docs/inventory.md#language-runtimes) for the list of managed languages and [`docs/asdf-cheatsheet.md`](docs/asdf-cheatsheet.md) for version management commands.
 
 ### Applications Installed
 
-Docker Desktop, VS Code, Cursor, Google Chrome, Rectangle, 1Password, AppCleaner, Maccy, LinearMouse. Plus Claude Code via the native auto-updating installer (not Homebrew).
+See **[`docs/inventory.md`](docs/inventory.md)** for the full list of GUI apps, CLI tools, and language runtimes.
 
 <p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
 
@@ -196,6 +169,7 @@ Docker Desktop also appends a CLI completions block to `~/.zshrc` on first launc
 - **Chrome**: sign in, set as default browser if desired
 - **Cursor / VS Code**: sign in for settings sync
 - **Maccy**: no account, but enable "Launch at Login" in its preferences
+- See the [inventory section](docs/inventory.md) for other GUI apps that may require login or manual setup after first launch
 
 ### 6. Authenticate Cloud CLIs (as needed)
 
@@ -251,79 +225,16 @@ All configs live in this repo and are symlinked, so changes are preserved in git
 
 ## Daily Usage: Keybindings & Commands
 
-Quick reference for what you'll actually use every day. Full references are in the cheat sheets.
-
-### Ghostty (Terminal)
-
-| Shortcut | Action |
+| What you need | Where to look |
 |---|---|
-| `Cmd+T` | New tab |
-| `Cmd+W` | Close tab / split |
-| `Cmd+1..9` | Jump to tab by number |
-| `Cmd+D` | Split right |
-| `Cmd+Shift+D` | Split down |
-| `Cmd+Alt+arrows` | Navigate between splits |
-| `Cmd+Shift+Enter` | Zoom/unzoom current split |
-| `Cmd+Shift+,` | Reload config |
-| `Ctrl+\`` | Toggle Quick Terminal dropdown (anywhere on macOS) |
+| Terminal keybindings (tabs, splits, Quick Terminal) | [`docs/ghostty-cheatsheet.md`](docs/ghostty-cheatsheet.md) |
+| Shell history search, fuzzy file/dir picker, autosuggestions | [`docs/modern-cli-cheatsheet.md`](docs/modern-cli-cheatsheet.md) |
+| Directory jumping (`z`) | [`docs/modern-cli-cheatsheet.md`](docs/modern-cli-cheatsheet.md#jumping-to-directories-zoxide) |
+| `rg`, `fd`, `bat`, `eza`, `dust`, `btop` usage | [`docs/modern-cli-cheatsheet.md`](docs/modern-cli-cheatsheet.md) |
+| Git TUI (`lg`) | [`docs/lazygit-cheatsheet.md`](docs/lazygit-cheatsheet.md) |
+| Language runtime commands (`asdf current`, `asdf install`) | [`docs/asdf-cheatsheet.md`](docs/asdf-cheatsheet.md) |
 
-### Shell (fzf / Atuin)
-
-| Shortcut | Action |
-|---|---|
-| `Ctrl+R` | Search shell history (Atuin full-screen UI) |
-| `Ctrl+T` | Fuzzy pick a file (preview via bat) |
-| `Alt+C` | Fuzzy pick a directory (preview via eza) |
-| `→` (right arrow) | Accept autosuggestion |
-
-> **On Mac, `Alt` is the same key as `Option` (⌥).** Tool documentation (fzf, readline) uses the Alt label historically; press the key labeled Option on your keyboard.
-
-### zoxide (jump anywhere)
-
-```bash
-z proj              # jumps to most-visited dir matching "proj"
-z proj frontend     # narrows by multiple terms
-zi                  # interactive picker
-z -                 # previous directory
-```
-
-### Modern CLI essentials
-
-```bash
-# Search code
-rg "TODO" --type ts
-rg -i "error" -C 3
-
-# Find files
-fd -e md                         # all .md files
-fd --type d config               # directories named "config"
-
-# Git
-lg                               # full TUI
-gl                               # log --oneline --graph --decorate -20
-gs                               # status
-
-# View files
-bat README.md                    # syntax-highlighted cat
-eza -lah --git                   # ls with git info and icons
-
-# Disk / resources
-dust                             # tree-based du
-btop                             # process monitor
-```
-
-For full references: [`docs/modern-cli-cheatsheet.md`](docs/modern-cli-cheatsheet.md) covers ripgrep, fd, bat, eza, fzf, atuin, delta, dust, btop, tldr with usage patterns and composition examples. For the lazygit TUI specifically: [`docs/lazygit-cheatsheet.md`](docs/lazygit-cheatsheet.md).
-
-### Language runtimes (asdf)
-
-```bash
-asdf current                     # show active versions for everything
-asdf install                     # install everything in .tool-versions
-asdf set nodejs 24.15.0           # pin a version in current dir
-asdf list all python 3.12        # show installable 3.12.x versions
-```
-
-For full command reference: [`docs/asdf-cheatsheet.md`](docs/asdf-cheatsheet.md).
+> **On Mac, `Alt` = `Option` (⌥).** fzf and readline docs use "Alt" historically.
 
 <p align="right"><a href="#table-of-contents">↑ Back to top</a></p>
 
@@ -456,20 +367,17 @@ See [`docs/homebrew-cheatsheet.md`](docs/homebrew-cheatsheet.md#common-pitfalls)
 
 ### Atuin doesn't import my old history
 
-```bash
-atuin import auto                # auto-detects zsh_history and imports
-atuin stats                      # verify history count went up
-```
+See [Shell History (atuin)](docs/modern-cli-cheatsheet.md#shell-history-atuin) in the modern CLI cheat sheet.
 
 ### Starting over on a single tool
 
 ```bash
 # Reinstall a Homebrew cask
-brew reinstall --cask ghostty
+brew reinstall --cask <app-name>
 
-# Reset an asdf tool
-asdf uninstall python 3.13.13
-asdf install python 3.13.13
+# Reset an asdf tool (version from .tool-versions)
+asdf uninstall <language> <version>
+asdf install
 
 # Reload shell config without restarting
 reload
@@ -483,6 +391,7 @@ reload
 
 Full command references for the tools that get the most daily use. These live in `docs/` so you can open them in-repo rather than fishing through web docs:
 
+- **[Software inventory](docs/inventory.md)**: full list of GUI apps, CLI tools, and language runtimes — update this whenever `Brewfile` or `.tool-versions` changes
 - **[Homebrew cheat sheet](docs/homebrew-cheatsheet.md)**: install, daily commands, Brewfile workflows, FAQ, common pitfalls
 - **[asdf cheat sheet](docs/asdf-cheatsheet.md)**: plugin management, version commands, `.tool-versions` format, CI integration, troubleshooting
 - **[Ghostty cheat sheet](docs/ghostty-cheatsheet.md)**: default keybindings, config syntax, action reference, SSH terminfo fixes, themes and fonts
@@ -513,6 +422,7 @@ dotfiles/
 ├── ghostty-config             # Ghostty terminal config
 ├── linearmouse.json           # Mouse customization (side buttons, acceleration)
 └── docs/
+    ├── inventory.md               # full list of installed apps, tools, and runtimes
     ├── homebrew-cheatsheet.md
     ├── asdf-cheatsheet.md
     ├── ghostty-cheatsheet.md

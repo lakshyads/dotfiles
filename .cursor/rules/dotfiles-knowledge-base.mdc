@@ -1,38 +1,126 @@
 ---
-description: Prefer this dotfiles repo as the knowledge base; extend docs when the web fills gaps
+description: Standards for this dotfiles repo — sources of truth, no-duplication rule, and checklists for adding tools
 alwaysApply: true
 ---
 
-# Dotfiles repo first, then the web, then capture knowledge
+# Dotfiles Repo Standards
 
-## 1. Answer from this repository before the open web
+## 1. Search the repo before anything else
 
-For this Mac dev setup, shell tools, or anything documented here:
+For any question about this Mac dev setup:
 
-- Read **`README.md`** for orientation, daily commands, updating, troubleshooting, and links to cheat sheets.
-- Search **`docs/`** (primary references): `homebrew-cheatsheet.md`, `asdf-cheatsheet.md`, `ghostty-cheatsheet.md`, `git-cheatsheet.md`, `lazygit-cheatsheet.md`, `modern-cli-cheatsheet.md`, `claude-code-cheatsheet.md`, `cursor-cli-cheatsheet.md`.
-- For “what is installed / how is it wired?” use **`setup.sh`**, **`verify.sh`**, **`Brewfile`**, **`.tool-versions`**, and root configs (e.g. **`.zshrc`**, **`starship.toml`**, **`ghostty-config`**).
-
-Use repo search across these paths before relying on memory or the web.
-
-## 2. If the repo does not contain the answer
-
-- Use **current upstream or official docs** (release notes when versions matter: Homebrew, asdf, Cursor, Ghostty, etc.).
-- State clearly when the answer comes **from outside** this repo.
-
-## 3. Keep the knowledge base in sync
-
-When the answer came from the web or experimentation and is **stable and reusable**:
-
-- **Place it** in the most relevant `docs/*-cheatsheet.md`, or a short **`README.md`** subsection for very common workflows, or a new **`docs/`** file if it is a new topic.
-- **Match** existing cheat-sheet tone: skimmable, commands first, gotchas where they matter.
-
-Prefer **making that edit** in Agent sessions unless the user asked for guidance only.
-
-## 4. Search hygiene
+- **`docs/inventory.md`** — what is installed and how (start here for "what's in the setup")
+- **`README.md`** — orientation, quick start, links to cheat sheets
+- **`docs/`** — full command references; see [`README.md` Cheat Sheets section](../README.md#cheat-sheets--references) for the full annotated index
+- **`Brewfile`** — authoritative package list; **`.tool-versions`** — authoritative runtime versions; **`setup.sh`** / **`verify.sh`** — bootstrap and smoke tests
+- Root configs (`ghostty-config`, `.zshrc`, `starship.toml`) — live configuration
 
 | Question type | Start here |
-|---------------|------------|
-| How-to / CLI reference | `docs/`, `README.md` |
-| Bootstrap / inventory | `setup.sh`, `verify.sh`, `Brewfile` |
-| Live config / “what is set?” | Root dotfiles (`ghostty-config`, `.zshrc`, etc.) |
+|---|---|
+| What is installed / how | `docs/inventory.md` |
+| How-to / CLI reference | `docs/*-cheatsheet.md` |
+| Bootstrap / wiring | `setup.sh`, `verify.sh`, `Brewfile` |
+| Live config / "what is set?" | Root dotfiles (`ghostty-config`, `.zshrc`, etc.) |
+
+---
+
+## 2. Sources of truth — one file owns each type of data
+
+Never duplicate these. Every other place must link, not repeat.
+
+| Data | Authoritative file | Rule |
+|------|--------------------|------|
+| Installed packages (formulae + casks) | `Brewfile` | Every `brew install` entry lives here |
+| Language runtime versions | `.tool-versions` | Version numbers never written in docs |
+| Zsh plugin list | `.zsh_plugins.txt` | Plugin names never written in docs |
+| Human-readable inventory | `docs/inventory.md` | What's installed, how, one row per item |
+| Detailed command references | `docs/*-cheatsheet.md` | Full usage, flags, examples, gotchas |
+| Orientation + links | `README.md` | Overview only — no content, only links |
+
+---
+
+## 3. No duplicate content across docs
+
+**One source, everywhere else links.**
+
+- If a table, code block, or list already exists in one doc, all other docs link to it — never copy it.
+- `README.md` is orientation only: it describes categories and links out. No tool lists, keybinding tables, command blocks, or version numbers.
+- Version numbers appear only in `.tool-versions`. Docs name the language but never the version.
+- Plugin names appear only in `.zsh_plugins.txt`. Docs reference that file rather than listing plugins inline.
+- New content from research goes in the single most relevant `docs/*-cheatsheet.md` — not in README as well.
+
+---
+
+## 4. Adding a new tool, app, or runtime — full checklist
+
+Work through every applicable item. Skipping any item leaves the repo inconsistent.
+
+### Adding a Homebrew formula
+
+- [ ] Add to `Brewfile` under the correct section comment
+- [ ] Add a row to the appropriate CLI tools section in `docs/inventory.md` with "Installed via: `brew install`"
+- [ ] Add to the matching category block in `setup.sh` (`want "..."` + `formula ...`)
+- [ ] Add to the CLI tools loop in `verify.sh` if it provides a binary
+
+### Adding a Homebrew cask (GUI app)
+
+- [ ] Add to `Brewfile` under the correct section comment
+- [ ] Add a row to the GUI Applications table in `docs/inventory.md` with "Installed via: `brew install --cask`"
+- [ ] Add to the matching category block in `setup.sh` (`want "..."` + `cask_pkg ...`)
+- [ ] Add to the `APPS` array in `verify.sh`
+- [ ] If the app writes back to a config file, symlink that file into the dotfiles repo (see `linearmouse.json` pattern in `setup.sh`)
+
+### Adding a language runtime (asdf)
+
+- [ ] Add to `.tool-versions` — version number goes here and nowhere else
+- [ ] Add a row to the Language Runtimes table in `docs/inventory.md` (language name + key only, no version)
+- [ ] Add `asdf plugin add <lang>` to the asdf section of `setup.sh`
+- [ ] Add the language to the runtime loop in `verify.sh`
+
+### Adding a Zsh plugin
+
+- [ ] Add to `.zsh_plugins.txt` — plugin entry goes here and nowhere else
+- [ ] Add a row to the Zsh plugins table in `docs/inventory.md`
+- [ ] Add a `check_contains` line for the plugin in `verify.sh`
+
+### Removing anything
+
+- [ ] Remove from `Brewfile` / `.tool-versions` / `.zsh_plugins.txt`
+- [ ] Remove the corresponding row from `docs/inventory.md`
+- [ ] Remove from `setup.sh`
+- [ ] Remove from `verify.sh`
+
+---
+
+## 5. README is orientation only
+
+`README.md` must never contain:
+
+- Lists of tool or app names → link to `docs/inventory.md`
+- Keybinding tables → link to the relevant cheatsheet
+- Command examples already in a cheatsheet → link to the cheatsheet
+- Version numbers → link to `.tool-versions`
+- Plugin names → link to `.zsh_plugins.txt`
+
+When editing README, ask: "does this content already exist in a cheatsheet or inventory?" If yes, replace with a link.
+
+---
+
+## 6. verify.sh must stay in sync
+
+`verify.sh` is the contract that the setup is complete and correct. Keep it in sync:
+
+- New CLI binary → add to the `check_command` loop
+- New GUI app → add to the `APPS` array
+- New symlink in `setup.sh` → add a `check_symlink` call
+- New config file → add `check_contains` or `check_json` assertions for its critical settings
+- New Zsh plugin → add a `check_contains` line for `.zsh_plugins.txt`
+- New `.zshrc` initialization → add a `check_contains` line for `.zshrc`
+
+---
+
+## 7. If the repo does not contain the answer
+
+- Use current upstream or official docs (prefer release notes when versions matter).
+- State clearly when the answer comes from outside this repo.
+- If the answer is stable and reusable, add it to the most relevant `docs/*-cheatsheet.md`. Match existing tone: skimmable, commands first, gotchas where they matter.

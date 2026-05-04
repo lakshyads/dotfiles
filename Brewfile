@@ -74,6 +74,10 @@ cask "linearmouse"                # Mouse customization: extra buttons, per-devi
                                   # Essential for third-party mice with side/extra buttons.
                                   # Fixes macOS's patchy handling of back/forward buttons.
 
+# ---- API testing ----
+cask "granola"                    # AI-powered notepad for meetings
+cask "postman"                    # REST client & API testing
+
 # ---- Developer fonts ----
 # Nerd Fonts include glyphs required by Starship, eza icons, and modern TUI tools.
 cask "font-jetbrains-mono-nerd-font"  # Recommended: primary coding font
