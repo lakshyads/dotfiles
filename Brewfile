@@ -75,6 +75,7 @@ cask "linearmouse"                # Mouse customization: extra buttons, per-devi
                                   # Fixes macOS's patchy handling of back/forward buttons.
 
 # ---- API testing ----
+cask "granola"                    # AI-powered notepad for meetings
 cask "postman"                    # REST client & API testing
 
 # ---- Developer fonts ----
