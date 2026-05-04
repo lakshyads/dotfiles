@@ -35,6 +35,7 @@ All installed via `brew install --cask` unless noted otherwise.
 | AppCleaner | `brew install --cask` | Productivity | Clean app uninstalls |
 | Maccy | `brew install --cask` | Productivity | Clipboard history (Cmd+Shift+C) |
 | LinearMouse | `brew install --cask` | Productivity | Mouse customization: side buttons, scroll, acceleration |
+| Granola | `brew install --cask` | Productivity | AI-powered notepad for meetings |
 | Postman | `brew install --cask` | API Testing | REST client |
 | Claude Code | `curl \| bash` (claude.ai/install.sh) | AI / CLI | Native auto-updating installer — **not** via Homebrew |
 

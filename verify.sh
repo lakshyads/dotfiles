@@ -237,6 +237,7 @@ APPS=(
   "AppCleaner"
   "Maccy"
   "LinearMouse"
+  "Granola"
   "Postman"
 )
 for app in "${APPS[@]}"; do

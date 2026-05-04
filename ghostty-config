@@ -58,3 +58,6 @@ auto-update-channel = stable
 # Ghostty uses xterm-ghostty as its TERM, which older remote hosts don't recognize.
 # Fall back to xterm-256color over SSH.
 term = xterm-256color
+
+# ---- Notifications ----
+desktop-notifications = true
