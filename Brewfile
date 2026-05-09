@@ -73,6 +73,7 @@ cask "maccy"                      # Clipboard history manager (Cmd+Shift+C)
 cask "linearmouse"                # Mouse customization: extra buttons, per-device scroll/accel
                                   # Essential for third-party mice with side/extra buttons.
                                   # Fixes macOS's patchy handling of back/forward buttons.
+cask "superwhisper"               # AI voice-to-text dictation (system-wide)
 
 # ---- API testing ----
 cask "granola"                    # AI-powered notepad for meetings

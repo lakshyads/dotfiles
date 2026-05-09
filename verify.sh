@@ -237,6 +237,7 @@ APPS=(
   "AppCleaner"
   "Maccy"
   "LinearMouse"
+  "SuperWhisper"
   "Granola"
   "Postman"
 )
