@@ -38,6 +38,9 @@ All installed via `brew install --cask` unless noted otherwise.
 | SuperWhisper | `brew install --cask` | Productivity | AI voice-to-text dictation (system-wide) |
 | Granola | `brew install --cask` | Productivity | AI-powered notepad for meetings |
 | Postman | `brew install --cask` | API Testing | REST client |
+| Whimsical | `brew install --cask` | Productivity | Collaboration and diagramming tool |
+| Claude (desktop) | `brew install --cask claude` | AI | Anthropic Claude desktop app |
+| Codex (desktop) | `brew install --cask codex-app` | AI | OpenAI Codex desktop app for managing coding agents |
 | Claude Code | `curl \| bash` (claude.ai/install.sh) | AI / CLI | Native auto-updating installer — **not** via Homebrew |
 
 ---
@@ -72,6 +75,13 @@ All installed via `brew install` (formula) unless noted otherwise.
 | `dust` | `du` | Tree-based disk usage visualizer |
 | `tldr` | `man` (common cases) | Simplified man pages with real examples |
 | `atuin` | `~/.zsh_history` | SQLite-backed shell history with search |
+
+### AI coding CLIs
+
+| Tool | Installed via | Description |
+|------|---------------|-------------|
+| `codex` | `brew install --cask codex` | OpenAI Codex CLI — coding agent in terminal (cask binary; depends on `ripgrep`) |
+| `claude` | `curl \| bash` (claude.ai/install.sh) | Anthropic Claude Code CLI — auto-updating native installer, **not** via Homebrew |
 
 ### Shell productivity
 

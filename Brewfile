@@ -62,6 +62,12 @@ cask "ghostty"                    # Native GPU-accelerated terminal (replaces iT
 cask "visual-studio-code"         # Editor
 cask "cursor"                     # AI-native code editor
 
+# ---- AI coding tools ----
+# Claude Code (CLI) is intentionally excluded — it uses its own auto-updating native installer.
+cask "claude"                     # Anthropic Claude desktop app
+cask "codex"                      # OpenAI Codex CLI (coding agent in terminal)
+cask "codex-app"                  # OpenAI Codex desktop app (manages coding agents)
+
 # ---- Browsers ----
 cask "google-chrome"
 
@@ -78,6 +84,7 @@ cask "superwhisper"               # AI voice-to-text dictation (system-wide)
 # ---- API testing ----
 cask "granola"                    # AI-powered notepad for meetings
 cask "postman"                    # REST client & API testing
+cask "whimsical"                  # Collaboration and diagramming tool
 
 # ---- Developer fonts ----
 # Nerd Fonts include glyphs required by Starship, eza icons, and modern TUI tools.

@@ -191,12 +191,19 @@ category "Cloud Tooling" "Google Cloud CLI — gcloud, gsutil, bq"
 if want "Google Cloud CLI (gcloud, gsutil, bq)"; then cask_pkg gcloud-cli; fi
 
 # ── Editors & Terminal ────────────────────────────────────────────────────────
-category "Editors & Terminal" "Ghostty  VS Code  Cursor  Claude Code"
+category "Editors & Terminal" "Ghostty  VS Code  Cursor"
 
 if want "Ghostty — GPU-accelerated terminal";          then cask_pkg ghostty;            fi
 if want "Visual Studio Code";                          then cask_pkg visual-studio-code; fi
 if want "Cursor — AI-native code editor";              then cask_pkg cursor;             fi
+
+# ── AI Coding Tools ───────────────────────────────────────────────────────────
+category "AI Coding Tools" "Claude Code  Claude desktop  Codex CLI  Codex desktop app"
+
 if want "Claude Code — AI CLI (native installer)";     then DID_CLAUDE=true;             fi
+if want "Claude — Anthropic desktop app";              then cask_pkg claude;             fi
+if want "Codex CLI — OpenAI coding agent in terminal"; then cask_pkg codex;              fi
+if want "Codex desktop app — manages coding agents";   then cask_pkg codex-app;          fi
 
 # ── Browser ───────────────────────────────────────────────────────────────────
 category "Browser" "Google Chrome"
@@ -205,7 +212,7 @@ if want "Google Chrome"; then cask_pkg google-chrome; fi
 
 # ── Productivity Apps ─────────────────────────────────────────────────────────
 category "Productivity Apps" \
-  "Rectangle  1Password  AppCleaner  Maccy  LinearMouse  SuperWhisper  Granola  Postman"
+  "Rectangle  1Password  AppCleaner  Maccy  LinearMouse  SuperWhisper  Granola  Postman  Whimsical"
 
 if want "Rectangle — keyboard-driven window tiling";       then cask_pkg rectangle;   fi
 if want "1Password — password manager";                    then cask_pkg 1password;   fi
@@ -215,6 +222,7 @@ if want "LinearMouse — mouse customization";               then cask_pkg linea
 if want "SuperWhisper — AI voice-to-text dictation";       then cask_pkg superwhisper; fi
 if want "Granola — AI-powered notepad for meetings";       then cask_pkg granola;       fi
 if want "Postman — REST client & API testing";             then cask_pkg postman;     fi
+if want "Whimsical — collaboration & diagramming";         then cask_pkg whimsical;   fi
 
 # ── Developer Fonts ───────────────────────────────────────────────────────────
 category "Developer Fonts" \
