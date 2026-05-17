@@ -163,6 +163,10 @@ for tool in rg fd bat eza zoxide fzf delta lazygit btop dust tldr atuin; do
   check_command "$tool" "$tool"
 done
 
+# ── 4b. AI Coding CLIs ────────────────────────────────────────────────────────
+info "4b. AI Coding CLIs"
+check_command codex "codex (OpenAI Codex CLI)"
+
 # ── 5. Git & GitHub CLI ───────────────────────────────────────────────────────
 info "5. Git & GitHub"
 check_command git  "git"
@@ -240,6 +244,9 @@ APPS=(
   "SuperWhisper"
   "Granola"
   "Postman"
+  "Whimsical"
+  "Claude"
+  "Codex"
 )
 for app in "${APPS[@]}"; do
   if [[ -d "/Applications/$app.app" ]]; then
