@@ -9,7 +9,8 @@ font-size = 14
 
 # ---- Theme ----
 # Auto light/dark switching follows macOS system appearance.
-theme = light:Catppuccin Latte,dark:Catppuccin Mocha
+# theme = light:Catppuccin Latte,dark:Catppuccin Mocha
+theme = light:Catppuccin Mocha,dark:Catppuccin Mocha
 
 # ---- Window appearance ----
 macos-titlebar-style = tabs
