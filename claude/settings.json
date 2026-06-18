@@ -1,0 +1,9 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "bash /Users/lakshyadevsingh/.claude/statusline-command.sh"
+  },
+  "effortLevel": "high",
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
+}

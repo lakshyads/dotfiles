@@ -256,6 +256,18 @@ if [[ -f "$LINEARMOUSE_TARGET" && ! -L "$LINEARMOUSE_TARGET" ]]; then
   mv "$LINEARMOUSE_TARGET" "$BACKUP"
 fi
 ln -sf "$DOTFILES_DIR/linearmouse.json" "$LINEARMOUSE_TARGET"
+
+mkdir -p "$HOME/.claude"
+ln -sf "$DOTFILES_DIR/claude/CLAUDE.md"              "$HOME/.claude/CLAUDE.md"
+ln -sf "$DOTFILES_DIR/claude/settings.json"          "$HOME/.claude/settings.json"
+ln -sf "$DOTFILES_DIR/claude/statusline-command.sh"  "$HOME/.claude/statusline-command.sh"
+
+mkdir -p "$HOME/.codex"
+ln -sf "$DOTFILES_DIR/codex-instructions.md" "$HOME/.codex/instructions.md"
+
+mkdir -p "$HOME/.cursor/rules"
+ln -sf "$DOTFILES_DIR/cursor-rules/git-commits.mdc" "$HOME/.cursor/rules/git-commits.mdc"
+
 done_ "Dotfiles linked"
 
 # ── Git Configuration ─────────────────────────────────────────────────────────

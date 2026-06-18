@@ -204,6 +204,11 @@ check_symlink "$HOME/.tool-versions"                        "~/.tool-versions"
 check_symlink "$HOME/.config/ghostty/config"                "~/.config/ghostty/config"
 check_symlink "$HOME/.config/starship.toml"                 "~/.config/starship.toml"
 check_symlink "$HOME/.config/linearmouse/linearmouse.json"  "~/.config/linearmouse/linearmouse.json"
+check_symlink "$HOME/.claude/CLAUDE.md"                      "~/.claude/CLAUDE.md"
+check_symlink "$HOME/.claude/settings.json"                  "~/.claude/settings.json"
+check_symlink "$HOME/.claude/statusline-command.sh"          "~/.claude/statusline-command.sh"
+check_symlink "$HOME/.codex/instructions.md"                 "~/.codex/instructions.md"
+check_symlink "$HOME/.cursor/rules/git-commits.mdc"          "~/.cursor/rules/git-commits.mdc"
 
 # ── 9. Config File Integrity ──────────────────────────────────────────────────
 info "9. Config File Integrity"
