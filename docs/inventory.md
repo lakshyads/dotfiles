@@ -26,7 +26,7 @@ All installed via `brew install --cask` unless noted otherwise.
 |-----|---------------|----------|-------|
 | Ghostty | `brew install --cask` | Terminal | GPU-accelerated; replaces iTerm2 |
 | Visual Studio Code | `brew install --cask` | Editor | |
-| Cursor | `brew install --cask` | Editor | AI-native code editor |
+| Cursor | `brew install --cask` | Editor | AI-native code editor; global AI rules symlinked from `cursor-rules/git-commits.mdc` to `~/.cursor/rules/git-commits.mdc` |
 | Docker Desktop | `brew install --cask` | Containers | Provides `docker` and `docker compose` CLIs |
 | Google Chrome | `brew install --cask` | Browser | |
 | Google Cloud CLI | `brew install --cask` | Cloud | Includes `gcloud`, `gsutil`, `bq`; kubectl installed on demand |
@@ -40,8 +40,8 @@ All installed via `brew install --cask` unless noted otherwise.
 | Postman | `brew install --cask` | API Testing | REST client |
 | Whimsical | `brew install --cask` | Productivity | Collaboration and diagramming tool |
 | Claude (desktop) | `brew install --cask claude` | AI | Anthropic Claude desktop app |
-| Codex (desktop) | `brew install --cask codex-app` | AI | OpenAI Codex desktop app for managing coding agents |
-| Claude Code | `curl \| bash` (claude.ai/install.sh) | AI / CLI | Native auto-updating installer — **not** via Homebrew |
+| Codex (desktop) | `brew install --cask codex-app` | AI | OpenAI Codex desktop app for managing coding agents; global instructions symlinked from `codex-instructions.md` to `~/.codex/instructions.md` |
+| Claude Code | `curl \| bash` (claude.ai/install.sh) | AI / CLI | Native auto-updating installer — **not** via Homebrew; global config (`CLAUDE.md`, `settings.json`, `statusline-command.sh`) symlinked from `claude/` to `~/.claude/` |
 
 ---
 
