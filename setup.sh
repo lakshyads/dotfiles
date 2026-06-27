@@ -206,9 +206,11 @@ if want "Codex CLI — OpenAI coding agent in terminal"; then cask_pkg codex;   
 if want "Codex desktop app — manages coding agents";   then cask_pkg codex-app;          fi
 
 # ── Browser ───────────────────────────────────────────────────────────────────
-category "Browser" "Google Chrome"
+category "Browser" "Google Chrome  Firefox  ChatGPT Atlas"
 
-if want "Google Chrome"; then cask_pkg google-chrome; fi
+if want "Google Chrome";  then cask_pkg google-chrome;  fi
+if want "Firefox";        then cask_pkg firefox;         fi
+if want "ChatGPT Atlas";  then cask_pkg chatgpt-atlas;   fi
 
 # ── Productivity Apps ─────────────────────────────────────────────────────────
 category "Productivity Apps" \
@@ -267,6 +269,12 @@ ln -sf "$DOTFILES_DIR/codex-instructions.md" "$HOME/.codex/instructions.md"
 
 mkdir -p "$HOME/.cursor/rules"
 ln -sf "$DOTFILES_DIR/cursor-rules/git-commits.mdc" "$HOME/.cursor/rules/git-commits.mdc"
+
+# Wire delta + merge config via git include (keeps personal user info separate).
+# Guard against duplicates on re-runs — git config --add would append every time.
+if ! git config --global --get-all include.path | grep -qF "$DOTFILES_DIR/gitconfig"; then
+  git config --global --add include.path "$DOTFILES_DIR/gitconfig"
+fi
 
 done_ "Dotfiles linked"
 

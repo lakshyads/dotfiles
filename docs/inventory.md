@@ -29,6 +29,8 @@ All installed via `brew install --cask` unless noted otherwise.
 | Cursor | `brew install --cask` | Editor | AI-native code editor; global AI rules symlinked from `cursor-rules/git-commits.mdc` to `~/.cursor/rules/git-commits.mdc` |
 | Docker Desktop | `brew install --cask` | Containers | Provides `docker` and `docker compose` CLIs |
 | Google Chrome | `brew install --cask` | Browser | |
+| Firefox | `brew install --cask` | Browser | |
+| ChatGPT Atlas | `brew install --cask` | Browser | OpenAI's browser with ChatGPT built in; requires arm64 + macOS 14 |
 | Google Cloud CLI | `brew install --cask` | Cloud | Includes `gcloud`, `gsutil`, `bq`; kubectl installed on demand |
 | Rectangle | `brew install --cask` | Productivity | Keyboard-driven window tiling |
 | 1Password | `brew install --cask` | Productivity | Password manager |
@@ -69,7 +71,7 @@ All installed via `brew install` (formula) unless noted otherwise.
 | `eza` | `ls` | Modern listing with icons, git status, tree view |
 | `zoxide` (`z`) | `cd` | Learns habits; jump to dirs by partial name |
 | `fzf` | — | Fuzzy finder for history, files, branches, processes |
-| `delta` | `diff` pager | Syntax-highlighted, side-by-side git diffs |
+| `delta` | `diff` pager | Syntax-highlighted, side-by-side git diffs; config in `gitconfig`, wired via `[include]` in `~/.gitconfig` |
 | `lazygit` (`lg`) | — | Full terminal UI for git |
 | `btop` | `top` / `htop` | Modern resource monitor with graphs |
 | `dust` | `du` | Tree-based disk usage visualizer |
