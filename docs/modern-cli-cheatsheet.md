@@ -450,9 +450,17 @@ history_filter = [
 
 Delta is a pager for git diffs. Once configured, every `git diff`, `git log -p`, and `git show` gets syntax highlighting and side-by-side view.
 
-### Setup (one-time)
+### Setup
 
-Add to `~/.gitconfig`:
+Automated by `setup.sh` — no manual steps needed. The config lives in `dotfiles/gitconfig` and is wired into `~/.gitconfig` via `[include]`, leaving your personal identity settings untouched.
+
+To apply manually on an existing machine:
+
+```bash
+git config --global --add include.path ~/dotfiles/gitconfig
+```
+
+Config applied (`dotfiles/gitconfig`):
 
 ```ini
 [core]

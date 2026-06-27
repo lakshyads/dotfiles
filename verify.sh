@@ -233,6 +233,10 @@ fi
 # LinearMouse — must be valid JSON
 check_json "$HOME/.config/linearmouse/linearmouse.json" "linearmouse.json"
 
+# Delta git config — included from dotfiles/gitconfig
+check_contains "$HOME/.gitconfig"        "include"       "~/.gitconfig: includes dotfiles/gitconfig"
+check_contains "$DOTFILES_DIR/gitconfig" "pager = delta" "dotfiles/gitconfig: delta pager configured"
+
 # ── 10. GUI Applications ──────────────────────────────────────────────────────
 info "10. GUI Applications"
 APPS=(
@@ -241,6 +245,8 @@ APPS=(
   "Cursor"
   "Docker"
   "Google Chrome"
+  "Firefox"
+  "ChatGPT Atlas"
   "1Password"
   "Rectangle"
   "AppCleaner"

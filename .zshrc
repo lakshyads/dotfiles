@@ -73,6 +73,7 @@ alias ....='cd ../../..'
 alias g='git'
 alias gs='git status'
 alias gd='git diff'
+alias gds='git diff --staged'
 alias gl='git log --oneline --graph --decorate -20'
 alias lg='lazygit'
 

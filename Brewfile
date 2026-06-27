@@ -70,6 +70,8 @@ cask "codex-app"                  # OpenAI Codex desktop app (manages coding age
 
 # ---- Browsers ----
 cask "google-chrome"
+cask "firefox"
+cask "chatgpt-atlas"              # OpenAI's browser with ChatGPT built in
 
 # ---- Productivity & utilities ----
 cask "rectangle"                  # Window management (keyboard-driven tiling)
