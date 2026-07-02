@@ -27,7 +27,7 @@ All installed via `brew install --cask` unless noted otherwise.
 | Ghostty | `brew install --cask` | Terminal | GPU-accelerated; replaces iTerm2 |
 | Visual Studio Code | `brew install --cask` | Editor | |
 | Cursor | `brew install --cask` | Editor | AI-native code editor; global AI rules symlinked from `cursor-rules/git-commits.mdc` to `~/.cursor/rules/git-commits.mdc` |
-| Docker Desktop | `brew install --cask` | Containers | Provides `docker` and `docker compose` CLIs |
+| Docker Desktop | `brew install --cask` | Containers | Provides `docker` and `docker compose` CLIs — see [Docker cheat sheet](docker-cheatsheet.md) |
 | Google Chrome | `brew install --cask` | Browser | |
 | Firefox | `brew install --cask` | Browser | |
 | ChatGPT Atlas | `brew install --cask` | Browser | OpenAI's browser with ChatGPT built in; requires arm64 + macOS 14 |
