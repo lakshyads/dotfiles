@@ -266,27 +266,30 @@ After any changes, commit them to your dotfiles repo. Other machines pick up cha
 ### Update everything
 
 ```bash
-cd ~/dotfiles
+./update.sh
+```
+
+`update.sh` runs each updater in sequence — Homebrew (formulae + casks + cleanup), Zsh plugins (antidote), asdf plugins, and Claude Code. A failure in one section does not abort the rest.
+
+After pulling dotfiles changes, also run:
+
+```bash
 git pull
-brew update && brew upgrade     # Homebrew packages
-brew bundle                      # ensure new Brewfile entries are installed
-asdf install                     # ensure new .tool-versions are installed
-brew cleanup                     # reclaim disk space
+brew bundle          # install any new Brewfile entries
+asdf install         # install any new .tool-versions runtimes
 ```
 
 ### Update just Homebrew packages
 
 ```bash
-brew update && brew upgrade
+brew update && brew upgrade && brew upgrade --cask
 brew cleanup
 ```
 
 ### Update Claude Code
 
-It auto-updates via the native installer. If you want to verify or force update:
-
 ```bash
-claude doctor
+claude update
 ```
 
 ### Update asdf plugins
@@ -413,6 +416,7 @@ Each is written as a skimmable reference, not a tutorial. Use them when you need
 dotfiles/
 ├── README.md                  # this file (orientation + daily reference)
 ├── setup.sh                   # one-command bootstrap (idempotent)
+├── update.sh                  # update all package managers and tools
 ├── verify.sh                  # end-to-end smoke test (run after setup.sh)
 ├── Brewfile                   # Homebrew packages (formulae + casks)
 ├── .tool-versions             # asdf runtime versions (Node, Python, Go)
