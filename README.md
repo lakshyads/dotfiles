@@ -401,6 +401,7 @@ Full command references for the tools that get the most daily use. These live in
 - **[Git cheat sheet](docs/git-cheatsheet.md)**: daily workflow commands, branching, rebasing, undoing mistakes, stash, tags, `.gitignore` essentials, troubleshooting
 - **[Lazygit cheat sheet](docs/lazygit-cheatsheet.md)**: panel navigation, default keybindings, line-staging, interactive rebase workflows, custom commands
 - **[Modern CLI tools cheat sheet](docs/modern-cli-cheatsheet.md)**: ripgrep, fd, bat, eza, zoxide, fzf, atuin, delta, dust, btop, tldr. Usage per tool plus composition examples
+- **[Docker cheat sheet](docs/docker-cheatsheet.md)**: images, containers, volumes, networks, Docker Compose, Dockerfile basics, disk cleanup, troubleshooting
 - **[Claude Code cheat sheet](docs/claude-code-cheatsheet.md)**: CLI flags, slash commands, keyboard shortcuts, permission modes, CLAUDE.md, hooks, MCP, subagents, models and cost
 - **[Cursor CLI cheat sheet](docs/cursor-cli-cheatsheet.md)**: agent modes (Agent/Plan/Ask), slash commands, cloud handoff, MCP integration, rules and skills, subagents
 
