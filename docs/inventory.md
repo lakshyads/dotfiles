@@ -38,6 +38,7 @@ All installed via `brew install --cask` unless noted otherwise.
 | Maccy | `brew install --cask` | Productivity | Clipboard history (Cmd+Shift+C) |
 | LinearMouse | `brew install --cask` | Productivity | Mouse customization: side buttons, scroll, acceleration |
 | SuperWhisper | `brew install --cask` | Productivity | AI voice-to-text dictation (system-wide) |
+| Obsidian | `brew install --cask` | Productivity | Markdown-based knowledge base / note-taking |
 | Granola | `brew install --cask` | Productivity | AI-powered notepad for meetings |
 | Postman | `brew install --cask` | API Testing | REST client |
 | Whimsical | `brew install --cask` | Productivity | Collaboration and diagramming tool |

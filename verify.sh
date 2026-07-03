@@ -253,6 +253,7 @@ APPS=(
   "Maccy"
   "LinearMouse"
   "SuperWhisper"
+  "Obsidian"
   "Granola"
   "Postman"
   "Whimsical"
