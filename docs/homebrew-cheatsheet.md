@@ -425,6 +425,12 @@ asdf reshim <plugin>
 exec zsh
 ```
 
+### Selective installer, unconditional Brewfile
+
+If your setup script offers per-app prompts (skip this one, install that one) but also ships a `Brewfile`, know that the two aren't reconciled. A `Brewfile` has no "skipped" state — every `brew`/`cask` line installs unconditionally. Running `brew bundle` later will install anything you deliberately skipped during the interactive run.
+
+Treat the `Brewfile` as the definitive "what should end up installed" list, not the interactive script, since `brew bundle cleanup` also uses it as ground truth. If you skip something at setup time, expect it to reappear the next time `brew bundle` runs.
+
 ### Brewfile `cleanup` removes something you want
 
 `brew bundle cleanup` uninstalls any package not listed in the Brewfile. If you want to keep a one-off install:

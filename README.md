@@ -279,6 +279,8 @@ brew bundle          # install any new Brewfile entries
 asdf install         # install any new .tool-versions runtimes
 ```
 
+> **Note:** `brew bundle` installs everything in `Brewfile` unconditionally — including anything you chose to skip in an earlier interactive `./setup.sh` run. See [Homebrew cheat sheet — Common Pitfalls](docs/homebrew-cheatsheet.md#common-pitfalls).
+
 ### Update just Homebrew packages
 
 ```bash
