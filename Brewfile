@@ -82,6 +82,7 @@ cask "linearmouse"                # Mouse customization: extra buttons, per-devi
                                   # Essential for third-party mice with side/extra buttons.
                                   # Fixes macOS's patchy handling of back/forward buttons.
 cask "superwhisper"               # AI voice-to-text dictation (system-wide)
+cask "obsidian"                   # Markdown-based knowledge base / note-taking
 
 # ---- API testing ----
 cask "granola"                    # AI-powered notepad for meetings

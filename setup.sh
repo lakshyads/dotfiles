@@ -222,6 +222,7 @@ if want "AppCleaner — clean app uninstalls";               then cask_pkg appcl
 if want "Maccy — clipboard history (Cmd+Shift+C)";         then cask_pkg maccy;       fi
 if want "LinearMouse — mouse customization";               then cask_pkg linearmouse;   fi
 if want "SuperWhisper — AI voice-to-text dictation";       then cask_pkg superwhisper; fi
+if want "Obsidian — markdown knowledge base";              then cask_pkg obsidian;      fi
 if want "Granola — AI-powered notepad for meetings";       then cask_pkg granola;       fi
 if want "Postman — REST client & API testing";             then cask_pkg postman;     fi
 if want "Whimsical — collaboration & diagramming";         then cask_pkg whimsical;   fi
