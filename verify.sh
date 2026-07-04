@@ -159,13 +159,14 @@ check_contains "$HOME/.zsh_plugins.txt" "zsh-syntax-highlighting" ".zsh_plugins.
 
 # ── 4. Modern CLI Tools ───────────────────────────────────────────────────────
 info "4. Modern CLI Tools"
-for tool in rg fd bat eza zoxide fzf delta lazygit btop dust tldr atuin; do
+for tool in rg fd bat eza zoxide fzf delta lazygit btop dust tldr atuin tmux nvim; do
   check_command "$tool" "$tool"
 done
 
 # ── 4b. AI Coding CLIs ────────────────────────────────────────────────────────
 info "4b. AI Coding CLIs"
 check_command codex "codex (OpenAI Codex CLI)"
+check_command opencode "opencode (AI coding agent)"
 
 # ── 5. Git & GitHub CLI ───────────────────────────────────────────────────────
 info "5. Git & GitHub"
@@ -241,18 +242,18 @@ check_contains "$DOTFILES_DIR/gitconfig" "pager = delta" "dotfiles/gitconfig: de
 info "10. GUI Applications"
 APPS=(
   "Ghostty"
+  "WezTerm"
   "Visual Studio Code"
   "Cursor"
   "Docker"
   "Google Chrome"
   "Firefox"
   "ChatGPT Atlas"
-  "1Password"
   "Rectangle"
   "AppCleaner"
   "Maccy"
   "LinearMouse"
-  "SuperWhisper"
+  "OpenSuperWhisper"
   "Obsidian"
   "Granola"
   "Postman"
