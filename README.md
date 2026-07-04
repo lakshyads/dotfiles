@@ -165,7 +165,6 @@ Docker Desktop also appends a CLI completions block to `~/.zshrc` on first launc
 
 ### 5. Sign Into GUI Apps
 
-- **1Password**: sign into your account so the CLI (`op`) can authenticate later
 - **Chrome**: sign in, set as default browser if desired
 - **Cursor / VS Code**: sign in for settings sync
 - **Maccy**: no account, but enable "Launch at Login" in its preferences

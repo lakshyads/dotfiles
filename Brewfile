@@ -31,6 +31,8 @@ brew "btop"                       # Modern resource monitor (replaces top/htop)
 brew "dust"                       # Visual disk usage (replaces du)
 brew "tldr"                       # Simplified man pages with real examples
 brew "atuin"                      # SQLite-backed shell history with search
+brew "tmux"                       # Terminal multiplexer
+brew "neovim"                     # Modal text editor
 
 # ---- Shell productivity ----
 brew "starship"                   # Cross-shell prompt (actively maintained; replaces powerlevel10k)
@@ -59,11 +61,13 @@ cask "gcloud-cli"                 # gcloud, gsutil, bq (kubectl installed on dem
 
 # ---- Terminal emulator & editors ----
 cask "ghostty"                    # Native GPU-accelerated terminal (replaces iTerm2 in 2026)
+cask "wezterm"                    # GPU-accelerated cross-platform terminal emulator
 cask "visual-studio-code"         # Editor
 cask "cursor"                     # AI-native code editor
 
 # ---- AI coding tools ----
 # Claude Code (CLI) is intentionally excluded — it uses its own auto-updating native installer.
+brew "opencode"                   # AI coding agent, built for the terminal
 cask "claude"                     # Anthropic Claude desktop app
 cask "codex"                      # OpenAI Codex CLI (coding agent in terminal)
 cask "codex-app"                  # OpenAI Codex desktop app (manages coding agents)
@@ -75,13 +79,12 @@ cask "chatgpt-atlas"              # OpenAI's browser with ChatGPT built in
 
 # ---- Productivity & utilities ----
 cask "rectangle"                  # Window management (keyboard-driven tiling)
-cask "1password"                  # Password manager
 cask "appcleaner"                 # Clean app uninstalls
 cask "maccy"                      # Clipboard history manager (Cmd+Shift+C)
 cask "linearmouse"                # Mouse customization: extra buttons, per-device scroll/accel
                                   # Essential for third-party mice with side/extra buttons.
                                   # Fixes macOS's patchy handling of back/forward buttons.
-cask "superwhisper"               # AI voice-to-text dictation (system-wide)
+cask "opensuperwhisper"           # Open-source AI voice-to-text dictation (system-wide)
 cask "obsidian"                   # Markdown-based knowledge base / note-taking
 
 # ---- API testing ----

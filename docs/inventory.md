@@ -25,6 +25,7 @@ All installed via `brew install --cask` unless noted otherwise.
 | App | Installed via | Category | Notes |
 |-----|---------------|----------|-------|
 | Ghostty | `brew install --cask` | Terminal | GPU-accelerated; replaces iTerm2 |
+| WezTerm | `brew install --cask` | Terminal | GPU-accelerated, cross-platform terminal emulator |
 | Visual Studio Code | `brew install --cask` | Editor | |
 | Cursor | `brew install --cask` | Editor | AI-native code editor; global AI rules symlinked from `cursor-rules/git-commits.mdc` to `~/.cursor/rules/git-commits.mdc` |
 | Docker Desktop | `brew install --cask` | Containers | Provides `docker` and `docker compose` CLIs — see [Docker cheat sheet](docker-cheatsheet.md) |
@@ -33,11 +34,10 @@ All installed via `brew install --cask` unless noted otherwise.
 | ChatGPT Atlas | `brew install --cask` | Browser | OpenAI's browser with ChatGPT built in; requires arm64 + macOS 14 |
 | Google Cloud CLI | `brew install --cask` | Cloud | Includes `gcloud`, `gsutil`, `bq`; kubectl installed on demand |
 | Rectangle | `brew install --cask` | Productivity | Keyboard-driven window tiling |
-| 1Password | `brew install --cask` | Productivity | Password manager |
 | AppCleaner | `brew install --cask` | Productivity | Clean app uninstalls |
 | Maccy | `brew install --cask` | Productivity | Clipboard history (Cmd+Shift+C) |
 | LinearMouse | `brew install --cask` | Productivity | Mouse customization: side buttons, scroll, acceleration |
-| SuperWhisper | `brew install --cask` | Productivity | AI voice-to-text dictation (system-wide) |
+| OpenSuperWhisper | `brew install --cask` | Productivity | Open-source AI voice-to-text dictation (system-wide) |
 | Obsidian | `brew install --cask` | Productivity | Markdown-based knowledge base / note-taking |
 | Granola | `brew install --cask` | Productivity | AI-powered notepad for meetings |
 | Postman | `brew install --cask` | API Testing | REST client |
@@ -61,6 +61,8 @@ All installed via `brew install` (formula) unless noted otherwise.
 | `jq` | JSON processor |
 | `tree` | Directory tree visualizer |
 | `wget` | HTTP downloader |
+| `tmux` | Terminal multiplexer |
+| `nvim` (neovim) | Modal text editor |
 
 ### Modern CLI replacements
 
@@ -85,6 +87,7 @@ All installed via `brew install` (formula) unless noted otherwise.
 |------|---------------|-------------|
 | `codex` | `brew install --cask codex` | OpenAI Codex CLI — coding agent in terminal (cask binary; depends on `ripgrep`) |
 | `claude` | `curl \| bash` (claude.ai/install.sh) | Anthropic Claude Code CLI — auto-updating native installer, **not** via Homebrew |
+| `opencode` | `brew install` | AI coding agent, built for the terminal |
 
 ### Shell productivity
 

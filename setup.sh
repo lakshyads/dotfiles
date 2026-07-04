@@ -138,7 +138,7 @@ if want "wget — HTTP downloader";  then formula wget; fi
 
 # ── Modern CLI Tools ──────────────────────────────────────────────────────────
 category "Modern CLI Tools" \
-  "rg  fd  bat  eza  zoxide  fzf  delta  lazygit  btop  dust  tldr  atuin"
+  "rg  fd  bat  eza  zoxide  fzf  delta  lazygit  btop  dust  tldr  atuin  tmux  neovim"
 
 if want "ripgrep (rg) — fast grep, respects .gitignore"; then formula ripgrep;    fi
 if want "fd — intuitive find replacement";               then formula fd;         fi
@@ -152,6 +152,8 @@ if want "btop — modern resource monitor";                then formula btop;   
 if want "dust — tree-based disk usage";                  then formula dust;       fi
 if want "tldr — simplified man pages";                   then formula tldr;       fi
 if want "atuin — SQLite-backed shell history";           then formula atuin;      fi
+if want "tmux — terminal multiplexer";                   then formula tmux;       fi
+if want "neovim — modal text editor";                    then formula neovim;     fi
 
 # ── Shell Productivity ────────────────────────────────────────────────────────
 category "Shell Productivity" "starship  antidote"
@@ -191,19 +193,21 @@ category "Cloud Tooling" "Google Cloud CLI — gcloud, gsutil, bq"
 if want "Google Cloud CLI (gcloud, gsutil, bq)"; then cask_pkg gcloud-cli; fi
 
 # ── Editors & Terminal ────────────────────────────────────────────────────────
-category "Editors & Terminal" "Ghostty  VS Code  Cursor"
+category "Editors & Terminal" "Ghostty  WezTerm  VS Code  Cursor"
 
 if want "Ghostty — GPU-accelerated terminal";          then cask_pkg ghostty;            fi
+if want "WezTerm — GPU-accelerated terminal";          then cask_pkg wezterm;            fi
 if want "Visual Studio Code";                          then cask_pkg visual-studio-code; fi
 if want "Cursor — AI-native code editor";              then cask_pkg cursor;             fi
 
 # ── AI Coding Tools ───────────────────────────────────────────────────────────
-category "AI Coding Tools" "Claude Code  Claude desktop  Codex CLI  Codex desktop app"
+category "AI Coding Tools" "Claude Code  Claude desktop  Codex CLI  Codex desktop app  opencode"
 
 if want "Claude Code — AI CLI (native installer)";     then DID_CLAUDE=true;             fi
 if want "Claude — Anthropic desktop app";              then cask_pkg claude;             fi
 if want "Codex CLI — OpenAI coding agent in terminal"; then cask_pkg codex;              fi
 if want "Codex desktop app — manages coding agents";   then cask_pkg codex-app;          fi
+if want "opencode — AI coding agent in terminal";      then formula opencode;            fi
 
 # ── Browser ───────────────────────────────────────────────────────────────────
 category "Browser" "Google Chrome  Firefox  ChatGPT Atlas"
@@ -214,14 +218,13 @@ if want "ChatGPT Atlas";  then cask_pkg chatgpt-atlas;   fi
 
 # ── Productivity Apps ─────────────────────────────────────────────────────────
 category "Productivity Apps" \
-  "Rectangle  1Password  AppCleaner  Maccy  LinearMouse  SuperWhisper  Granola  Postman  Whimsical"
+  "Rectangle  AppCleaner  Maccy  LinearMouse  OpenSuperWhisper  Granola  Postman  Whimsical"
 
 if want "Rectangle — keyboard-driven window tiling";       then cask_pkg rectangle;   fi
-if want "1Password — password manager";                    then cask_pkg 1password;   fi
 if want "AppCleaner — clean app uninstalls";               then cask_pkg appcleaner;  fi
 if want "Maccy — clipboard history (Cmd+Shift+C)";         then cask_pkg maccy;       fi
 if want "LinearMouse — mouse customization";               then cask_pkg linearmouse;   fi
-if want "SuperWhisper — AI voice-to-text dictation";       then cask_pkg superwhisper; fi
+if want "OpenSuperWhisper — open-source AI voice-to-text dictation"; then cask_pkg opensuperwhisper; fi
 if want "Obsidian — markdown knowledge base";              then cask_pkg obsidian;      fi
 if want "Granola — AI-powered notepad for meetings";       then cask_pkg granola;       fi
 if want "Postman — REST client & API testing";             then cask_pkg postman;     fi
@@ -378,7 +381,7 @@ echo
 echo "  5. Launch Docker Desktop once to complete its install:"
 echo "       open -a Docker"
 echo
-echo "  6. Sign into GUI apps (1Password, Chrome, Cursor, VS Code)"
+echo "  6. Sign into GUI apps (Chrome, Cursor, VS Code)"
 echo
 echo "  7. Authenticate Claude Code:"
 echo "       claude"
