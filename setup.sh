@@ -250,8 +250,11 @@ ln -sf "$DOTFILES_DIR/.zsh_plugins.txt" "$HOME/.zsh_plugins.txt"
 ln -sf "$DOTFILES_DIR/.tool-versions"   "$HOME/.tool-versions"
 
 mkdir -p "$HOME/.config/ghostty"
-ln -sf "$DOTFILES_DIR/ghostty-config"   "$HOME/.config/ghostty/config"
-ln -sf "$DOTFILES_DIR/starship.toml"    "$HOME/.config/starship.toml"
+ln -sf "$DOTFILES_DIR/configs/ghostty-config" "$HOME/.config/ghostty/config"
+ln -sf "$DOTFILES_DIR/configs/starship.toml"  "$HOME/.config/starship.toml"
+
+mkdir -p "$HOME/.config/wezterm"
+ln -sf "$DOTFILES_DIR/configs/wezterm.lua" "$HOME/.config/wezterm/wezterm.lua"
 
 # LinearMouse: back up any pre-existing real file before replacing with symlink.
 mkdir -p "$HOME/.config/linearmouse"
@@ -261,7 +264,7 @@ if [[ -f "$LINEARMOUSE_TARGET" && ! -L "$LINEARMOUSE_TARGET" ]]; then
   info "Existing LinearMouse config found; backing up to $(basename "$BACKUP")"
   mv "$LINEARMOUSE_TARGET" "$BACKUP"
 fi
-ln -sf "$DOTFILES_DIR/linearmouse.json" "$LINEARMOUSE_TARGET"
+ln -sf "$DOTFILES_DIR/configs/linearmouse.json" "$LINEARMOUSE_TARGET"
 
 mkdir -p "$HOME/.claude"
 ln -sf "$DOTFILES_DIR/claude/CLAUDE.md"              "$HOME/.claude/CLAUDE.md"
@@ -276,8 +279,8 @@ ln -sf "$DOTFILES_DIR/cursor-rules/git-commits.mdc" "$HOME/.cursor/rules/git-com
 
 # Wire delta + merge config via git include (keeps personal user info separate).
 # Guard against duplicates on re-runs — git config --add would append every time.
-if ! git config --global --get-all include.path | grep -qF "$DOTFILES_DIR/gitconfig"; then
-  git config --global --add include.path "$DOTFILES_DIR/gitconfig"
+if ! git config --global --get-all include.path | grep -qF "$DOTFILES_DIR/configs/gitconfig"; then
+  git config --global --add include.path "$DOTFILES_DIR/configs/gitconfig"
 fi
 
 done_ "Dotfiles linked"

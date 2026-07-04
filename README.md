@@ -211,9 +211,9 @@ System Settings > Desktop & Dock > Scroll to "Default web browser / Default term
 
 The defaults are chosen carefully, but if you want to customize:
 
-- **Ghostty theme:** edit `ghostty-config`, change the `theme = ...` line. Preview options with `ghostty +list-themes`.
-- **Font:** the Brewfile installs both `font-jetbrains-mono-nerd-font` (default) and `font-fira-code-nerd-font`. Change `font-family` in `ghostty-config`.
-- **Starship prompt:** edit `starship.toml`. See [starship.rs/presets](https://starship.rs/presets) for ready-made layouts.
+- **Ghostty theme:** edit `configs/ghostty-config`, change the `theme = ...` line. Preview options with `ghostty +list-themes`.
+- **Font:** the Brewfile installs both `font-jetbrains-mono-nerd-font` (default) and `font-fira-code-nerd-font`. Change `font-family` in `configs/ghostty-config`.
+- **Starship prompt:** edit `configs/starship.toml`. See [starship.rs/presets](https://starship.rs/presets) for ready-made layouts.
 - **Shell aliases:** edit `.zshrc` and run `reload`.
 
 All configs live in this repo and are symlinked, so changes are preserved in git.
@@ -249,9 +249,10 @@ This repo is meant to be forked and personalized. The files worth editing:
 | `.tool-versions` | Language runtime versions. Edit and run `asdf install`. |
 | `.zshrc` | Aliases, env vars, tool integration. Run `reload` after editing. |
 | `.zsh_plugins.txt` | Zsh plugins loaded by Antidote. |
-| `starship.toml` | Prompt appearance. |
-| `ghostty-config` | Terminal appearance and keybindings. Reload with `Cmd+Shift+,`. |
-| `linearmouse.json` | Mouse settings (side buttons, scroll direction, acceleration). Edit via the LinearMouse GUI; changes write back to the file automatically. |
+| `configs/starship.toml` | Prompt appearance. |
+| `configs/ghostty-config` | Terminal appearance and keybindings. Reload with `Cmd+Shift+,`. |
+| `configs/wezterm.lua` | WezTerm terminal appearance. |
+| `configs/linearmouse.json` | Mouse settings (side buttons, scroll direction, acceleration). Edit via the LinearMouse GUI; changes write back to the file automatically. |
 | `setup.sh` | Bootstrap steps. Only touch if you add new tools needing custom setup. |
 
 After any changes, commit them to your dotfiles repo. Other machines pick up changes with `git pull && ./setup.sh`.
@@ -332,7 +333,7 @@ git push
 
 ### Icons show as squares in Starship / eza
 
-Your terminal isn't using a Nerd Font. Check `ghostty-config`:
+Your terminal isn't using a Nerd Font. Check `configs/ghostty-config`:
 
 ```
 font-family = JetBrainsMono Nerd Font
@@ -346,7 +347,7 @@ Accessibility permission not granted. Go to System Settings > Privacy & Security
 
 ### SSH session looks broken (vim / less render incorrectly)
 
-The remote host doesn't have Ghostty's terminfo. Your `ghostty-config` already sets `term = xterm-256color` to avoid this, but if you removed that line, re-add it.
+The remote host doesn't have Ghostty's terminfo. Your `configs/ghostty-config` already sets `term = xterm-256color` to avoid this, but if you removed that line, re-add it.
 
 ### asdf says "No version is set for command X"
 
@@ -424,9 +425,12 @@ dotfiles/
 ├── .tool-versions             # asdf runtime versions (Node, Python, Go)
 ├── .zshrc                     # shell config (aliases, tool integration)
 ├── .zsh_plugins.txt           # Antidote plugin list
-├── starship.toml              # Starship prompt config
-├── ghostty-config             # Ghostty terminal config
-├── linearmouse.json           # Mouse customization (side buttons, acceleration)
+├── configs/
+│   ├── starship.toml          # Starship prompt config
+│   ├── ghostty-config         # Ghostty terminal config
+│   ├── wezterm.lua            # WezTerm terminal config
+│   ├── linearmouse.json       # Mouse customization (side buttons, acceleration)
+│   └── gitconfig              # Delta pager + git config, included via ~/.gitconfig
 └── docs/
     ├── inventory.md               # full list of installed apps, tools, and runtimes
     ├── homebrew-cheatsheet.md

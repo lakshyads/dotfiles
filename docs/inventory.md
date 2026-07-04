@@ -74,7 +74,7 @@ All installed via `brew install` (formula) unless noted otherwise.
 | `eza` | `ls` | Modern listing with icons, git status, tree view |
 | `zoxide` (`z`) | `cd` | Learns habits; jump to dirs by partial name |
 | `fzf` | — | Fuzzy finder for history, files, branches, processes |
-| `delta` | `diff` pager | Syntax-highlighted, side-by-side git diffs; config in `gitconfig`, wired via `[include]` in `~/.gitconfig` |
+| `delta` | `diff` pager | Syntax-highlighted, side-by-side git diffs; config in `configs/gitconfig`, wired via `[include]` in `~/.gitconfig` |
 | `lazygit` (`lg`) | — | Full terminal UI for git |
 | `btop` | `top` / `htop` | Modern resource monitor with graphs |
 | `dust` | `du` | Tree-based disk usage visualizer |
