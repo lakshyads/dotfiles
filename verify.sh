@@ -205,6 +205,7 @@ check_symlink "$HOME/.tool-versions"                        "~/.tool-versions"
 check_symlink "$HOME/.config/ghostty/config"                "~/.config/ghostty/config"
 check_symlink "$HOME/.config/starship.toml"                 "~/.config/starship.toml"
 check_symlink "$HOME/.config/linearmouse/linearmouse.json"  "~/.config/linearmouse/linearmouse.json"
+check_symlink "$HOME/.config/wezterm/wezterm.lua"            "~/.config/wezterm/wezterm.lua"
 check_symlink "$HOME/.claude/CLAUDE.md"                      "~/.claude/CLAUDE.md"
 check_symlink "$HOME/.claude/settings.json"                  "~/.claude/settings.json"
 check_symlink "$HOME/.claude/statusline-command.sh"          "~/.claude/statusline-command.sh"
@@ -234,9 +235,9 @@ fi
 # LinearMouse — must be valid JSON
 check_json "$HOME/.config/linearmouse/linearmouse.json" "linearmouse.json"
 
-# Delta git config — included from dotfiles/gitconfig
-check_contains "$HOME/.gitconfig"        "include"       "~/.gitconfig: includes dotfiles/gitconfig"
-check_contains "$DOTFILES_DIR/gitconfig" "pager = delta" "dotfiles/gitconfig: delta pager configured"
+# Delta git config — included from configs/gitconfig
+check_contains "$HOME/.gitconfig"                "include"       "~/.gitconfig: includes configs/gitconfig"
+check_contains "$DOTFILES_DIR/configs/gitconfig" "pager = delta" "configs/gitconfig: delta pager configured"
 
 # ── 10. GUI Applications ──────────────────────────────────────────────────────
 info "10. GUI Applications"

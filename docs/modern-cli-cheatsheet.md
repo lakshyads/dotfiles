@@ -452,15 +452,15 @@ Delta is a pager for git diffs. Once configured, every `git diff`, `git log -p`,
 
 ### Setup
 
-Automated by `setup.sh` — no manual steps needed. The config lives in `dotfiles/gitconfig` and is wired into `~/.gitconfig` via `[include]`, leaving your personal identity settings untouched.
+Automated by `setup.sh` — no manual steps needed. The config lives in `dotfiles/configs/gitconfig` and is wired into `~/.gitconfig` via `[include]`, leaving your personal identity settings untouched.
 
 To apply manually on an existing machine:
 
 ```bash
-git config --global --add include.path ~/dotfiles/gitconfig
+git config --global --add include.path ~/dotfiles/configs/gitconfig
 ```
 
-Config applied (`dotfiles/gitconfig`):
+Config applied (`dotfiles/configs/gitconfig`):
 
 ```ini
 [core]
@@ -706,4 +706,4 @@ Most tools in this cheat sheet respect these locations:
 | zoxide | None; controlled by env vars; database at `~/.local/share/zoxide/db.zo` |
 | fd | None; use shell aliases if you want different defaults |
 
-All configs in this repo are either in the root (`.zshrc`, `starship.toml`) or commented into `.zshrc` itself for these tools.
+All configs in this repo are either in `configs/` (`starship.toml`, `ghostty-config`, etc.), in the root (`.zshrc`), or commented into `.zshrc` itself for these tools.
