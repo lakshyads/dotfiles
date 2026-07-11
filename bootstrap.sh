@@ -19,8 +19,9 @@
 #   6. Registers asdf plugins and installs runtimes from .tool-versions
 #      (per-project .tool-versions overrides don't fit Nix's model, so
 #      runtimes stay asdf-managed by design).
-#   7. Prompts for git identity (kept out of home-manager's programs.git so
-#      ~/.gitconfig stays mutable).
+#   7. Prompts for git identity (still written directly to ~/.gitconfig —
+#      pager/merge/delta config is now nix-managed separately via
+#      ~/.config/git/config).
 #
 # After this, `darwin-rebuild` exists on PATH and you're on the normal
 # workflow: edit files, then run ./rebuild.sh.
@@ -116,9 +117,10 @@ else
 fi
 
 # ── 7. Git Configuration ─────────────────────────────────────────────────────
-# Deliberately not managed by home-manager's programs.git: that would make
-# ~/.gitconfig an immutable Nix-store symlink, and personal identity below
-# needs to stay easily settable per-machine.
+# Identity stays here (not home-manager's programs.git) so it's easily
+# settable per-machine and writes directly to mutable ~/.gitconfig.
+# Pager/merge/delta config is nix-managed separately via home.nix's
+# programs.git.settings, applied to ~/.config/git/config.
 section "Git Configuration"
 
 _branch=main
@@ -153,12 +155,6 @@ else
   [[ -n "$_cur_name" ]]  && done_ "git user.name  = $_cur_name"  || warn "git user.name not set — run: git config --global user.name \"Your Name\""
   [[ -n "$_cur_email" ]] && done_ "git user.email = $_cur_email" || warn "git user.email not set — run: git config --global user.email \"you@example.com\""
 fi
-
-# Wire delta + merge config via git include (keeps personal user info separate).
-if ! git config --global --get-all include.path | grep -qF "$DOTFILES_DIR/configs/gitconfig"; then
-  git config --global --add include.path "$DOTFILES_DIR/configs/gitconfig"
-fi
-done_ "git include.path wired to configs/gitconfig"
 
 if [[ "$SHELL" != *"zsh"* ]]; then
   warn "Your login shell is $SHELL. Run: chsh -s $(which zsh)"

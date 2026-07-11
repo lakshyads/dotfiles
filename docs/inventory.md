@@ -78,7 +78,7 @@ Installed via `home.nix`'s `home.packages` (Nix), unless noted otherwise.
 | `eza` | `ls` | Modern listing with icons, git status, tree view |
 | `zoxide` (`z`) | `cd` | Learns habits; jump to dirs by partial name — `home.nix`'s `programs.zoxide` (Nix, home-manager module, handles shell init) |
 | `fzf` | — | Fuzzy finder for history, files, branches, processes — `home.nix`'s `programs.fzf` (Nix, home-manager module, handles shell integration) |
-| `delta` | `diff` pager | Syntax-highlighted, side-by-side git diffs; config in `configs/gitconfig`, wired via `[include]` in `~/.gitconfig` (nixpkgs package name is `delta`, not `git-delta`) |
+| `delta` | `diff` pager | Syntax-highlighted, side-by-side git diffs; declared in `home.nix`'s `programs.git.settings` (home-manager, applied to `~/.config/git/config`) (nixpkgs package name is `delta`, not `git-delta`) |
 | `lazygit` (`lg`) | — | Full terminal UI for git |
 | `btop` | `top` / `htop` | Modern resource monitor with graphs |
 | `dust` | `du` | Tree-based disk usage visualizer |

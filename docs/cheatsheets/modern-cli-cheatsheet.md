@@ -462,15 +462,11 @@ Delta is a pager for git diffs. Once configured, every `git diff`, `git log -p`,
 
 ### Setup
 
-Automated by `bootstrap.sh` — no manual steps needed. The config lives in `dotfiles/configs/gitconfig` and is wired into `~/.gitconfig` via `[include]`, leaving your personal identity settings untouched. This is deliberately kept outside home-manager's `programs.git` — enabling it would make `~/.gitconfig` an immutable Nix-store symlink, breaking `bootstrap.sh`'s git-identity prompt.
+Declared in `home.nix`'s `programs.git.settings` (home-manager) and applied via `./rebuild.sh` — no manual steps needed. Personal identity (`user.name`/`user.email`/`init.defaultBranch`) stays separate: it's prompted for and written directly to `~/.gitconfig` by `bootstrap.sh`. The pager/merge config below is written by home-manager to `~/.config/git/config` (XDG path), which git reads and merges alongside `~/.gitconfig` automatically — no `include.path` wiring needed.
 
-To apply manually on an existing machine:
+To apply manually on an existing machine, add the equivalent block to `home.nix`'s `programs.git.settings` and run `./rebuild.sh`.
 
-```bash
-git config --global --add include.path ~/dotfiles/configs/gitconfig
-```
-
-Config applied (`dotfiles/configs/gitconfig`):
+Config applied (generated at `~/.config/git/config`):
 
 ```ini
 [core]

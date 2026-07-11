@@ -140,7 +140,7 @@ When editing README, ask: "does this content already exist in a cheatsheet or in
 - Whether things are *actually* wired up on THIS machine right now (not just declared correctly)
 - GUI app presence and `/Applications` state (Nix can't verify sign-in state)
 - asdf runtime versions matching `.tool-versions` (asdf is deliberately outside Nix's management)
-- Git identity (deliberately outside home-manager's `programs.git`)
+- Git identity (still `bootstrap.sh`-driven, written directly to mutable `~/.gitconfig`; pager/merge/delta config is nix-managed via `programs.git` in `home.nix`, applied to `~/.config/git/config`)
 - LinearMouse JSON content integrity (a write-back file, worth sanity-checking regardless of installer mechanism)
 
 Keep `verify.sh` in sync:
