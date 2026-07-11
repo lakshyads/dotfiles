@@ -186,11 +186,27 @@ in
     enableZshIntegration = true;
   };
 
-  # Note: programs.git is deliberately NOT enabled here. It would make
-  # ~/.gitconfig a Nix-store-managed file, which breaks bootstrap.sh's
-  # `git config --global user.name/user.email` identity prompt (can't write
-  # to an immutable symlink). configs/gitconfig + the include.path wiring
-  # stay exactly as bootstrap.sh already sets them up, until that's revisited.
+  # programs.git writes its generated config to the XDG path
+  # ~/.config/git/config (confirmed for the home-manager rev pinned in
+  # flake.lock, release-26.05) — it never touches ~/.gitconfig. That means
+  # bootstrap.sh's interactive identity prompt (git config --global
+  # user.name/user.email, written directly to ~/.gitconfig) keeps working
+  # untouched, while delta/merge/pager config lives here declaratively
+  # instead of in a separate configs/gitconfig file.
+  programs.git = {
+    enable = true;
+    settings = {
+      core.pager = "delta";
+      interactive.diffFilter = "delta --color-only";
+      delta = {
+        navigate = true;
+        light = false;
+        "line-numbers" = true;
+        "side-by-side" = true;
+      };
+      merge.conflictStyle = "zdiff3";
+    };
+  };
 
   # Edit-in-place: the real files stay in this repo, ~/.config just points at them.
   home.file.".config/wezterm".source =

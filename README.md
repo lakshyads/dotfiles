@@ -268,7 +268,6 @@ This repo is meant to be forked and personalized. The files worth editing:
 | `home/.config/herdr/config.toml` | herdr (terminal agent multiplexer) keybindings. Edit-in-place, no rebuild needed. |
 | `home/.config/linearmouse/linearmouse.json` | Mouse settings (side buttons, scroll direction, acceleration). Edit via the LinearMouse GUI; changes write back to the file automatically. |
 | `home/AGENTS.md` | Shared agent instructions, symlinked into Claude Code, Codex, and opencode. |
-| `configs/gitconfig` | Delta pager + git config, included via `~/.gitconfig`'s `include.path` (wired by `bootstrap.sh`, kept outside home-manager so personal identity stays mutable). |
 
 After any changes, commit them to your dotfiles repo. Other machines pick up changes with `git pull && ./rebuild.sh` (or `./bootstrap.sh` on a machine that hasn't been bootstrapped yet).
 
@@ -464,8 +463,6 @@ dotfiles/
 ├── home.nix                    # home-manager: CLI packages, zsh/starship, dotfile symlinks
 ├── Brewfile                    # RETIRED — pointer stub, superseded by configuration.nix
 ├── .tool-versions              # asdf runtime versions (Node, Python, Go, Java)
-├── configs/
-│   └── gitconfig               # Delta pager + git config, included via ~/.gitconfig
 ├── home/                       # edit-in-place source for home-manager's mkOutOfStoreSymlink files
 │   ├── AGENTS.md                # shared agent instructions (Claude, Codex, opencode)
 │   ├── .claude/
