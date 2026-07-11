@@ -58,6 +58,24 @@ check_resolves_to_repo() {
   fi
 }
 
+# Same as check_resolves_to_repo, but for symlink targets that depend on
+# machine-specific state outside this repo (e.g. an external workspace
+# checkout that isn't guaranteed to exist on every machine this repo is
+# cloned onto). A missing target here is a warn, not a hard fail.
+check_resolves_to_repo_optional() {
+  local path="$1" label="${2:-$path}"
+  if [[ -e "$path" ]]; then
+    local resolved; resolved=$(realpath "$path" 2>/dev/null || echo "")
+    if [[ "$resolved" == "$DOTFILES_DIR"* ]]; then
+      pass "$label → $resolved"
+    else
+      warn_m "$label exists but resolves outside dotfiles repo: $resolved"
+    fi
+  else
+    warn_m "$label missing (optional: depends on external workspace)"
+  fi
+}
+
 # Verify a home-manager-*generated* file exists (its real content is a
 # Nix-store-managed file, not something in this repo, so we just check it's
 # there rather than expecting it to resolve back into the repo).
@@ -205,6 +223,8 @@ check_resolves_to_repo "$HOME/.config/wezterm/wezterm.lua"          "~/.config/w
 check_resolves_to_repo "$HOME/.config/ghostty/config"               "~/.config/ghostty/config"
 check_resolves_to_repo "$HOME/.config/nvim/init.lua"                "~/.config/nvim/init.lua"
 check_resolves_to_repo "$HOME/.config/linearmouse/linearmouse.json" "~/.config/linearmouse/linearmouse.json"
+check_resolves_to_repo "$HOME/.config/herdr/config.toml"            "~/.config/herdr/config.toml"
+check_resolves_to_repo_optional "$HOME/Documents/workspace/my-matrix/a-utils/cheatsheets" "~/Documents/workspace/my-matrix/a-utils/cheatsheets (optional: external workspace)"
 check_resolves_to_repo "$HOME/.tool-versions"                       "~/.tool-versions"
 check_resolves_to_repo "$HOME/.claude/CLAUDE.md"                    "~/.claude/CLAUDE.md (-> home/AGENTS.md)"
 check_resolves_to_repo "$HOME/.codex/AGENTS.md"                     "~/.codex/AGENTS.md"
