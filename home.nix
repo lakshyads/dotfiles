@@ -54,6 +54,7 @@ in
       # Modern CLI replacements
       ls = "eza --icons --group-directories-first";
       ll = "eza -lah --git --icons";
+      # lt = full-depth tree listing; lt2 = capped at 2 levels (former lt default).
       lt = "eza --tree --icons";
       lt2 = "lt --level=2";
       lt3 = "lt --level=3";
