@@ -54,12 +54,19 @@ in
       # Modern CLI replacements
       ls = "eza --icons --group-directories-first";
       ll = "eza -lah --git --icons";
-      lt = "eza --tree --level=2 --icons";
-      la = "ls -a";
+      lt = "eza --tree --icons";
+      lt2 = "lt --level=2";
+      lt3 = "lt --level=3";
+      lt4 = "lt --level=4";
+      lt5 = "lt --level=5";
+      lt6 = "lt --level=6";
+      lsa = "ls -a";
       lla = "ll -a";
       cat = "bat --paging=never";
       top = "btop";
       du = "dust";
+      vi = "nvim";
+      vim = "vi";
 
       # Git shortcuts
       g = "git";
@@ -67,6 +74,7 @@ in
       gd = "git diff";
       gds = "git diff --staged";
       gl = "git log --oneline --graph --decorate -20";
+      gla = "git log";
       lg = "lazygit";
       add = "git add .";
       push = "git push";
@@ -76,9 +84,12 @@ in
       reload = "exec zsh";
 
       # High-agency agent shortcuts — opt-in, bypass permission prompts.
-      cc = "claude --dangerously-skip-permissions";
-      co = "codex --full-auto";
+      cc = "claude";
+      ccc = "claude --dangerously-skip-permissions";
+      co = "codex";
+      coo = "codex --full-auto";
       aa = "agent"; 
+      aaa = "agent -f"; 
     };
 
     initContent = lib.mkMerge [
