@@ -100,9 +100,6 @@
       "granola"
       "postman"
       "whimsical"
-      # Developer fonts
-      "font-jetbrains-mono-nerd-font"
-      "font-fira-code-nerd-font"
     ];
   };
 }
