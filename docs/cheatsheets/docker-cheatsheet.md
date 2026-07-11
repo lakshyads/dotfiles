@@ -1,3 +1,11 @@
+---
+tag:
+  - type/cheatsheet
+  - topic/containers
+related:
+  - "[[homebrew-cheatsheet]]"
+---
+
 # Docker Cheat Sheet
 
 A reference for Docker Desktop on macOS. Covers daily container/image commands, Compose workflows, and the troubleshooting you'll actually need.

@@ -1,3 +1,12 @@
+---
+tag:
+  - type/cheatsheet
+  - topic/terminal
+related:
+  - "[[modern-cli-cheatsheet]]"
+  - "[[nix-cheatsheet]]"
+---
+
 # Ghostty Cheat Sheet & Best Practices
 
 A reference for Ghostty on macOS (2026). Covers default keybindings, config syntax, common actions, and the gotchas that trip people up.
@@ -49,7 +58,7 @@ These ship with Ghostty and don't require config. All use the `Cmd` modifier to 
 | `Cmd+Shift+E` | Equalize splits |
 | `Cmd+Shift+F` | Zooms into one panel (press again to restore) |
 
-Note: Split *creation* keybindings aren't default; they're in your `configs/ghostty-config`. Navigation between existing splits is fully default on macOS. (`Alt` in shortcuts above = the key labeled Option `⌥`.)
+Note: Split *creation* keybindings aren't default; they're in your `home/.config/ghostty/config`. Navigation between existing splits is fully default on macOS. (`Alt` in shortcuts above = the key labeled Option `⌥`.)
 
 ### Clipboard
 
@@ -391,7 +400,7 @@ Do this once per remote you care about.
 
 ### Commit your config to dotfiles
 
-`~/.config/ghostty/config` is plain text. Version it. In this repo it's at `configs/ghostty-config` and symlinked into place by `setup.sh`.
+`~/.config/ghostty/config` is plain text. Version it. In this repo it's at `home/.config/ghostty/config`, symlinked into place by `home.nix` (`mkOutOfStoreSymlink`) — edits there take effect immediately, no rebuild needed.
 
 ### Keep the config minimal
 

@@ -1,3 +1,11 @@
+---
+tag:
+  - type/cheatsheet
+  - topic/ai-agent
+related:
+  - "[[claude-code-cheatsheet]]"
+---
+
 # Cursor CLI Cheat Sheet
 
 Reference for Cursor CLI (the terminal companion to the Cursor editor). Current as of April 2026, covering Agent Modes, Cloud Handoff, MCP integration, and Subagents (Cursor 2.4+).

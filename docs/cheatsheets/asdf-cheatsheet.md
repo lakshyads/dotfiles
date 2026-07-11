@@ -1,3 +1,13 @@
+---
+tag:
+  - type/cheatsheet
+  - topic/package-management
+related:
+  - "[[homebrew-cheatsheet]]"
+  - "[[nix-cheatsheet]]"
+  - "[[git-cheatsheet]]"
+---
+
 # asdf Cheat Sheet & Best Practices
 
 A reference for the day-to-day and the "I set this up months ago and now I need to remember how" moments. Targets asdf `0.16+` (the Go rewrite); older `source asdf.sh` syntax is deprecated and not covered here.

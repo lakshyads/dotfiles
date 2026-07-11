@@ -1,8 +1,18 @@
+---
+tag:
+  - type/cheatsheet
+  - topic/terminal
+related:
+  - "[[homebrew-cheatsheet]]"
+  - "[[ghostty-cheatsheet]]"
+  - "[[nix-cheatsheet]]"
+---
+
 # Modern CLI Tools Cheat Sheet
 
 A reference for the modern command-line tools in this setup: the Rust-based replacements for classic Unix tools plus a few new additions that don't have classic equivalents. Organized by task rather than by tool, so you can look up "how do I search files" without needing to remember which tool does it.
 
-All tools below are installed via the `Brewfile`. See [`homebrew-cheatsheet.md`](homebrew-cheatsheet.md) if you need to install manually.
+Most tools below are now installed via [[nix-cheatsheet|Nix]] (`home.nix`'s `home.packages`) rather than Homebrew directly — see [[homebrew-cheatsheet]] for the package-manager basics either way covers.
 
 ---
 
@@ -315,9 +325,9 @@ Every `cd` (and zoxide-aware shell integration) registers a visit. The database 
 
 ## Fuzzy Finding (fzf)
 
-fzf is the general-purpose fuzzy finder. The Brewfile installs it, and `setup.sh` wires up the shell key bindings.
+fzf is the general-purpose fuzzy finder. `home.nix`'s `programs.fzf` (with `enableZshIntegration = true`) installs it and wires up the shell key bindings automatically — no separate setup step needed.
 
-### Default shell bindings (auto-configured by `setup.sh`)
+### Default shell bindings (auto-configured by `home.nix`'s `programs.fzf`)
 
 | Keys | What it does |
 |---|---|
@@ -452,7 +462,7 @@ Delta is a pager for git diffs. Once configured, every `git diff`, `git log -p`,
 
 ### Setup
 
-Automated by `setup.sh` — no manual steps needed. The config lives in `dotfiles/configs/gitconfig` and is wired into `~/.gitconfig` via `[include]`, leaving your personal identity settings untouched.
+Automated by `bootstrap.sh` — no manual steps needed. The config lives in `dotfiles/configs/gitconfig` and is wired into `~/.gitconfig` via `[include]`, leaving your personal identity settings untouched. This is deliberately kept outside home-manager's `programs.git` — enabling it would make `~/.gitconfig` an immutable Nix-store symlink, breaking `bootstrap.sh`'s git-identity prompt.
 
 To apply manually on an existing machine:
 

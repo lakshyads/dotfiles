@@ -4,13 +4,14 @@
 # View all options: ghostty +show-config --default --docs
 
 # ---- Typography ----
-font-family = JetBrainsMono Nerd Font
+# Hack Nerd Font is the primary system font. See README.md "Customization"
+# for how to switch to JetBrains Mono or Fira Code instead.
+font-family = Hack Nerd Font
 font-size = 14
 
 # ---- Theme ----
-# Auto light/dark switching follows macOS system appearance.
-# theme = light:Catppuccin Latte,dark:Catppuccin Mocha
-theme = light:Catppuccin Mocha,dark:Catppuccin Mocha
+# rose-pine-moon everywhere: matches WezTerm and Neovim for a consistent look.
+theme = light:Rose Pine Moon,dark:Rose Pine Moon
 
 # ---- Window appearance ----
 macos-titlebar-style = tabs

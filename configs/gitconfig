@@ -2,7 +2,7 @@
 #   git config --global include.path ~/dotfiles/gitconfig
 #
 # Personal identity (user.name, user.email) is intentionally absent;
-# setup.sh sets those directly via git config --global.
+# bootstrap.sh sets those directly via git config --global.
 
 [core]
     pager = delta
