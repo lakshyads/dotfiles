@@ -1,3 +1,12 @@
+---
+tag:
+  - type/cheatsheet
+  - topic/git
+related:
+  - "[[lazygit-cheatsheet]]"
+  - "[[asdf-cheatsheet]]"
+---
+
 # Git Cheat Sheet & Best Practices
 
 A reference for git workflows that come up daily. Focused on what you actually use, organized by task, with the gotchas that cause real problems.

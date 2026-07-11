@@ -1,3 +1,11 @@
+---
+tag:
+  - type/cheatsheet
+  - topic/git
+related:
+  - "[[git-cheatsheet]]"
+---
+
 # Lazygit Cheat Sheet
 
 A reference for lazygit, the keyboard-driven TUI for git. Covers the panels, default keybindings, common workflows, and the features that take lazygit from "nicer git" to "faster than the CLI."

@@ -1,3 +1,13 @@
+---
+tag:
+  - type/cheatsheet
+  - topic/package-management
+related:
+  - "[[nix-cheatsheet]]"
+  - "[[asdf-cheatsheet]]"
+  - "[[modern-cli-cheatsheet]]"
+---
+
 # Homebrew Cheat Sheet & Best Practices
 
 A reference for Homebrew 5.x on macOS (2026). Covers installation, daily commands, Brewfile workflows, and the troubleshooting you'll actually need.

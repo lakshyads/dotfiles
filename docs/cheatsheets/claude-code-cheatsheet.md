@@ -1,6 +1,15 @@
+---
+tag:
+  - type/cheatsheet
+  - topic/ai-agent
+related:
+  - "[[cursor-cli-cheatsheet]]"
+  - "[[git-cheatsheet]]"
+---
+
 # Claude Code Cheat Sheet
 
-Reference for Claude Code, Anthropic's agentic CLI. Current as of April 2026, covering through v2.1.116 (the version installed by your `setup.sh`).
+Reference for Claude Code, Anthropic's agentic CLI. Current as of April 2026, covering through v2.1.116 (the version installed via the `claude-code` Homebrew cask).
 
 Official docs: <https://code.claude.com/docs>
 
@@ -27,7 +36,7 @@ Official docs: <https://code.claude.com/docs>
 
 ## Installation & Authentication
 
-Claude Code was installed by `setup.sh` via the native installer. Basic management:
+Claude Code is installed via the `claude-code` Homebrew cask, declared in `configuration.nix`'s `homebrew.casks` and kept up to date by Homebrew's `onActivation.autoUpdate` (not a native installer). Basic management:
 
 ```bash
 claude doctor              # verify installation health
