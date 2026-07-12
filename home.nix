@@ -20,7 +20,6 @@ in
     delta
     dust
     tldr
-    tmux
     neovim
     jq
     tree

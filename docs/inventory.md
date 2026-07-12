@@ -63,7 +63,6 @@ Installed via `home.nix`'s `home.packages` (Nix), unless noted otherwise.
 | `jq` | JSON processor |
 | `tree` | Directory tree visualizer |
 | `wget` | HTTP downloader |
-| `tmux` | Terminal multiplexer |
 | `nvim` (neovim) | Modal text editor — see `home/.config/nvim/` for the full lazy.nvim config |
 
 ### Modern CLI replacements
@@ -98,7 +97,6 @@ Installed via `home.nix`'s `home.packages` (Nix), unless noted otherwise.
 
 | Tool | Installed via | Description |
 |------|---------------|-------------|
-| `tmux` | `home.nix` (home.packages) | Classic terminal multiplexer |
 | `herdr` | `configuration.nix` (homebrew.brews) | Agent multiplexer for the terminal (tmux-style `Ctrl+B` prefix bindings) — config in `home/.config/herdr/config.toml` |
 
 ### Cloud, infrastructure & payments CLIs

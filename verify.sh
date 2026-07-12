@@ -184,7 +184,7 @@ check_contains "$HOME/.zshrc" "atuin"                   ".zshrc: initializes atu
 
 # ── 4. Modern CLI Tools ───────────────────────────────────────────────────────
 info "4. Modern CLI Tools"
-for tool in rg fd bat eza zoxide fzf delta lazygit btop dust tldr atuin tmux nvim; do
+for tool in rg fd bat eza zoxide fzf delta lazygit btop dust tldr atuin nvim; do
   check_command "$tool" "$tool"
 done
 
