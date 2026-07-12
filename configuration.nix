@@ -52,7 +52,7 @@
     ];
 
     # CLI tools that exist in nixpkgs (ripgrep, fd, bat, eza, zoxide, fzf,
-    # delta, lazygit, btop, dust, tldr, atuin, tmux, neovim, starship, jq,
+    # delta, lazygit, btop, dust, tldr, atuin, neovim, starship, jq,
     # tree, wget, git, gh, opencode) are now installed via home.nix's
     # home.packages / programs.* instead of here — see home.nix. antidote is
     # dropped entirely (native home-manager zsh plugins replace it). Only
