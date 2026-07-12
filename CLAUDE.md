@@ -1,1 +1,1 @@
-/Users/lakshyadevsingh/github/dotfiles/AGENTS.md
+/Users/lakshyadevsingh/.dotfiles/AGENTS.md
