@@ -440,6 +440,7 @@ Full command references for the tools that get the most daily use. These live in
 - **[Docker cheat sheet](docs/cheatsheets/docker-cheatsheet.md)**: images, containers, volumes, networks, Docker Compose, Dockerfile basics, disk cleanup, troubleshooting
 - **[Claude Code cheat sheet](docs/cheatsheets/claude-code-cheatsheet.md)**: CLI flags, slash commands, keyboard shortcuts, permission modes, CLAUDE.md, hooks, MCP, subagents, models and cost
 - **[Cursor CLI cheat sheet](docs/cheatsheets/cursor-cli-cheatsheet.md)**: agent modes (Agent/Plan/Ask), slash commands, cloud handoff, MCP integration, rules and skills, subagents
+- **[Herdr cheat sheet](docs/cheatsheets/herdr-cheatsheet.md)**: session/workspace/tab/pane model, tmux-style keybindings, worktrees, agent integrations, socket API for scripting agents
 
 Each is written as a skimmable reference, not a tutorial. Use them when you need to look something up.
 
