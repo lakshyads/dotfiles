@@ -246,7 +246,7 @@ check_contains "$GHOSTTY_CFG" "theme"                 "ghostty-config: theme set
 
 check_json "$HOME/.config/linearmouse/linearmouse.json" "linearmouse.json"
 
-check_contains "$HOME/.config/git/config" "pager = delta" "~/.config/git/config: delta pager configured (home-manager)"
+check_contains "$HOME/.config/git/config" 'pager = "delta"' "~/.config/git/config: delta pager configured (home-manager)"
 
 # ── 9. GUI Applications ───────────────────────────────────────────────────────
 info "9. GUI Applications"
