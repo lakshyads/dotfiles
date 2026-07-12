@@ -261,7 +261,7 @@ This repo is meant to be forked and personalized. The files worth editing:
 |---|---|
 | `configuration.nix` | System defaults, and Homebrew packages: GUI apps (casks), asdf + its build deps, and the two tapped tools (`terraform`, `stripe`) not worth moving to Nix. Run `./rebuild.sh` after editing. |
 | `home.nix` | CLI tools available in nixpkgs (`home.packages`), zsh aliases/keybinds/plugins (`programs.zsh`), Starship prompt (`programs.starship`), and every dotfile symlink (`home.file`). Run `./rebuild.sh` after editing. |
-| `.tool-versions` | Language runtime versions. Edit and run `./bootstrap.sh` (registers asdf plugins + runs `asdf install`). |
+| `home/.tool-versions` | Language runtime versions. Edit and run `./bootstrap.sh` (registers asdf plugins + runs `asdf install`). |
 | `home/.config/wezterm/wezterm.lua` | WezTerm terminal appearance. Edit-in-place, no rebuild needed. |
 | `home/.config/ghostty/config` | Ghostty terminal appearance and keybindings. Edit-in-place, no rebuild needed. Reload in-app with `Cmd+Shift+,`. |
 | `home/.config/nvim/` | Neovim config (lazy.nvim plugin specs under `lua/plugins/`). Edit-in-place, no rebuild needed. |
@@ -463,9 +463,9 @@ dotfiles/
 ├── configuration.nix           # system defaults + Homebrew (casks, asdf, tapped tools)
 ├── home.nix                    # home-manager: CLI packages, zsh/starship, dotfile symlinks
 ├── Brewfile                    # RETIRED — pointer stub, superseded by configuration.nix
-├── .tool-versions              # asdf runtime versions (Node, Python, Go, Java)
 ├── home/                       # edit-in-place source for home-manager's mkOutOfStoreSymlink files
 │   ├── AGENTS.md                # shared agent instructions (Claude, Codex, opencode)
+│   ├── .tool-versions            # asdf runtime versions (Node, Python, Go, Java)
 │   ├── .claude/
 │   │   └── settings.json        # Claude Code settings (theme, statusline)
 │   └── .config/

@@ -228,7 +228,7 @@ in
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.claude/settings.json";
 
   home.file.".tool-versions".source =
-    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/.tool-versions";
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.tool-versions";
 
   # CheatSheets symlink setup: this repo's docs/cheatsheets/ is the source of
   # truth; a-utils/cheatsheets just points at it.
