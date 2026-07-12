@@ -148,7 +148,7 @@ if command -v asdf >/dev/null 2>&1; then
   for lang in nodejs python golang java; do
     if asdf current "$lang" >/dev/null 2>&1; then
       ver=$(asdf current "$lang" 2>/dev/null | awk -v l="$lang" '$1 == l {print $2}')
-      tv_ver=$(grep "^${lang}" "$DOTFILES_DIR/.tool-versions" 2>/dev/null | awk '{print $2}')
+      tv_ver=$(grep "^${lang}" "$DOTFILES_DIR/home/.tool-versions" 2>/dev/null | awk '{print $2}')
       if [[ -n "$tv_ver" && "$ver" == "$tv_ver" ]]; then
         pass "asdf $lang: $ver (matches .tool-versions)"
       elif [[ -n "$tv_ver" ]]; then
@@ -225,7 +225,7 @@ check_resolves_to_repo "$HOME/.config/nvim/init.lua"                "~/.config/n
 check_resolves_to_repo "$HOME/.config/linearmouse/linearmouse.json" "~/.config/linearmouse/linearmouse.json"
 check_resolves_to_repo "$HOME/.config/herdr/config.toml"            "~/.config/herdr/config.toml"
 check_resolves_to_repo_optional "$HOME/Documents/workspace/my-matrix/a-utils/cheatsheets" "~/Documents/workspace/my-matrix/a-utils/cheatsheets (optional: external workspace)"
-check_resolves_to_repo "$HOME/.tool-versions"                       "~/.tool-versions"
+check_resolves_to_repo "$HOME/.tool-versions"                       "~/.tool-versions (-> home/.tool-versions)"
 check_resolves_to_repo "$HOME/.claude/CLAUDE.md"                    "~/.claude/CLAUDE.md (-> home/AGENTS.md)"
 check_resolves_to_repo "$HOME/.codex/AGENTS.md"                     "~/.codex/AGENTS.md"
 check_resolves_to_repo "$HOME/.config/opencode/AGENTS.md"           "~/.config/opencode/AGENTS.md"

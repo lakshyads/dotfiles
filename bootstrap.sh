@@ -108,7 +108,7 @@ if command -v asdf >/dev/null 2>&1; then
     [[ -z "$lang" ]] && continue
     asdf plugin add "$lang" 2>/dev/null || true
     done_ "asdf plugin: $lang"
-  done < "$DOTFILES_DIR/.tool-versions"
+  done < "$DOTFILES_DIR/home/.tool-versions"
   info "Installing versions from .tool-versions (may take a few minutes) …"
   asdf install
   done_ "Language runtimes installed"
