@@ -8,4 +8,16 @@ result-*
 # herdr runtime artifacts (regenerated at runtime; never commit)
 home/.config/herdr/*.log
 home/.config/herdr/session.json
+home/.config/herdr/session.json.bak-*
+home/.config/herdr/session-history.json
+home/.config/herdr/sessions/
 home/.config/herdr/*.sock
+
+# herdr artifacts can end up stray in other config dirs (e.g. copied into
+# home/.config/ghostty/ by accident) - catch them repo-wide by name too
+herdr-*.log
+herdr.sock
+herdr-client.sock
+
+# no-mistakes local validation state - never commit in this public repo
+.no-mistakes/

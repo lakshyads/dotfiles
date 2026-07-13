@@ -86,6 +86,8 @@ All prefix actions require pressing `Ctrl+B` first, then the key — same two-st
 | `Ctrl+B &` | Close tab |
 | `Ctrl+B w` | Workspace picker |
 | `Ctrl+B g` | Goto (jump menu) |
+| `Ctrl+B Shift+O` | Open worktree (jump to an existing worktree-backed workspace) |
+| `Ctrl+B Shift+X` | Remove worktree (opens confirmation) |
 | `Ctrl+B y` | Enter copy mode |
 
 Copy mode's internal keys (`v`/`space` select, `y`/`Enter` copy, `q`/`Esc` cancel) aren't configurable. Edit `home/.config/herdr/config.toml` to change any of these — changes apply live via `herdr server reload-config` or the `reload_config` keybinding (default `prefix+shift+r`), no rebuild needed.
@@ -183,7 +185,14 @@ herdr worktree open (--path PATH | --branch NAME)
 herdr worktree remove --workspace ID [--force]
 ```
 
-Worktrees are created under `~/.herdr/worktrees` by default (configurable via `[worktrees].directory` in `config.toml`). The `new_worktree` prefix binding (default `prefix+shift+g`) does the same thing interactively — handy for spinning up an isolated workspace per branch/PR without leaving herdr.
+Worktrees are created under `~/.herdr/worktrees` by default. Override with `[worktrees].directory` in `config.toml`:
+
+```toml
+[worktrees]
+directory = "~/dev/worktrees"
+```
+
+The `new_worktree` prefix binding (default `prefix+shift+g`) does the same thing interactively — handy for spinning up an isolated workspace per branch/PR without leaving herdr. `open_worktree` and `remove_worktree` are bindable actions too but ship unset (`""`) in herdr's default config — this repo binds them to `prefix+shift+o` (jump to an existing worktree-backed workspace) and `prefix+shift+x` (remove, with confirmation).
 
 ---
 
