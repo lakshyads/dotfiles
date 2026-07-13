@@ -1,3 +1,4 @@
+onboarding = false
 [keys]
 prefix = "ctrl+b"
 focus_pane_left  = "prefix+h"
@@ -10,4 +11,22 @@ new_tab   = "prefix+c"
 close_tab = "prefix+ampersand"
 workspace_picker = "prefix+w"
 goto             = "prefix+g"
+open_worktree    = "prefix+shift+o"
+remove_worktree  = "prefix+shift+x"
 copy_mode  = "prefix+y"  # herdr's copy-mode entry key; copy-mode's own internal keys (v/space select, y/Enter copy, q/Esc cancel) aren't configurable
+
+[worktrees]
+directory = "/Users/lakshyadevsingh/github/lakshyads05/"
+
+[ui.toast]
+delivery = "system"
+
+[theme]
+name = "terminal"
+auto_switch = false
+
+[ui]
+show_agent_labels_on_pane_borders = true
+
+[experimental]
+pane_history = true
