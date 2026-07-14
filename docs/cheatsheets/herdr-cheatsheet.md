@@ -185,14 +185,11 @@ herdr worktree open (--path PATH | --branch NAME)
 herdr worktree remove --workspace ID [--force]
 ```
 
-Worktrees are created under `~/.herdr/worktrees` by default. Override with `[worktrees].directory` in `config.toml`:
+Worktrees are created under `~/.herdr/worktrees` by default (one single directory for every project — `herdr worktree create` has no concept of "nest it inside the repo it came from"). Override the root with `[worktrees].directory` in `config.toml`, but note this repo deliberately leaves it unset: an earlier attempt pointed it at `~/github/lakshyads05/` so worktrees would at least live near projects, but that just mixed worktree dirs in flat with actual project repos at the top level — herdr's own default is the better tradeoff.
 
-```toml
-[worktrees]
-directory = "~/dev/worktrees"
-```
+If a project uses the bare-repo worktree pattern (see [git-cheatsheet.md](git-cheatsheet.md#worktrees-bare-repo-pattern)) and you want new worktrees to land as siblings of `.bare` instead of under `~/.herdr/worktrees`, either pass `--path` explicitly to `herdr worktree create`, or (preferred) create the worktree with plain `git worktree add` / this repo's `wtnew` shell function and then run `herdr worktree open --path <path>` to attach a herdr session to it afterward — that gets the right location and herdr's session/agent-status tracking together.
 
-The `new_worktree` prefix binding (default `prefix+shift+g`) does the same thing interactively — handy for spinning up an isolated workspace per branch/PR without leaving herdr. `open_worktree` and `remove_worktree` are bindable actions too but ship unset (`""`) in herdr's default config — this repo binds them to `prefix+shift+o` (jump to an existing worktree-backed workspace) and `prefix+shift+x` (remove, with confirmation).
+The `new_worktree` prefix binding (default `prefix+shift+g`) does the same thing as `herdr worktree create` interactively — handy for ad hoc worktrees, but has the same "always in the default directory" behavior. `open_worktree` and `remove_worktree` are bindable actions too but ship unset (`""`) in herdr's default config — this repo binds them to `prefix+shift+o` (jump to an existing worktree-backed workspace) and `prefix+shift+x` (remove, with confirmation).
 
 ---
 
