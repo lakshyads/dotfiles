@@ -193,6 +193,7 @@ info "4b. AI Coding CLIs"
 check_command claude  "claude (Claude Code CLI)"
 check_command codex   "codex (OpenAI Codex CLI)"
 check_command opencode "opencode (AI coding agent)"
+check_command agent   "agent (Cursor CLI)"
 
 # ── 5. Git & GitHub ───────────────────────────────────────────────────────────
 info "5. Git & GitHub"
