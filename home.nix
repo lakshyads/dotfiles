@@ -283,6 +283,18 @@ in
   home.file.".claude/settings.json".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.claude/settings.json";
 
+  # Skills shared across agent CLIs, all reading the same open SKILL.md
+  # format (frontmatter: name + description). ~/.agents/skills is the one
+  # canonical registry — Codex and Cursor both scan it natively, so a skill
+  # placed there is picked up by every tool with no per-tool symlink needed.
+  # Claude Code is the one exception: it only reads its own ~/.claude/skills
+  # folder, so anything meant for Claude Code needs an explicit symlink
+  # there too. See docs/inventory.md#shared-agent-skills for the full model.
+  home.file.".agents/skills/smell".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/smell";
+  home.file.".claude/skills/smell".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/smell";
+
   home.file.".tool-versions".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.tool-versions";
 

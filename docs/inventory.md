@@ -93,6 +93,16 @@ Installed via `home.nix`'s `home.packages` (Nix), unless noted otherwise.
 | `opencode` | `home.nix` (home.packages) | AI coding agent, built for the terminal |
 | `agent` / `cursor-agent` | Installed independently by Cursor (not via this repo) | Cursor's agent CLI, under `~/.local/bin` — aliased to `aa` in `home.nix`'s `programs.zsh.shellAliases` |
 
+#### Shared agent skills
+
+Claude Code, Codex CLI, and Cursor all read the same open `SKILL.md` format (YAML frontmatter with `name`/`description`, then markdown instructions), each from its own per-tool directory. One canonical copy in this repo's `home/skills/<name>/` is symlinked via `home.nix` into all three, so it's usable from any of them without duplication.
+
+| Skill | Canonical source | Symlinked into |
+|-------|-------------------|-----------------|
+| `smell` | `home/skills/smell/SKILL.md` | `~/.agents/skills/smell`, `~/.claude/skills/smell`, `~/.codex/skills/smell`, `~/.cursor/skills-cursor/smell` |
+
+See [git cheatsheet — Code smell review](cheatsheets/git-cheatsheet.md) for usage.
+
 ### Terminal multiplexing
 
 | Tool | Installed via | Description |
