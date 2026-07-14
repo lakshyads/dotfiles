@@ -21,6 +21,7 @@ in
     dust
     tldr
     neovim
+    tree-sitter  # CLI nvim-treesitter shells out to for compiling parsers
     jq
     tree
     wget
