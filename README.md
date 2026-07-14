@@ -267,7 +267,7 @@ This repo is meant to be forked and personalized. The files worth editing:
 | `home/.config/nvim/` | Neovim config (lazy.nvim plugin specs under `lua/plugins/`). Edit-in-place, no rebuild needed. |
 | `home/.config/herdr/config.toml` | herdr (terminal agent multiplexer) keybindings. Edit-in-place, no rebuild needed. |
 | `home/.config/linearmouse/linearmouse.json` | Mouse settings (side buttons, scroll direction, acceleration). Edit via the LinearMouse GUI; changes write back to the file automatically. |
-| `home/AGENTS.md` | Shared agent instructions, symlinked into Claude Code, Codex, and opencode. |
+| `home/AGENTS.md` | Shared agent instructions, symlinked into Claude Code, Codex, opencode, and Cursor. |
 
 After any changes, commit them to your dotfiles repo. Other machines pick up changes with `git pull && ./rebuild.sh` (or `./bootstrap.sh` on a machine that hasn't been bootstrapped yet).
 
@@ -464,7 +464,7 @@ dotfiles/
 ├── home.nix                    # home-manager: CLI packages, zsh/starship, dotfile symlinks
 ├── Brewfile                    # RETIRED — pointer stub, superseded by configuration.nix
 ├── home/                       # edit-in-place source for home-manager's mkOutOfStoreSymlink files
-│   ├── AGENTS.md                # shared agent instructions (Claude, Codex, opencode)
+│   ├── AGENTS.md                # shared agent instructions (Claude, Codex, opencode, Cursor)
 │   ├── .tool-versions            # asdf runtime versions (Node, Python, Go, Java)
 │   ├── .claude/
 │   │   └── settings.json        # Claude Code settings (theme, statusline)
