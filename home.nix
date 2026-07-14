@@ -296,6 +296,14 @@ in
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/smell";
   home.file.".claude/skills/smell".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/smell";
+  home.file.".agents/skills/commit-message".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/commit-message";
+  home.file.".claude/skills/commit-message".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/commit-message";
+  home.file.".agents/skills/pr-description".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/pr-description";
+  home.file.".claude/skills/pr-description".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/pr-description";
 
   home.file.".tool-versions".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.tool-versions";

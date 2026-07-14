@@ -26,6 +26,8 @@ Official docs: <https://git-scm.com/doc>
 - [Remote Work (Pushing, Pulling, Fetching)](#remote-work-pushing-pulling-fetching)
 - [Inspecting History](#inspecting-history)
 - [Code Smell Review](#code-smell-review)
+- [Commit Message Conventions](#commit-message-conventions)
+- [Pull Request Description Conventions](#pull-request-description-conventions)
 - [Undoing Things](#undoing-things)
 - [Stashing](#stashing)
 - [Tags & Releases](#tags--releases)
@@ -383,6 +385,26 @@ review this diff for code smells against develop
 It diffs committed + working-tree changes against the resolved base branch (explicit branch, else `origin/HEAD`, else `main`), classifies the change, picks a Clean Code / Gang of Four / Mixed lens, then reports findings as `BLOCKER`/`HIGH`/`MEDIUM`/`LOW`/`NIT`, each citing one catalog ID (e.g. `CC.G5` Duplication, `PY.BARE-EXCEPT`), a one-line why, and a one-line fix.
 
 Canonical source: `home/skills/smell/SKILL.md` in this repo. Edit it there — the per-tool copies are symlinks, so changes apply everywhere without a rebuild.
+
+---
+
+## Commit Message Conventions
+
+A shared `commit-message` skill is symlinked into Claude Code, Codex CLI, and Cursor from a single canonical source — see [inventory.md — Shared agent skills](../inventory.md#shared-agent-skills) for how the symlinks are wired.
+
+It formats commit subjects as Conventional Commits with a lowercase scope (`type(scope): summary`), prefixing the Jira ticket ID when the current branch name contains one (e.g. `ABC-123 feat(billing): ...`).
+
+Canonical source: `home/skills/commit-message/SKILL.md` in this repo. Edit it there — the per-tool copies are symlinks, so changes apply everywhere without a rebuild.
+
+---
+
+## Pull Request Description Conventions
+
+A shared `pr-description` skill is symlinked into Claude Code, Codex CLI, and Cursor from a single canonical source — see [inventory.md — Shared agent skills](../inventory.md#shared-agent-skills) for how the symlinks are wired.
+
+It formats PR titles the same way as commit subjects, and bodies as `# Summary` / `# Changes` / `# Why` / `# Test plan` sections wrapped in a fenced markdown code block.
+
+Canonical source: `home/skills/pr-description/SKILL.md` in this repo. Edit it there — the per-tool copies are symlinks, so changes apply everywhere without a rebuild.
 
 ---
 

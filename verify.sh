@@ -234,6 +234,10 @@ check_resolves_to_repo "$HOME/.claude/settings.json"                "~/.claude/s
 check_resolves_to_repo "$HOME/.claude/statusline-command.sh"        "~/.claude/statusline-command.sh"
 check_resolves_to_repo "$HOME/.agents/skills/smell"                 "~/.agents/skills/smell (-> home/skills/smell)"
 check_resolves_to_repo "$HOME/.claude/skills/smell"                 "~/.claude/skills/smell (-> home/skills/smell)"
+check_resolves_to_repo "$HOME/.agents/skills/commit-message"        "~/.agents/skills/commit-message (-> home/skills/commit-message)"
+check_resolves_to_repo "$HOME/.claude/skills/commit-message"        "~/.claude/skills/commit-message (-> home/skills/commit-message)"
+check_resolves_to_repo "$HOME/.agents/skills/pr-description"        "~/.agents/skills/pr-description (-> home/skills/pr-description)"
+check_resolves_to_repo "$HOME/.claude/skills/pr-description"        "~/.claude/skills/pr-description (-> home/skills/pr-description)"
 
 # home-manager-generated: real content is a Nix-store-managed file, not
 # something in this repo — just check it exists.
