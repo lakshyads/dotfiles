@@ -25,6 +25,7 @@ Official docs: <https://git-scm.com/doc>
 - [Merging & Rebasing](#merging--rebasing)
 - [Remote Work (Pushing, Pulling, Fetching)](#remote-work-pushing-pulling-fetching)
 - [Inspecting History](#inspecting-history)
+- [Code Smell Review](#code-smell-review)
 - [Undoing Things](#undoing-things)
 - [Stashing](#stashing)
 - [Tags & Releases](#tags--releases)
@@ -366,6 +367,22 @@ gd      # git diff
 gl      # git log --oneline --graph --decorate -20
 lg      # lazygit (full TUI)
 ```
+
+---
+
+## Code Smell Review
+
+A shared `smell` skill (Clean Code + Gang of Four + Python-specific catalog) is symlinked into Claude Code, Codex CLI, and Cursor from a single canonical source — see [inventory.md — Shared agent skills](../inventory.md#shared-agent-skills) for how the symlinks are wired.
+
+Ask any of the three agents to run a smell review (it triggers on phrases like "check for code smells" or "review this before I merge"), optionally naming a base branch:
+
+```
+review this diff for code smells against develop
+```
+
+It diffs committed + working-tree changes against the resolved base branch (explicit branch, else `origin/HEAD`, else `main`), classifies the change, picks a Clean Code / Gang of Four / Mixed lens, then reports findings as `BLOCKER`/`HIGH`/`MEDIUM`/`LOW`/`NIT`, each citing one catalog ID (e.g. `CC.G5` Duplication, `PY.BARE-EXCEPT`), a one-line why, and a one-line fix.
+
+Canonical source: `home/skills/smell/SKILL.md` in this repo. Edit it there — the per-tool copies are symlinks, so changes apply everywhere without a rebuild.
 
 ---
 
