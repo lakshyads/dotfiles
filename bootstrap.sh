@@ -19,7 +19,9 @@
 #   6. Registers asdf plugins and installs runtimes from .tool-versions
 #      (per-project .tool-versions overrides don't fit Nix's model, so
 #      runtimes stay asdf-managed by design).
-#   7. Prompts for git identity (still written directly to ~/.gitconfig —
+#   7. Installs the Cursor CLI (`agent`) via Cursor's own installer — not
+#      Nix/Homebrew-managed.
+#   8. Prompts for git identity (still written directly to ~/.gitconfig —
 #      pager/merge/delta config is now nix-managed separately via
 #      ~/.config/git/config).
 #
@@ -116,7 +118,19 @@ else
   warn "asdf not found on PATH yet — open a new terminal and re-run this script."
 fi
 
-# ── 7. Git Configuration ─────────────────────────────────────────────────────
+# ── 7. Cursor CLI ─────────────────────────────────────────────────────────────
+# Not Nix/Homebrew-managed — Cursor ships its own self-updating installer,
+# same trust model already accepted for the Nix installer above.
+section "Cursor CLI"
+if ! command -v agent &>/dev/null; then
+  info "Installing Cursor CLI..."
+  curl https://cursor.com/install -fsS | bash
+  done_ "Cursor CLI installed (agent)"
+else
+  done_ "Cursor CLI already installed (agent)"
+fi
+
+# ── 8. Git Configuration ─────────────────────────────────────────────────────
 # Identity stays here (not home-manager's programs.git) so it's easily
 # settable per-machine and writes directly to mutable ~/.gitconfig.
 # Pager/merge/delta config is nix-managed separately via home.nix's
@@ -189,10 +203,13 @@ echo
 echo "  7. Authenticate Claude Code:"
 echo "       claude"
 echo
-echo "  8. (Optional) Enable Atuin shell history sync:"
+echo "  8. Authenticate Cursor CLI:"
+echo "       agent login"
+echo
+echo "  9. (Optional) Enable Atuin shell history sync:"
 echo "       atuin register -u <username> -e <email>"
 echo
-echo "  9. (Optional) Authenticate cloud CLIs:"
+echo "  10. (Optional) Authenticate cloud CLIs:"
 echo "        gcloud auth login"
 echo
 echo "  From now on, after editing config: ./rebuild.sh"
