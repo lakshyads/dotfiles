@@ -64,6 +64,7 @@ Installed via `home.nix`'s `home.packages` (Nix), unless noted otherwise.
 | `tree` | Directory tree visualizer |
 | `wget` | HTTP downloader |
 | `nvim` (neovim) | Modal text editor — see `home/.config/nvim/` for the full lazy.nvim config |
+| `tree-sitter` | Parser generator CLI; nvim-treesitter shells out to it to compile Neovim's syntax parsers |
 
 ### Modern CLI replacements
 

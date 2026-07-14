@@ -20,7 +20,7 @@ focus_agent = "prefix+alt+1..9"
 delivery = "system"
 
 [theme]
-name = "terminal"
+name = "tokyo-night"
 auto_switch = false
 
 [ui]
