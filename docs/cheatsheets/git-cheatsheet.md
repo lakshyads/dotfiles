@@ -21,6 +21,7 @@ Official docs: <https://git-scm.com/doc>
 - [Starting a Repository](#starting-a-repository)
 - [The Daily Loop](#the-daily-loop)
 - [Branching](#branching)
+- [Worktrees (Bare-Repo Pattern)](#worktrees-bare-repo-pattern)
 - [Merging & Rebasing](#merging--rebasing)
 - [Remote Work (Pushing, Pulling, Fetching)](#remote-work-pushing-pulling-fetching)
 - [Inspecting History](#inspecting-history)
@@ -176,6 +177,67 @@ git branch --merged | grep -v "main\|master\|\*"
 # Delete them all (one-liner)
 git branch --merged | grep -v "main\|master\|\*" | xargs -n 1 git branch -d
 ```
+
+---
+
+## Worktrees (Bare-Repo Pattern)
+
+For projects with many parallel branches in flight (e.g. running multiple coding agents across features), use a bare repo as the project's git store, with every branch — including the default one — checked out as an equal-status sibling worktree. No single "primary" clone; no asymmetry.
+
+```
+tatbiq/
+├── .bare/          # bare repo — the actual git store
+├── .git            # file: "gitdir: ./.bare"
+├── main/            # one worktree per branch, named after the branch
+├── feature/
+│   └── x/           # slash in branch name nests the worktree dir to match
+└── td-130/
+```
+
+### Setting one up from scratch
+
+```bash
+mkdir myproject && cd myproject
+git clone --bare git@github.com:org/myproject.git .bare
+git --git-dir=.bare config core.bare true
+git --git-dir=.bare config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+printf 'gitdir: ./.bare\n' > .git
+git fetch --all
+git worktree add main main
+```
+
+### Day to day
+
+```bash
+git worktree list                       # see every worktree (run from anywhere in the tree)
+git worktree add <path> <branch>        # add one for an existing branch
+git worktree add -b <branch> <path> <base>  # create a new branch off <base> as a worktree
+git worktree remove <path>              # deregister + delete; NEVER just `rm -rf` a worktree dir —
+                                         # that leaves a stale/prunable entry behind
+git worktree prune                      # clean up stale entries after a manual rm -rf
+git worktree lock <path>                # protect a worktree (e.g. on a network/removable drive) from pruning
+```
+
+Gotchas:
+- Git refuses to check out the same branch in two worktrees at once — relevant when parallelizing agents, since each needs its own branch.
+- Hooks and local git config are shared across all worktrees (one `.bare`); a `git fetch` in any worktree makes new branches visible to all of them immediately.
+- A repo's default branch for new worktrees (`origin/HEAD`) can be repointed per local clone without touching the actual GitHub default:
+  ```bash
+  git --git-dir=.bare symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/develop
+  ```
+
+### `wtnew` — this repo's shortcut
+
+`home.nix` defines a `wtnew` shell function (see `programs.zsh.initContent`) that wraps the setup above:
+
+```bash
+wtnew <branch> [base-branch] [target-path]
+```
+
+- Discovers the project root by walking up from `$PWD` looking for a `.bare/` dir — works in any project using this pattern, not just one repo.
+- `<branch>`: creates it (branching off `[base-branch]`, or the bare repo's `origin/HEAD` if omitted) if it doesn't exist yet locally or on `origin`; otherwise just checks it out.
+- `[target-path]`: defaults to `<project-root>/<branch>`; pass an explicit path to override.
+- Attaches a herdr session via `herdr worktree open` afterward, if herdr is installed — see [herdr-cheatsheet.md](herdr-cheatsheet.md#worktrees).
 
 ---
 

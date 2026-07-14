@@ -111,6 +111,59 @@ in
         fpath+=(${pkgs.zsh-completions}/share/zsh/site-functions)
       '')
       ''
+        # wtnew <branch> [base-branch] [target-path]: create a git worktree
+        # inside a bare-repo-pattern project (one with a .bare/ dir), as a
+        # sibling of .bare, and attach a herdr session to it if herdr is
+        # installed. Discovers the project root by walking up from $PWD, so
+        # it works from any project using this convention, not just one repo.
+        # base-branch defaults to the bare repo's origin/HEAD (per-project,
+        # e.g. set via `git --git-dir=.bare symbolic-ref refs/remotes/origin/HEAD
+        # refs/remotes/origin/develop`); target-path defaults to
+        # <project-root>/<branch>.
+        wtnew() {
+          local branch="$1" base="$2" target="$3"
+          if [[ -z "$branch" ]]; then
+            echo "usage: wtnew <branch> [base-branch] [target-path]" >&2
+            return 1
+          fi
+
+          local dir="$PWD" bare=""
+          while [[ "$dir" != "/" ]]; do
+            if [[ -d "$dir/.bare" ]]; then
+              bare="$dir/.bare"
+              break
+            fi
+            dir="$(dirname "$dir")"
+          done
+
+          if [[ -z "$bare" ]]; then
+            echo "wtnew: no .bare directory found above $PWD" >&2
+            return 1
+          fi
+
+          target="''${target:-$dir/$branch}"
+          if [[ -e "$target" ]]; then
+            echo "wtnew: $target already exists" >&2
+            return 1
+          fi
+
+          if [[ -z "$base" ]]; then
+            base="$(git --git-dir="$bare" symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##')"
+            base="''${base:-main}"
+          fi
+
+          if git --git-dir="$bare" show-ref --verify --quiet "refs/heads/$branch" \
+             || git --git-dir="$bare" show-ref --verify --quiet "refs/remotes/origin/$branch"; then
+            git --git-dir="$bare" worktree add "$target" "$branch" || return 1
+          else
+            git --git-dir="$bare" worktree add -b "$branch" "$target" "$base" || return 1
+          fi
+
+          if command -v herdr >/dev/null 2>&1; then
+            herdr worktree open --path "$target" >/dev/null 2>&1
+          fi
+        }
+
         # Ctrl+F accepts the current autosuggestion (ghost text from history).
        bindkey '^f' autosuggest-accept
 
@@ -207,12 +260,15 @@ in
     };
   };
 
+  #############
+  # SYM-LINKS #
+  #############
+
   # Edit-in-place: the real files stay in this repo, ~/.config just points at them.
   home.file.".config/wezterm".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/wezterm";
   home.file.".config/ghostty".source =
-    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/ghostty";
-  home.file.".config/nvim".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/ghostty"; home.file.".config/nvim".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/nvim";
   home.file.".config/herdr".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.config/herdr";
