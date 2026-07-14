@@ -160,7 +160,11 @@ in
           fi
 
           if command -v herdr >/dev/null 2>&1; then
-            herdr worktree open --path "$target" >/dev/null 2>&1
+            # --cwd "$dir" scopes this to the repo's parent workspace explicitly;
+            # without it, herdr infers scope from the calling pane and refuses
+            # ("linked_worktree_source") when wtnew is run from inside another
+            # worktree instead of the bare-repo root.
+            herdr worktree open --cwd "$dir" --path "$target" >/dev/null 2>&1
           fi
         }
 

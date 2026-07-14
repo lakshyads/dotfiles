@@ -89,6 +89,7 @@ All prefix actions require pressing `Ctrl+B` first, then the key — same two-st
 | `Ctrl+B Shift+O` | Open worktree (jump to an existing worktree-backed workspace) |
 | `Ctrl+B Shift+X` | Remove worktree (opens confirmation) |
 | `Ctrl+B y` | Enter copy mode |
+| `Ctrl+B Alt+1..9` | Jump to agent N (indexed `focus_agent`) |
 
 Copy mode's internal keys (`v`/`space` select, `y`/`Enter` copy, `q`/`Esc` cancel) aren't configurable. Edit `home/.config/herdr/config.toml` to change any of these — changes apply live via `herdr server reload-config` or the `reload_config` keybinding (default `prefix+shift+r`), no rebuild needed.
 
@@ -119,7 +120,9 @@ Everything below is herdr's out-of-the-box binding for actions this repo hasn't 
 | `prefix+r` | Resize mode |
 | `prefix+b` | Toggle sidebar |
 
-Indexed bindings (`focus_agent`, `switch_workspace`) and navigate-mode movement keys are opt-in — see the commented block in `herdr --default-config`.
+Indexed bindings and navigate-mode movement keys are opt-in — see the commented block in `herdr --default-config`. This repo now sets `focus_agent` (see [Prefix Keybindings](#prefix-keybindings-this-repos-config) above); `switch_workspace` remains unset.
+
+Indexed bindings only accept a modifier (`alt`/`ctrl`/`shift`/`cmd`) before `1..9` — plain letters like `prefix+w+1..9` are rejected at reload (`invalid keybinding: ...; disabling binding`).
 
 ---
 
