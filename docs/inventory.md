@@ -46,7 +46,7 @@ All declared in `configuration.nix`'s `homebrew.casks` (applied via `darwin-rebu
 | Whimsical | `configuration.nix` (homebrew.casks) | Productivity | Collaboration and diagramming tool |
 | Claude (desktop) | `configuration.nix` (homebrew.casks: `claude`) | AI | Anthropic Claude desktop app |
 | Codex (desktop) | `configuration.nix` (homebrew.casks: `codex-app`) | AI | OpenAI Codex desktop app for managing coding agents; global instructions symlinked from `home/AGENTS.md` to `~/.codex/AGENTS.md` |
-| Claude Code | `configuration.nix` (homebrew.casks: `claude-code`) | AI / CLI | Global config (`CLAUDE.md` from `home/AGENTS.md`, `settings.json` with inline statusline command) symlinked via home-manager into `~/.claude/`. Updates via Homebrew's `onActivation.autoUpdate`, not a native installer. |
+| Claude Code | `configuration.nix` (homebrew.casks: `claude-code`) | AI / CLI | Global config (`CLAUDE.md` from `home/AGENTS.md`, `settings.json`, `statusline-command.sh`) symlinked via home-manager into `~/.claude/`. Updates via Homebrew's `onActivation.autoUpdate`, not a native installer. |
 
 ---
 

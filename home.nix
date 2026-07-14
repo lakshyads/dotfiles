@@ -282,6 +282,8 @@ in
 
   home.file.".claude/settings.json".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.claude/settings.json";
+  home.file.".claude/statusline-command.sh".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.claude/statusline-command.sh";
 
   # Skills shared across agent CLIs, all reading the same open SKILL.md
   # format (frontmatter: name + description). ~/.agents/skills is the one
