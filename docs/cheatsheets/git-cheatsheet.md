@@ -204,8 +204,13 @@ mkdir myproject && cd myproject
 git clone --bare git@github.com:org/myproject.git .bare
 git --git-dir=.bare config core.bare true
 git --git-dir=.bare config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+git --git-dir=.bare fetch origin
+# `clone --bare` mirrors origin's branches straight into refs/heads with no
+# tracking info attached. Wipe them now (refs/remotes/origin/* above already
+# has everything) so the first `worktree add` of each branch goes through
+# git's normal DWIM tracking setup instead of silently skipping it.
+git --git-dir=.bare for-each-ref --format='delete %(refname)' refs/heads | git --git-dir=.bare update-ref --stdin
 printf 'gitdir: ./.bare\n' > .git
-git fetch --all
 git worktree add main main
 ```
 
@@ -240,6 +245,7 @@ wtnew <branch> [base-branch] [target-path]
 - Discovers the project root by walking up from `$PWD` looking for a `.bare/` dir — works in any project using this pattern, not just one repo.
 - `<branch>`: creates it (branching off `[base-branch]`, or the bare repo's `origin/HEAD` if omitted) if it doesn't exist yet locally or on `origin`; otherwise just checks it out.
 - `[target-path]`: defaults to `<project-root>/<branch>`; pass an explicit path to override.
+- If `<branch>` exists on `origin` but its local `refs/heads/<branch>` has no upstream set (common right after the initial `git clone --bare`, which mirrors `origin`'s branches straight into `refs/heads` with no tracking info), `wtnew` backfills it with `git branch --set-upstream-to`.
 - Attaches a herdr session via `herdr worktree open` afterward, if herdr is installed — see [herdr-cheatsheet.md](herdr-cheatsheet.md#worktrees).
 
 ---
