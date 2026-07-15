@@ -22,6 +22,7 @@ branch name contains a Jira ticket ID, prefix the subject with that ID:
 - **JIRA-ID**: only include when present in the current branch name (e.g. `ABC-123` from `feature/ABC-123-add-login`). Preserve uppercase.
 - Add a blank line then a body when the change needs context (what/why), wrapped at ~72 chars.
 - Keep each commit focused: split unrelated changes into separate, meaningful commits rather than one catch-all commit.
+- NEVER auto-add your agent name as co-author to any commit.
 
 Examples:
 - `refactor(billing): unify billing_category resolution`
