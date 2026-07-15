@@ -156,6 +156,14 @@ in
           if git --git-dir="$bare" show-ref --verify --quiet "refs/heads/$branch" \
              || git --git-dir="$bare" show-ref --verify --quiet "refs/remotes/origin/$branch"; then
             git --git-dir="$bare" worktree add "$target" "$branch" || return 1
+            # A bare clone mirrors origin's refs/heads/* directly, so branches
+            # that existed on origin at clone time land in refs/heads with no
+            # tracking info attached (unlike branches git creates itself via
+            # DWIM, which do get tracking set up). Backfill it here.
+            if git --git-dir="$bare" show-ref --verify --quiet "refs/remotes/origin/$branch" \
+               && ! git --git-dir="$bare" rev-parse --abbrev-ref --symbolic-full-name "$branch@{upstream}" >/dev/null 2>&1; then
+              git --git-dir="$bare" branch --set-upstream-to="origin/$branch" "$branch"
+            fi
           else
             git --git-dir="$bare" worktree add -b "$branch" "$target" "$base" || return 1
           fi
