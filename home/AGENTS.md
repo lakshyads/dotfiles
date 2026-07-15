@@ -85,10 +85,17 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ---
 
-## Commit messages
+## Commit & commit messages
 
-When asked to create commit(s) or write a commit message -> See the `commit-message` skill (`home/skills/commit-message/SKILL.md`) for Conventional Commits formatting rules.
+When asked to create commit(s) or write a commit message -> See the `commit-message` skill for Conventional Commits formatting rules.
+**NEVER auto-add your agent name as co-author to any commit.**
 
 ## Pull request descriptions
 
-When asked to write PR title and/or description -> See the `pr-description` skill (`home/skills/pr-description/SKILL.md`) for PR title/body formatting rules.
+When asked to write PR title and/or description -> See the `pr-description` skill for PR title/body formatting rules.
+
+---
+
+## Other important rules
+
+- Never use the em dash "—". Use plain dash "-" instead.
