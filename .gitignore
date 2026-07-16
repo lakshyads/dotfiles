@@ -5,13 +5,22 @@
 result
 result-*
 
-# herdr runtime artifacts (regenerated at runtime; never commit)
+# herdr runtime artifacts under the edit-in-place config symlink
+# (keep home/.config/herdr/config.toml tracked; ignore everything herdr writes)
+# Docs: https://herdr.dev/docs/configuration/ , https://herdr.dev/docs/session-state/ ,
+# https://herdr.dev/docs/socket-api/ , https://herdr.dev/docs/plugins/
 home/.config/herdr/*.log
+home/.config/herdr/*.log.*
+home/.config/herdr/*.sock
 home/.config/herdr/session.json
 home/.config/herdr/session.json.bak-*
 home/.config/herdr/session-history.json
 home/.config/herdr/sessions/
-home/.config/herdr/*.sock
+home/.config/herdr/release-notes.json
+home/.config/herdr/product-announcements.json
+home/.config/herdr/plugins.json
+home/.config/herdr/plugins/
+home/.config/herdr/config.toml.bak-*
 
 # herdr artifacts can end up stray in other config dirs (e.g. copied into
 # home/.config/ghostty/ by accident) - catch them repo-wide by name too
