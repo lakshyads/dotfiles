@@ -85,6 +85,31 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ---
 
+## Delegation & grounding
+
+- When exploration or research spans many files or independent threads, delegate to subagents / parallel tasks if the tool supports them - keep your own context for synthesis and editing.
+- Ground every decision in the actual code or docs; do online research when the repo lacks the answer (see sections 1-2 above for assumption rules).
+- When asking clarifying questions, prefer the tool's structured question UI (AskUserQuestion / AskQuestion) over free-text option lists.
+- For UI/UX work, propose 2-3 distinct options for review before committing to one.
+- For rich visual artifacts (plans, comparisons, reports), use the `lavish` skill.
+
+## Design gate for large changes
+
+When a task introduces a new subsystem, a new class hierarchy, touches many modules, or adds a capability you expect to grow (more variants, more integrations, more states over time):
+
+1. Do not start coding. First produce a short design note: the key abstractions, their interfaces, and where future variants will plug in.
+2. Apply "program to an interface, not an implementation" and "composition over inheritance". Name the GoF pattern if one genuinely fits - and say why.
+3. Check the design against SOLID, especially SRP and OCP (new variants should be additions, not edits to existing code).
+4. Present the design for review before implementing.
+
+For small, contained changes this gate does not apply - see Simplicity First.
+
+## Code quality review
+
+For code-smell review, pre-merge quality checks, or design-pattern audits -> use the `smell` skill (Clean Code + GoF catalog lives there).
+
+---
+
 ## Commit & commit messages
 
 When asked to create commit(s) or write a commit message -> See the `commit-message` skill for Conventional Commits formatting rules.
