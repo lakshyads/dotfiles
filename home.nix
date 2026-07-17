@@ -159,10 +159,17 @@ in
             # A bare clone mirrors origin's refs/heads/* directly, so branches
             # that existed on origin at clone time land in refs/heads with no
             # tracking info attached (unlike branches git creates itself via
-            # DWIM, which do get tracking set up). Backfill it here.
-            if git --git-dir="$bare" show-ref --verify --quiet "refs/remotes/origin/$branch" \
-               && ! git --git-dir="$bare" rev-parse --abbrev-ref --symbolic-full-name "$branch@{upstream}" >/dev/null 2>&1; then
-              git --git-dir="$bare" branch --set-upstream-to="origin/$branch" "$branch"
+            # DWIM, which do get tracking set up). Some bare clones also never
+            # got remote.origin.fetch configured, so refs/remotes/origin/* was
+            # never populated either - `git branch --set-upstream-to` refuses
+            # to track a ref outside a configured remote-tracking namespace,
+            # so backfilling needs the refspec configured and that one branch
+            # fetched first, not just a local ref check.
+            if ! git --git-dir="$bare" rev-parse --abbrev-ref --symbolic-full-name "$branch@{upstream}" >/dev/null 2>&1; then
+              git --git-dir="$bare" config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+              if git --git-dir="$bare" fetch -q origin "refs/heads/$branch:refs/remotes/origin/$branch" 2>/dev/null; then
+                git --git-dir="$bare" branch --set-upstream-to="origin/$branch" "$branch"
+              fi
             fi
           else
             git --git-dir="$bare" worktree add -b "$branch" "$target" "$base" || return 1

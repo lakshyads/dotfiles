@@ -245,7 +245,7 @@ wtnew <branch> [base-branch] [target-path]
 - Discovers the project root by walking up from `$PWD` looking for a `.bare/` dir — works in any project using this pattern, not just one repo.
 - `<branch>`: creates it (branching off `[base-branch]`, or the bare repo's `origin/HEAD` if omitted) if it doesn't exist yet locally or on `origin`; otherwise just checks it out.
 - `[target-path]`: defaults to `<project-root>/<branch>`; pass an explicit path to override.
-- If `<branch>` exists on `origin` but its local `refs/heads/<branch>` has no upstream set (common right after the initial `git clone --bare`, which mirrors `origin`'s branches straight into `refs/heads` with no tracking info), `wtnew` backfills it with `git branch --set-upstream-to`.
+- If `<branch>` has no upstream set (common right after the initial `git clone --bare`, which mirrors `origin`'s branches straight into `refs/heads` with no tracking info, and doesn't configure `remote.origin.fetch` either), `wtnew` configures `remote.origin.fetch`, fetches that one branch from `origin` into `refs/remotes/origin/<branch>`, and backfills the upstream with `git branch --set-upstream-to`. Silently skips if `origin` doesn't have the branch (e.g. a local-only branch).
 - Attaches a herdr session via `herdr worktree open` afterward, if herdr is installed — see [herdr-cheatsheet.md](herdr-cheatsheet.md#worktrees).
 
 ---
