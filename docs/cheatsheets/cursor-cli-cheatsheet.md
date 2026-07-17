@@ -317,6 +317,8 @@ Manage with `/rules` to create or edit interactively.
 
 The CLI also reads `AGENTS.md` and `CLAUDE.md` at project root (if present) and applies them as rules, so a well-written CLAUDE.md works for both tools.
 
+> **No global rules yet.** Unlike Claude Code (`~/.claude/CLAUDE.md`) and Codex (`~/.codex/AGENTS.md`), Cursor CLI has no home-directory rules file - it only reads `.cursor/rules/`, `AGENTS.md`, and `CLAUDE.md` from the current project's root. Cursor's own team has confirmed this on the forum ("Global AI rules aren't supported yet, instructions must be defined at the project level"); there's an open, unresolved feature request for it as of mid-2026. This repo's `home/AGENTS.md` is the shared source of truth for Claude/Codex/OpenCode, but it must be manually symlinked or copied into each project's root for Cursor CLI to pick it up there.
+
 ### Skills (on-demand knowledge)
 
 New in 2.4. Unlike rules, skills are discovered by the agent when relevant, or you invoke them via the slash menu.
