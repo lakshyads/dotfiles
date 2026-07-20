@@ -153,24 +153,31 @@ in
             base="''${base:-main}"
           fi
 
-          if git --git-dir="$bare" show-ref --verify --quiet "refs/heads/$branch" \
-             || git --git-dir="$bare" show-ref --verify --quiet "refs/remotes/origin/$branch"; then
+          # A bare clone mirrors origin's refs/heads/* directly with no
+          # remote-tracking refs populated (remote.origin.fetch unset), so
+          # refs/remotes/origin/$branch can be missing or stale even when the
+          # branch genuinely exists on origin. Deciding "does this branch
+          # exist on origin" from that local mirror is unreliable - ask origin
+          # directly with a targeted fetch of just that one ref first, and use
+          # that as the source of truth for both the checkout path and the
+          # tracking backfill below. $branch MUST stay braced (''${branch})
+          # here: zsh parses an unbraced "$branch:refs/..." as the :r history
+          # modifier (strip suffix) rather than literal text, silently
+          # mangling the refspec and making every fetch below fail.
+          git --git-dir="$bare" config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+          local on_origin=1
+          git --git-dir="$bare" fetch -q origin "refs/heads/''${branch}:refs/remotes/origin/''${branch}" 2>/dev/null || on_origin=0
+
+          if git --git-dir="$bare" show-ref --verify --quiet "refs/heads/$branch"; then
             git --git-dir="$bare" worktree add "$target" "$branch" || return 1
-            # A bare clone mirrors origin's refs/heads/* directly, so branches
-            # that existed on origin at clone time land in refs/heads with no
-            # tracking info attached (unlike branches git creates itself via
-            # DWIM, which do get tracking set up). Some bare clones also never
-            # got remote.origin.fetch configured, so refs/remotes/origin/* was
-            # never populated either - `git branch --set-upstream-to` refuses
-            # to track a ref outside a configured remote-tracking namespace,
-            # so backfilling needs the refspec configured and that one branch
-            # fetched first, not just a local ref check.
-            if ! git --git-dir="$bare" rev-parse --abbrev-ref --symbolic-full-name "$branch@{upstream}" >/dev/null 2>&1; then
-              git --git-dir="$bare" config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
-              if git --git-dir="$bare" fetch -q origin "refs/heads/$branch:refs/remotes/origin/$branch" 2>/dev/null; then
-                git --git-dir="$bare" branch --set-upstream-to="origin/$branch" "$branch"
-              fi
+            if [[ "$on_origin" == 1 ]] && ! git --git-dir="$bare" rev-parse --abbrev-ref --symbolic-full-name "$branch@{upstream}" >/dev/null 2>&1; then
+              git --git-dir="$bare" branch --set-upstream-to="origin/$branch" "$branch"
             fi
+          elif [[ "$on_origin" == 1 ]]; then
+            # Local branch doesn't exist yet but origin does - create it
+            # directly from the remote-tracking ref so git's default
+            # branch.autoSetupMerge wires up tracking automatically.
+            git --git-dir="$bare" worktree add "$target" -b "$branch" "origin/$branch" || return 1
           else
             git --git-dir="$bare" worktree add -b "$branch" "$target" "$base" || return 1
           fi
