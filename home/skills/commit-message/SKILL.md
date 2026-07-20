@@ -20,7 +20,8 @@ branch name contains a Jira ticket ID, prefix the subject with that ID:
 - **scope**: the area touched, in parentheses, lowercase (e.g. `billing`, `vouchers`, `auth`, `i18n`, `infra+deploy`). Combine related scopes with `+` when a change spans a couple of areas (e.g. `auth+security`, `vouchers+billing`).
 - **summary**: imperative mood, lowercase start, no trailing period.
 - **JIRA-ID**: only include when present in the current branch name (e.g. `ABC-123` from `feature/ABC-123-add-login`). Preserve uppercase.
-- Add a blank line then a body when the change needs context (what/why), wrapped at ~72 chars.
+- Keep the whole subject line (including `<type>(<scope>):` and any JIRA-ID prefix) to 50 chars where possible, 72 chars hard cap. Trim the summary first if it runs long.
+- Add a blank line then a body when the change needs context (why, not what), wrapped at 72 chars per line.
 - Keep each commit focused: split unrelated changes into separate, meaningful commits rather than one catch-all commit.
 - NEVER auto-add your agent name as co-author to any commit.
 
