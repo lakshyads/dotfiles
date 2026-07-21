@@ -96,13 +96,14 @@ Installed via `home.nix`'s `home.packages` (Nix), unless noted otherwise.
 
 #### Shared agent skills
 
-Claude Code, Codex CLI, and Cursor all read the same open `SKILL.md` format (YAML frontmatter with `name`/`description`, then markdown instructions). Codex and Cursor scan `~/.agents/skills` natively; Claude Code only reads its own `~/.claude/skills`, so `home.nix` symlinks each skill into both directories from one canonical copy in this repo's `home/skills/<name>/`.
+Claude Code, Codex CLI, Cursor, and OpenCode all read the same open `SKILL.md` format (YAML frontmatter with `name`/`description`, then markdown instructions). Codex, Cursor, and OpenCode scan `~/.agents/skills` natively; Claude Code only reads its own `~/.claude/skills`, so `home.nix` symlinks each skill into both directories from one canonical copy in this repo's `home/skills/<name>/`.
 
 | Skill | Canonical source | Symlinked into |
 |-------|-------------------|-----------------|
 | `smell` | `home/skills/smell/SKILL.md` | `~/.agents/skills/smell`, `~/.claude/skills/smell` |
 | `commit-message` | `home/skills/commit-message/SKILL.md` | `~/.agents/skills/commit-message`, `~/.claude/skills/commit-message` |
 | `pr-description` | `home/skills/pr-description/SKILL.md` | `~/.agents/skills/pr-description`, `~/.claude/skills/pr-description` |
+| `architecture-plan` | `home/skills/architecture-plan/SKILL.md` | `~/.agents/skills/architecture-plan`, `~/.claude/skills/architecture-plan` |
 
 See [git cheatsheet — Code smell review](cheatsheets/git-cheatsheet.md), [git cheatsheet — Commit message conventions](cheatsheets/git-cheatsheet.md), and [git cheatsheet — Pull request description conventions](cheatsheets/git-cheatsheet.md) for usage.
 

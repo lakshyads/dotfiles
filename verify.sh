@@ -239,6 +239,8 @@ check_resolves_to_repo "$HOME/.agents/skills/commit-message"        "~/.agents/s
 check_resolves_to_repo "$HOME/.claude/skills/commit-message"        "~/.claude/skills/commit-message (-> home/skills/commit-message)"
 check_resolves_to_repo "$HOME/.agents/skills/pr-description"        "~/.agents/skills/pr-description (-> home/skills/pr-description)"
 check_resolves_to_repo "$HOME/.claude/skills/pr-description"        "~/.claude/skills/pr-description (-> home/skills/pr-description)"
+check_resolves_to_repo "$HOME/.agents/skills/architecture-plan"      "~/.agents/skills/architecture-plan (-> home/skills/architecture-plan)"
+check_resolves_to_repo "$HOME/.claude/skills/architecture-plan"      "~/.claude/skills/architecture-plan (-> home/skills/architecture-plan)"
 
 # home-manager-generated: real content is a Nix-store-managed file, not
 # something in this repo — just check it exists.

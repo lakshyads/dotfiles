@@ -12,29 +12,27 @@ alwaysApply: true
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
 
 Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them - don't pick silently.
+- State assumptions explicitly. If unclear, uncertain or multiple interpretations exist, stop and ask rather than choosing silently.
 - If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
 
 ## 2. Verify Reality First
 
 **Don't assume facts. Check them.**
 
 - Read relevant files before editing them.
-- Don't assume files, APIs, functions, schemas, or dependencies exist — verify.
-- Don't assume tool output is correct or complete.
-- Distinguish observations from assumptions. If uncertain, say so.
+- Verify that files, APIs, functions, schemas, and dependencies exist before relying on them.
+- Don't assume tool output is correct or complete. Distinguish observations from assumptions.
+- When the repository lacks an answer, research authoritative sources if tools permit it.
 
 ## 3. Simplicity First
+
+**For complex feature planning in Plan mode, see Plan-mode feature design below.**
 
 **Minimum code that solves the problem. Nothing speculative.**
 
 - No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
+- No abstractions, flexibility, or configurability that wasn't requested.
+- Don't add defensive branches for states excluded by verified contracts.
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
@@ -42,15 +40,9 @@ Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, sim
 
 **Touch only what you must. Clean up only your own mess.**
 
-When editing existing code:
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it - don't delete it.
-
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
+- Leave unrelated code, comments, formatting, and pre-existing dead code unchanged. Mention and surface them instead.
+- Match existing style, even if you would choose differently.
+- Remove imports, variables, and functions made unused by your changes.
 
 The test: Every changed line should trace directly to the user's request.
 
@@ -58,69 +50,36 @@ The test: Every changed line should trace directly to the user's request.
 
 **Define success criteria. Loop until verified.**
 
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
+- Translate requests into verifiable outcomes. For example, reproduce a bug with a test, then make the test pass.
+- For multi-step tasks, state a brief plan with a verification check for each step.
 
-For multi-step tasks, state a brief plan:
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
-
-**Report honestly.** Don't claim success you didn't verify. If something couldn't be verified, say so — don't imply it passed.
+**Report honestly.** Don't claim success you didn't verify. If something couldn't be verified, say so instead of implying it passed.
 
 ## 6. When Blocked or Asked to Do Harm
 
 - If blocked, stop. Describe the blocker, what's missing, and what you already verified. Don't fabricate progress.
 - If a request seems harmful or destructive, name the concern. Don't proceed silently.
 
----
+## Delegation
 
-**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+- For non-trivial work with independent research, review, or validation threads, use subagents when supported.
+- Keep the main agent responsible for scope, synthesis, integration, editing, and final verification.
+- Do not delegate trivial linear work or tightly coupled steps solely to satisfy a delegation quota.
+- When asking clarifying questions, prefer the host's structured question tool when available.
 
----
+## Plan-mode feature design
 
-## Delegation & grounding
+When an explicitly identified Plan-mode session concerns a substantial feature, new subsystem, cross-cutting change, or costly-to-reverse architectural decision, use the `architecture-plan` skill for analysis and plan refinement.
 
-- When exploration or research spans many files or independent threads, delegate to subagents / parallel tasks if the tool supports them - keep your own context for synthesis and editing.
-- Ground every decision in the actual code or docs; do online research when the repo lacks the answer (see sections 1-2 above for assumption rules).
-- When asking clarifying questions, prefer the tool's structured question UI (AskUserQuestion / AskQuestion) over free-text option lists.
-- For UI/UX work, propose 2-3 distinct options for review before committing to one.
-- For rich visual artifacts (plans, comparisons, reports), use the `lavish` skill.
+This workflow does not apply to implementation sessions or small, contained changes unless the user invokes the skill explicitly.
 
-## Design gate for large changes
+## Skill Routing
 
-When a task introduces a new subsystem, a new class hierarchy, touches many modules, or adds a capability you expect to grow (more variants, more integrations, more states over time):
-
-1. Do not start coding. First produce a short design note: the key abstractions, their interfaces, and where future variants will plug in.
-2. Apply "program to an interface, not an implementation" and "composition over inheritance". Name the GoF pattern if one genuinely fits - and say why.
-3. Check the design against SOLID, especially SRP and OCP (new variants should be additions, not edits to existing code).
-4. Present the design for review before implementing.
-
-For small, contained changes this gate does not apply - see Simplicity First.
-
-## Code quality review
-
-For code-smell review, pre-merge quality checks, or design-pattern audits -> use the `smell` skill (Clean Code + GoF catalog lives there).
-
----
-
-## Commit & commit messages
-
-When asked to create commit(s) or write a commit message -> See the `commit-message` skill for Conventional Commits formatting rules.
-**NEVER auto-add your agent name as co-author to any commit.**
-
-## Pull request descriptions
-
-When asked to write PR title and/or description -> See the `pr-description` skill for PR title/body formatting rules.
-
----
+- Code smell review, pre-merge quality checks, design-pattern audits -> `smell` skill (Clean Code + GoF catalog).
+- Commit messages -> `commit-message` skill (Conventional Commits format). Never auto-add your agent name as commit co-author.
+- PR title/description -> `pr-description` skill.
 
 ## Other important rules
 
-- Never use the em dash "—". Use plain dash "-" instead.
+- Never delete a Lavish artifact unless the user explicitly asks for deletion.
+- Never use Unicode U+2014. Use a hyphen or other punctuation instead.
