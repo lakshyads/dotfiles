@@ -30,3 +30,6 @@ herdr-client.sock
 
 # no-mistakes local validation state - never commit in this public repo
 .no-mistakes/
+
+# Local Lavish review artifacts - preserve locally, never commit
+.lavish/

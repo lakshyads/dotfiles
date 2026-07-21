@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architecture Plan"
+  short_description: "Design and review substantial feature architecture"
+  default_prompt: "Create a decision-complete architecture plan for this substantial feature, then prepare it for interactive Lavish review."

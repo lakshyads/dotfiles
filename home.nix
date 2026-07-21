@@ -88,7 +88,7 @@ in
       cc = "claude";
       ccc = "claude --dangerously-skip-permissions";
       co = "codex";
-      coo = "codex --full-auto";
+      coo = "codex -a never -s workspace-write";
       aa = "agent"; 
       aaa = "agent -f"; 
     };
@@ -313,9 +313,8 @@ in
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.claude/statusline-command.sh";
 
   # Skills shared across agent CLIs, all reading the same open SKILL.md
-  # format (frontmatter: name + description). ~/.agents/skills is the one
-  # canonical registry — Codex and Cursor both scan it natively, so a skill
-  # placed there is picked up by every tool with no per-tool symlink needed.
+  # format (frontmatter: name + description). ~/.agents/skills is the canonical
+  # registry; Codex, Cursor, and opencode scan it natively.
   # Claude Code is the one exception: it only reads its own ~/.claude/skills
   # folder, so anything meant for Claude Code needs an explicit symlink
   # there too. See docs/inventory.md#shared-agent-skills for the full model.
@@ -331,6 +330,10 @@ in
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/pr-description";
   home.file.".claude/skills/pr-description".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/pr-description";
+  home.file.".agents/skills/architecture-plan".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/architecture-plan";
+  home.file.".claude/skills/architecture-plan".source =
+    config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/skills/architecture-plan";
 
   home.file.".tool-versions".source =
     config.lib.file.mkOutOfStoreSymlink "${dotfiles}/home/.tool-versions";
