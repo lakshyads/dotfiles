@@ -3,7 +3,7 @@ description: Behavioral guidelines to reduce common LLM coding mistakes. Use whe
 alwaysApply: true
 ---
 
-# Behavioral Guidelines 
+# Behavioral Guidelines
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
@@ -12,7 +12,7 @@ alwaysApply: true
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
 
 Before implementing:
-- State assumptions explicitly. If unclear, uncertain or multiple interpretations exist, stop and ask rather than choosing silently.
+- State assumptions explicitly and proceed when the reasonable interpretations lead to the same work. Ask only when interpretations diverge into materially different work, or when a choice is destructive or hard to reverse.
 - If a simpler approach exists, say so. Push back when warranted.
 
 ## 2. Verify Reality First
@@ -25,8 +25,6 @@ Before implementing:
 - When the repository lacks an answer, research authoritative sources if tools permit it.
 
 ## 3. Simplicity First
-
-**For complex feature planning in Plan mode, see Plan-mode feature design below.**
 
 **Minimum code that solves the problem. Nothing speculative.**
 
@@ -64,7 +62,7 @@ The test: Every changed line should trace directly to the user's request.
 
 - For non-trivial work with independent research, review, or validation threads, use subagents when supported.
 - Keep the main agent responsible for scope, synthesis, integration, editing, and final verification.
-- Do not delegate trivial linear work or tightly coupled steps solely to satisfy a delegation quota.
+- Do not delegate trivial linear work or tightly coupled steps; delegation is a tool, not a goal.
 - When asking clarifying questions, prefer the host's structured question tool when available.
 
 ## Plan-mode feature design
@@ -75,8 +73,8 @@ This workflow does not apply to implementation sessions or small, contained chan
 
 ## Skill Routing
 
-- Code smell review, pre-merge quality checks, design-pattern audits -> `smell` skill (Clean Code + GoF catalog).
-- Commit messages -> `commit-message` skill (Conventional Commits format). Never auto-add your agent name as commit co-author.
+- Code smell review, pre-merge quality checks, design-pattern audits -> `smell` skill.
+- Commit messages -> `commit-message` skill. Never auto-add your agent name as commit co-author.
 - PR title/description -> `pr-description` skill.
 
 ## Other important rules
