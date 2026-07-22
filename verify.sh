@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-# verify.sh: End-to-end smoke test of the macOS developer setup.
+# verify.sh: Smoke test of the macOS developer setup.
 #
-# Runs non-destructive checks against every component installed by setup.sh:
-# binaries, symlinks (existence + target), config file content, GUI apps, fonts.
+# Package/dotfile declarations themselves are validated structurally by
+# `nix flake check --no-build` (run as part of this script) — that's the
+# primary contract now, not this file. What's left here is what Nix can't
+# express: is everything actually wired up on THIS machine right now, GUI
+# app presence/signed-in state, and the handful of things bootstrap.sh still
+# manages directly (git identity, asdf runtimes).
 #
 # Exit code 0 if all critical checks pass; 1 if any fail (with summary).
 #
@@ -37,20 +41,50 @@ check_command() {
   fi
 }
 
-# Verify a symlink exists AND points into the dotfiles repo.
-check_symlink() {
+# Verify a path resolves (through any number of symlink hops, e.g. the
+# mkOutOfStoreSymlink -> nix-store -> repo chain home-manager creates) back
+# into this repo. Used for "edit-in-place" files whose real content lives here.
+check_resolves_to_repo() {
   local path="$1" label="${2:-$path}"
-  if [[ -L "$path" ]]; then
-    local target; target=$(readlink "$path")
-    if [[ "$target" == "$DOTFILES_DIR"* ]]; then
-      pass "$label → $target"
+  if [[ -e "$path" ]]; then
+    local resolved; resolved=$(realpath "$path" 2>/dev/null || echo "")
+    if [[ "$resolved" == "$DOTFILES_DIR"* ]]; then
+      pass "$label → $resolved"
     else
-      warn_m "$label is a symlink but points outside dotfiles repo: $target"
+      warn_m "$label exists but resolves outside dotfiles repo: $resolved"
     fi
-  elif [[ -e "$path" ]]; then
-    warn_m "$label exists but is not a symlink (expected symlink into dotfiles repo)"
   else
     fail "$label missing"
+  fi
+}
+
+# Same as check_resolves_to_repo, but for symlink targets that depend on
+# machine-specific state outside this repo (e.g. an external workspace
+# checkout that isn't guaranteed to exist on every machine this repo is
+# cloned onto). A missing target here is a warn, not a hard fail.
+check_resolves_to_repo_optional() {
+  local path="$1" label="${2:-$path}"
+  if [[ -e "$path" ]]; then
+    local resolved; resolved=$(realpath "$path" 2>/dev/null || echo "")
+    if [[ "$resolved" == "$DOTFILES_DIR"* ]]; then
+      pass "$label → $resolved"
+    else
+      warn_m "$label exists but resolves outside dotfiles repo: $resolved"
+    fi
+  else
+    warn_m "$label missing (optional: depends on external workspace)"
+  fi
+}
+
+# Verify a home-manager-*generated* file exists (its real content is a
+# Nix-store-managed file, not something in this repo, so we just check it's
+# there rather than expecting it to resolve back into the repo).
+check_nonempty() {
+  local path="$1" label="${2:-$path}"
+  if [[ -s "$path" ]]; then
+    pass "$label exists and is non-empty"
+  else
+    fail "$label missing or empty"
   fi
 }
 
@@ -81,8 +115,22 @@ check_json() {
 echo
 printf "\033[1;36m══  macOS Developer Setup: Verification  ══\033[0m\n"
 
-# ── 1. Homebrew ───────────────────────────────────────────────────────────────
-info "1. Homebrew"
+# ── 1. Nix / nix-darwin / Homebrew ────────────────────────────────────────────
+info "1. Nix / nix-darwin / Homebrew"
+check_command nix "Nix"
+if command -v darwin-rebuild >/dev/null 2>&1 || [[ -x /run/current-system/sw/bin/darwin-rebuild ]]; then
+  pass "darwin-rebuild available"
+else
+  fail "darwin-rebuild not found — run ./bootstrap.sh"
+fi
+if command -v nix >/dev/null 2>&1; then
+  info "Validating flake (nix flake check --no-build) …"
+  if (cd "$DOTFILES_DIR" && nix flake check --no-build >/dev/null 2>&1); then
+    pass "flake.nix / configuration.nix / home.nix evaluate cleanly"
+  else
+    fail "flake evaluation failed — run: nix flake check --no-build"
+  fi
+fi
 check_command brew "Homebrew"
 if command -v brew >/dev/null 2>&1; then
   prefix="$(brew --prefix)"
@@ -90,19 +138,6 @@ if command -v brew >/dev/null 2>&1; then
     pass "Homebrew prefix: /opt/homebrew (Apple Silicon)"
   else
     warn_m "Homebrew prefix: $prefix (expected /opt/homebrew on Apple Silicon)"
-  fi
-fi
-if grep -q "brew shellenv" "$HOME/.zprofile" 2>/dev/null; then
-  pass "Homebrew PATH persisted in ~/.zprofile"
-else
-  fail "Homebrew PATH missing from ~/.zprofile (login shells won't find brew)"
-fi
-# Verify Brewfile is fully satisfied.
-if command -v brew >/dev/null 2>&1; then
-  if brew bundle check --file="$DOTFILES_DIR/Brewfile" --quiet 2>/dev/null; then
-    pass "All Brewfile packages installed"
-  else
-    warn_m "Some Brewfile packages not installed — run: brew bundle"
   fi
 fi
 
@@ -113,7 +148,7 @@ if command -v asdf >/dev/null 2>&1; then
   for lang in nodejs python golang java; do
     if asdf current "$lang" >/dev/null 2>&1; then
       ver=$(asdf current "$lang" 2>/dev/null | awk -v l="$lang" '$1 == l {print $2}')
-      tv_ver=$(grep "^${lang}" "$DOTFILES_DIR/.tool-versions" 2>/dev/null | awk '{print $2}')
+      tv_ver=$(grep "^${lang}" "$DOTFILES_DIR/home/.tool-versions" 2>/dev/null | awk '{print $2}')
       if [[ -n "$tv_ver" && "$ver" == "$tv_ver" ]]; then
         pass "asdf $lang: $ver (matches .tool-versions)"
       elif [[ -n "$tv_ver" ]]; then
@@ -122,10 +157,9 @@ if command -v asdf >/dev/null 2>&1; then
         pass "asdf $lang: $ver"
       fi
     else
-      fail "asdf $lang not configured (run: asdf plugin add $lang && asdf install)"
+      fail "asdf $lang not configured (run: ./bootstrap.sh)"
     fi
   done
-  # Verify shim binaries resolve.
   for bin in node python go java; do
     check_command "$bin" "$bin shim"
   done
@@ -139,35 +173,29 @@ else
   warn_m "Login shell is $SHELL (expected zsh) — run: chsh -s $(which zsh 2>/dev/null || echo zsh)"
 fi
 check_command starship "Starship"
-if [[ -f "/opt/homebrew/opt/antidote/share/antidote/antidote.zsh" ]]; then
-  pass "Antidote plugin manager installed"
-else
-  fail "Antidote not found at expected path"
-fi
 
-# .zshrc initializations
-check_contains "$HOME/.zshrc" "antidote"              ".zshrc sources antidote"
-check_contains "$HOME/.zshrc" "starship init"         ".zshrc initializes Starship"
-check_contains "$HOME/.zshrc" "asdf"                  ".zshrc initializes asdf"
-check_contains "$HOME/.zshrc" "zoxide init"           ".zshrc initializes zoxide"
-check_contains "$HOME/.zshrc" "atuin init"            ".zshrc initializes atuin"
-
-# .zsh_plugins.txt — all three plugins must be present
-check_contains "$HOME/.zsh_plugins.txt" "zsh-autosuggestions"  ".zsh_plugins.txt: zsh-autosuggestions"
-check_contains "$HOME/.zsh_plugins.txt" "zsh-completions"      ".zsh_plugins.txt: zsh-completions"
-check_contains "$HOME/.zsh_plugins.txt" "zsh-syntax-highlighting" ".zsh_plugins.txt: zsh-syntax-highlighting"
+# Native home-manager zsh plugins — antidote was retired in favor of these.
+check_contains "$HOME/.zshrc" "zsh-autosuggestions"     ".zshrc: autosuggestion enabled"
+check_contains "$HOME/.zshrc" "zsh-syntax-highlighting" ".zshrc: syntax-highlighting enabled"
+check_contains "$HOME/.zshrc" "starship init"           ".zshrc: initializes Starship"
+check_contains "$HOME/.zshrc" "asdf"                    ".zshrc: initializes asdf shims"
+check_contains "$HOME/.zshrc" "zoxide"                  ".zshrc: initializes zoxide"
+check_contains "$HOME/.zshrc" "atuin"                   ".zshrc: initializes atuin"
 
 # ── 4. Modern CLI Tools ───────────────────────────────────────────────────────
 info "4. Modern CLI Tools"
-for tool in rg fd bat eza zoxide fzf delta lazygit btop dust tldr atuin; do
+for tool in rg fd bat eza zoxide fzf delta lazygit btop dust tldr atuin nvim tree-sitter; do
   check_command "$tool" "$tool"
 done
 
 # ── 4b. AI Coding CLIs ────────────────────────────────────────────────────────
 info "4b. AI Coding CLIs"
-check_command codex "codex (OpenAI Codex CLI)"
+check_command claude  "claude (Claude Code CLI)"
+check_command codex   "codex (OpenAI Codex CLI)"
+check_command opencode "opencode (AI coding agent)"
+check_command agent   "agent (Cursor CLI)"
 
-# ── 5. Git & GitHub CLI ───────────────────────────────────────────────────────
+# ── 5. Git & GitHub ───────────────────────────────────────────────────────────
 info "5. Git & GitHub"
 check_command git  "git"
 check_command gh   "GitHub CLI"
@@ -175,8 +203,8 @@ if command -v git >/dev/null 2>&1; then
   name=$(git config --get user.name  2>/dev/null || echo "")
   email=$(git config --get user.email 2>/dev/null || echo "")
   branch=$(git config --get init.defaultBranch 2>/dev/null || echo "")
-  [[ -n "$name"   ]] && pass "git user.name: $name"   || fail "git user.name not set"
-  [[ -n "$email"  ]] && pass "git user.email: $email"  || fail "git user.email not set"
+  [[ -n "$name"   ]] && pass "git user.name: $name"   || fail "git user.name not set (run: ./bootstrap.sh)"
+  [[ -n "$email"  ]] && pass "git user.email: $email"  || fail "git user.email not set (run: ./bootstrap.sh)"
   [[ -n "$branch" ]] && pass "git init.defaultBranch: $branch" \
                      || warn_m "git init.defaultBranch not set (will default to 'master')"
 fi
@@ -184,75 +212,69 @@ fi
 # ── 6. Cloud Tools ────────────────────────────────────────────────────────────
 info "6. Cloud Tools"
 check_command gcloud "gcloud (Google Cloud CLI)"
-check_command gh     "gh (GitHub CLI)"
+check_command terraform "terraform"
+check_command stripe "stripe"
 
-# ── 7. Claude Code ────────────────────────────────────────────────────────────
-info "7. Claude Code"
-if command -v claude >/dev/null 2>&1; then
-  pass "claude on PATH"
-elif [[ -x "$HOME/.local/bin/claude" ]]; then
-  fail "claude at ~/.local/bin/claude but not on PATH (add ~/.local/bin to PATH in ~/.zshrc)"
-else
-  fail "Claude Code not found (run: curl -fsSL https://claude.ai/install.sh | bash)"
-fi
+# ── 7. Dotfile Wiring ─────────────────────────────────────────────────────────
+info "7. Dotfile Wiring"
 
-# ── 8. Dotfile Symlinks ───────────────────────────────────────────────────────
-info "8. Dotfile Symlinks"
-check_symlink "$HOME/.zshrc"                                "~/.zshrc"
-check_symlink "$HOME/.zsh_plugins.txt"                      "~/.zsh_plugins.txt"
-check_symlink "$HOME/.tool-versions"                        "~/.tool-versions"
-check_symlink "$HOME/.config/ghostty/config"                "~/.config/ghostty/config"
-check_symlink "$HOME/.config/starship.toml"                 "~/.config/starship.toml"
-check_symlink "$HOME/.config/linearmouse/linearmouse.json"  "~/.config/linearmouse/linearmouse.json"
-check_symlink "$HOME/.claude/CLAUDE.md"                      "~/.claude/CLAUDE.md"
-check_symlink "$HOME/.claude/settings.json"                  "~/.claude/settings.json"
-check_symlink "$HOME/.claude/statusline-command.sh"          "~/.claude/statusline-command.sh"
-check_symlink "$HOME/.codex/instructions.md"                 "~/.codex/instructions.md"
-check_symlink "$HOME/.cursor/rules/git-commits.mdc"          "~/.cursor/rules/git-commits.mdc"
+# Edit-in-place: real content lives in this repo, home-manager just symlinks
+# (via mkOutOfStoreSymlink) so editing here takes effect without a rebuild.
+check_resolves_to_repo "$HOME/.config/wezterm/wezterm.lua"          "~/.config/wezterm/wezterm.lua"
+check_resolves_to_repo "$HOME/.config/ghostty/config"               "~/.config/ghostty/config"
+check_resolves_to_repo "$HOME/.config/nvim/init.lua"                "~/.config/nvim/init.lua"
+check_resolves_to_repo "$HOME/.config/linearmouse/linearmouse.json" "~/.config/linearmouse/linearmouse.json"
+check_resolves_to_repo "$HOME/.config/herdr/config.toml"            "~/.config/herdr/config.toml"
+check_resolves_to_repo_optional "$HOME/Documents/workspace/my-matrix/a-utils/cheatsheets" "~/Documents/workspace/my-matrix/a-utils/cheatsheets (optional: external workspace)"
+check_resolves_to_repo "$HOME/.tool-versions"                       "~/.tool-versions (-> home/.tool-versions)"
+check_resolves_to_repo "$HOME/.claude/CLAUDE.md"                    "~/.claude/CLAUDE.md (-> home/AGENTS.md)"
+check_resolves_to_repo "$HOME/.codex/AGENTS.md"                     "~/.codex/AGENTS.md"
+check_resolves_to_repo "$HOME/.config/opencode/AGENTS.md"           "~/.config/opencode/AGENTS.md"
+check_resolves_to_repo "$HOME/.cursor/rules/master-rules.md"        "~/.cursor/rules/master-rules.md (-> home/AGENTS.md)"
+check_resolves_to_repo "$HOME/.claude/settings.json"                "~/.claude/settings.json"
+check_resolves_to_repo "$HOME/.claude/statusline-command.sh"        "~/.claude/statusline-command.sh"
+check_resolves_to_repo "$HOME/.agents/skills/smell"                 "~/.agents/skills/smell (-> home/skills/smell)"
+check_resolves_to_repo "$HOME/.claude/skills/smell"                 "~/.claude/skills/smell (-> home/skills/smell)"
+check_resolves_to_repo "$HOME/.agents/skills/commit-message"        "~/.agents/skills/commit-message (-> home/skills/commit-message)"
+check_resolves_to_repo "$HOME/.claude/skills/commit-message"        "~/.claude/skills/commit-message (-> home/skills/commit-message)"
+check_resolves_to_repo "$HOME/.agents/skills/pr-description"        "~/.agents/skills/pr-description (-> home/skills/pr-description)"
+check_resolves_to_repo "$HOME/.claude/skills/pr-description"        "~/.claude/skills/pr-description (-> home/skills/pr-description)"
+check_resolves_to_repo "$HOME/.agents/skills/architecture-plan"      "~/.agents/skills/architecture-plan (-> home/skills/architecture-plan)"
+check_resolves_to_repo "$HOME/.claude/skills/architecture-plan"      "~/.claude/skills/architecture-plan (-> home/skills/architecture-plan)"
 
-# ── 9. Config File Integrity ──────────────────────────────────────────────────
-info "9. Config File Integrity"
+# home-manager-generated: real content is a Nix-store-managed file, not
+# something in this repo — just check it exists.
+check_nonempty "$HOME/.zshrc"                "~/.zshrc (home-manager generated)"
+check_nonempty "$HOME/.config/starship.toml" "~/.config/starship.toml (home-manager generated)"
 
-# Ghostty
+# ── 8. Config File Integrity ──────────────────────────────────────────────────
+info "8. Config File Integrity"
+
 GHOSTTY_CFG="$HOME/.config/ghostty/config"
-check_contains "$GHOSTTY_CFG" "font-family"         "ghostty-config: font-family set"
+check_contains "$GHOSTTY_CFG" "font-family"           "ghostty-config: font-family set"
 check_contains "$GHOSTTY_CFG" "term = xterm-256color" "ghostty-config: term=xterm-256color (SSH safety)"
-check_contains "$GHOSTTY_CFG" "theme"               "ghostty-config: theme set"
+check_contains "$GHOSTTY_CFG" "theme"                 "ghostty-config: theme set"
 
-# Starship
-if [[ -f "$HOME/.config/starship.toml" ]]; then
-  if [[ -s "$HOME/.config/starship.toml" ]]; then
-    pass "starship.toml exists and is non-empty"
-  else
-    warn_m "starship.toml is empty"
-  fi
-else
-  fail "starship.toml not found"
-fi
-
-# LinearMouse — must be valid JSON
 check_json "$HOME/.config/linearmouse/linearmouse.json" "linearmouse.json"
 
-# Delta git config — included from dotfiles/gitconfig
-check_contains "$HOME/.gitconfig"        "include"       "~/.gitconfig: includes dotfiles/gitconfig"
-check_contains "$DOTFILES_DIR/gitconfig" "pager = delta" "dotfiles/gitconfig: delta pager configured"
+check_contains "$HOME/.config/git/config" 'pager = "delta"' "~/.config/git/config: delta pager configured (home-manager)"
 
-# ── 10. GUI Applications ──────────────────────────────────────────────────────
-info "10. GUI Applications"
+# ── 9. GUI Applications ───────────────────────────────────────────────────────
+info "9. GUI Applications"
 APPS=(
   "Ghostty"
+  "WezTerm"
   "Visual Studio Code"
   "Cursor"
   "Docker"
   "Google Chrome"
   "Firefox"
   "ChatGPT Atlas"
-  "1Password"
   "Rectangle"
   "AppCleaner"
   "Maccy"
   "LinearMouse"
-  "SuperWhisper"
+  "OpenSuperWhisper"
   "Obsidian"
   "Granola"
   "Postman"
@@ -268,28 +290,23 @@ for app in "${APPS[@]}"; do
   fi
 done
 
-# ── 11. Fonts ─────────────────────────────────────────────────────────────────
-info "11. Nerd Fonts"
+# ── 10. Nerd Fonts ─────────────────────────────────────────────────────────────
+info "10. Nerd Fonts"
 for font_pattern in "JetBrainsMono" "FiraCode"; do
   label="${font_pattern} Nerd Font"
-  if brew list --cask 2>/dev/null | grep -qi "$(echo "$font_pattern" | tr '[:upper:]' '[:lower:]')"; then
-    pass "$label (Homebrew cask)"
-  elif compgen -G "$HOME/Library/Fonts/${font_pattern}*" >/dev/null 2>&1 \
-    || compgen -G "/Library/Fonts/${font_pattern}*" >/dev/null 2>&1; then
-    pass "$label (font directory)"
+  if compgen -G "$HOME/Library/Fonts/${font_pattern}*" >/dev/null 2>&1 \
+    || compgen -G "/Library/Fonts/${font_pattern}*" >/dev/null 2>&1 \
+    || compgen -G "/Library/Fonts/Nix Fonts/${font_pattern}*" >/dev/null 2>&1; then
+    pass "$label"
   else
     warn_m "$label not detected (icons may render as boxes)"
   fi
 done
 
-# ── 12. fzf Shell Integration ─────────────────────────────────────────────────
-info "12. fzf Shell Integration"
-if [[ -f "$HOME/.fzf.zsh" ]]; then
-  pass "~/.fzf.zsh exists (key bindings installed)"
-else
-  fail "~/.fzf.zsh missing — run: \$(brew --prefix)/opt/fzf/install --key-bindings --completion --no-update-rc"
-fi
-check_contains "$HOME/.zshrc" "fzf.zsh" ".zshrc sources fzf key bindings"
+# ── 11. fzf Integration ────────────────────────────────────────────────────────
+info "11. fzf Integration"
+check_command fzf "fzf"
+check_contains "$HOME/.zshrc" "FZF_CTRL_T_OPTS" ".zshrc: fzf preview options configured"
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 printf "\n\033[1;36m━━  Summary\033[0m\n"
