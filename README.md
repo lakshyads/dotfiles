@@ -270,7 +270,7 @@ This repo is meant to be forked and personalized. The files worth editing:
 | `home/.config/herdr/config.toml` | herdr (terminal agent multiplexer) keybindings. Edit-in-place, no rebuild needed. |
 | `home/.config/linearmouse/linearmouse.json` | Mouse settings (side buttons, scroll direction, acceleration). Edit via the LinearMouse GUI; changes write back to the file automatically. |
 | `home/.baby-menu/` | Baby Menu extensions, preferences, and custom agents. Agent edits write through the symlink; DB/caches stay under `~/.baby-menu/` only. |
-| `home/AGENTS.md` | Shared agent instructions, symlinked into Claude Code, Codex, opencode, Pi, and Cursor. |
+| `home/AGENTS.md` | Shared agent instructions, symlinked into Claude Code, Codex, opencode, and Pi. Cursor can read personal rules from `~/.cursor/rules/*.mdc`, but these instructions are deliberately not wired there. |
 
 After any changes, commit them to your dotfiles repo. Other machines pick up changes with `git pull && ./rebuild.sh` (or `./bootstrap.sh` on a machine that hasn't been bootstrapped yet).
 
@@ -470,7 +470,7 @@ dotfiles/
 ├── home.nix                    # home-manager: config only — zsh/starship/git config, dotfile symlinks, fonts
 ├── Brewfile                    # RETIRED — pointer stub, superseded by configuration.nix
 ├── home/                       # edit-in-place source for home-manager's mkOutOfStoreSymlink files
-│   ├── AGENTS.md                # shared agent instructions (Claude, Codex, opencode, Pi, Cursor)
+│   ├── AGENTS.md                # shared agent instructions (Claude, Codex, opencode, Pi)
 │   ├── .tool-versions            # asdf runtime versions (Node, Python, Go, Java)
 │   ├── npm-globals.txt          # global npm CLIs (pi, *-axi, …)
 │   ├── agent-skills.txt         # third-party agent skills (npx skills)

@@ -308,16 +308,16 @@ Files in `.cursor/rules/` that are automatically loaded:
 
 ```
 .cursor/rules/
-├── typescript.md       # TS conventions for this project
-├── security.md         # security requirements
-└── api-style.md        # API design patterns
+├── typescript.mdc      # TS conventions for this project
+├── security.mdc        # security requirements
+└── api-style.mdc       # API design patterns
 ```
 
 Manage with `/rules` to create or edit interactively.
 
 The CLI also reads `AGENTS.md` and `CLAUDE.md` at project root (if present) and applies them as rules, so a well-written CLAUDE.md works for both tools.
 
-> **No global rules yet.** Unlike Claude Code (`~/.claude/CLAUDE.md`) and Codex (`~/.codex/AGENTS.md`), Cursor CLI has no home-directory rules file - it only reads `.cursor/rules/`, `AGENTS.md`, and `CLAUDE.md` from the current project's root. Cursor's own team has confirmed this on the forum ("Global AI rules aren't supported yet, instructions must be defined at the project level"); there's an open, unresolved feature request for it as of mid-2026. This repo's `home/AGENTS.md` is the shared source of truth for Claude/Codex/OpenCode, but it must be manually symlinked or copied into each project's root for Cursor CLI to pick it up there.
+> **Personal rules.** Cursor also reads personal rule files from `~/.cursor/rules/*.mdc`; they stay on this machine and don't sync. Like project rules they need the `.mdc` extension: plain `.md` files in a `.cursor/rules` folder are ignored. This repo's `home/AGENTS.md` is deliberately not wired there, so Cursor only gets project-level instructions, while Claude Code, Codex, OpenCode and Pi load `home/AGENTS.md` through their own symlinks.
 
 ### Skills (on-demand knowledge)
 

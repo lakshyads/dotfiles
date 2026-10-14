@@ -248,7 +248,6 @@ check_resolves_to_repo "$HOME/.claude/CLAUDE.md"                    "~/.claude/C
 check_resolves_to_repo "$HOME/.codex/AGENTS.md"                     "~/.codex/AGENTS.md"
 check_resolves_to_repo "$HOME/.config/opencode/AGENTS.md"           "~/.config/opencode/AGENTS.md"
 check_resolves_to_repo "$HOME/.pi/agent/AGENTS.md"                  "~/.pi/agent/AGENTS.md"
-check_resolves_to_repo "$HOME/.cursor/rules/master-rules.md"        "~/.cursor/rules/master-rules.md (-> home/AGENTS.md)"
 check_resolves_to_repo "$HOME/.claude/settings.json"                "~/.claude/settings.json"
 check_resolves_to_repo "$HOME/.claude/statusline-command.sh"        "~/.claude/statusline-command.sh"
 check_resolves_to_repo "$HOME/.agents/skills/smell"                 "~/.agents/skills/smell (-> home/skills/smell)"
