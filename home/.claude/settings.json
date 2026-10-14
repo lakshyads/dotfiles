@@ -1,5 +1,5 @@
 {
-  "model": "sonnet",
+  "model": "opus",
   "hooks": {
     "SessionStart": [
       {
@@ -38,7 +38,15 @@
     "type": "command",
     "command": "bash ~/.claude/statusline-command.sh"
   },
-  "effortLevel": "xhigh",
+  "effortLevel": "high",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    }
+  },
   "skipDangerousModePermissionPrompt": true,
-  "theme": "dark-ansi"
+  "theme": "auto",
+  "switchModelsOnFlag": true,
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true
 }
