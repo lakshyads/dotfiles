@@ -38,7 +38,7 @@ See [`README.md` — Cheat Sheets & References](README.md#cheat-sheets--referenc
 Use `rg` (ripgrep) to find relevant content fast before doing a full file read:
 
 ```
-rg "<keyword>" /Users/lakshyadevsingh/dotfiles/docs/ -l
+rg "<keyword>" docs/ -l
 rg "<keyword>" <matched-file> -n
 ```
 
@@ -166,4 +166,4 @@ Keep `verify.sh` in sync:
 
 1. **Say so explicitly.**
 2. **Search the web** using the WebSearch tool. Prefer official docs and release notes over blog posts.
-3. **Update the repo** if the answer is stable and reusable — place it in the most relevant `docs/cheatsheets/*-cheatsheet.md`. Match existing tone: skimmable, commands first, gotchas where they matter. Do this proactively in Agent sessions.
+3. **Offer to update the cheatsheet** if the answer is stable and reusable: suggest the most relevant `docs/cheatsheets/*-cheatsheet.md`, and wait for approval before editing it. Match existing tone: skimmable, commands first, gotchas where they matter.
