@@ -1,10 +1,11 @@
 # Installed Software Inventory
 
 > **Source of truth per install method:**
-> - GUI apps (casks), asdf + build deps, tapped tools: `configuration.nix`'s `homebrew` block
-> - CLI tools available in nixpkgs: `home.nix`'s `home.packages` / `programs.*`
+> - Every CLI tool (formulae) and GUI app (casks): `configuration.nix`'s `homebrew` block
+> - Global npm CLIs: `home/npm-globals.txt` (installed by `./npm-globals.sh`)
+> - Config only (zsh, Starship prompt, git config, symlinks) plus fonts and zsh completions: `home.nix`
 > - Language runtime versions: `.tool-versions`
-> - Non-Homebrew, non-Nix installs: `bootstrap.sh`
+> - Self-updating native installers (Claude Code `claude`, Cursor `agent`): `bootstrap.sh`
 >
 > Update this file whenever any of the above change.
 
@@ -16,7 +17,7 @@
 |------|---------------|-------|
 | Xcode Command Line Tools | `xcode-select --install` | Required for `git` and native compilation on macOS; installed by `bootstrap.sh` |
 | Determinate Nix | `curl \| sh` (install.determinate.systems) | Nix package manager; installed by `bootstrap.sh` |
-| Homebrew | Adopted by nix-homebrew (`autoMigrate = true` in `configuration.nix`) | Package manager for GUI apps + a few CLI tools; management itself is now declared in `configuration.nix`, not a separate bootstrap step |
+| Homebrew | Adopted by nix-homebrew (`autoMigrate = true` in `configuration.nix`) | Package manager for every CLI tool and GUI app; management itself is now declared in `configuration.nix`, not a separate bootstrap step |
 
 ---
 
@@ -47,29 +48,27 @@ All declared in `configuration.nix`'s `homebrew.casks` (applied via `darwin-rebu
 | Baby Menu | `configuration.nix` (homebrew.casks: `kunchenguid/tap/baby-menu`) | Productivity | Agent-editable macOS menu bar — ask Claude/Codex (or a custom ACP agent) to add widgets. Extensions, `preferences.json`, and `agents.json` are edit-in-place via `home.nix`'s `mkOutOfStoreSymlink` + `home.activation.backupBabyMenuConfig` (`home/.baby-menu/`); SQLite DB and caches stay machine-local under `~/.baby-menu/` |
 | Claude (desktop) | `configuration.nix` (homebrew.casks: `claude`) | AI | Anthropic Claude desktop app |
 | Codex (desktop) | `configuration.nix` (homebrew.casks: `codex-app`) | AI | OpenAI Codex desktop app for managing coding agents; global instructions symlinked from `home/AGENTS.md` to `~/.codex/AGENTS.md` |
-| Claude Code | `configuration.nix` (homebrew.casks: `claude-code`) | AI / CLI | Global config (`CLAUDE.md` from `home/AGENTS.md`, `settings.json`, `statusline-command.sh`) symlinked via home-manager into `~/.claude/`. Updates via Homebrew's `onActivation.autoUpdate`, not a native installer. |
-
 ---
 
 ## CLI Tools & Utilities
 
 ### Version control & core utilities
 
-Installed via `home.nix`'s `home.packages` (Nix), unless noted otherwise.
+Installed via `configuration.nix` (homebrew.brews), unless noted otherwise.
 
 | Tool | Description |
 |------|-------------|
-| `git` | Version control |
+| `git` | Version control; config written to `~/.config/git/config` by `home.nix`'s `programs.git` (`package = null`, so the binary is Homebrew's) |
 | `gh` | GitHub CLI |
 | `jq` | JSON processor |
 | `tree` | Directory tree visualizer |
 | `wget` | HTTP downloader |
 | `nvim` (neovim) | Modal text editor — see `home/.config/nvim/` for the full lazy.nvim config |
-| `tree-sitter` | Parser generator CLI; nvim-treesitter shells out to it to compile Neovim's syntax parsers |
+| `tree-sitter` (formula `tree-sitter-cli`) | Parser generator CLI; nvim-treesitter shells out to it to compile Neovim's syntax parsers |
 
 ### Modern CLI replacements
 
-Installed via `home.nix`'s `home.packages` (Nix), unless noted otherwise.
+Installed via `configuration.nix` (homebrew.brews), unless noted otherwise.
 
 | Tool | Replaces | Description |
 |------|----------|-------------|
@@ -77,24 +76,34 @@ Installed via `home.nix`'s `home.packages` (Nix), unless noted otherwise.
 | `fd` | `find` | Intuitive file finder; parallel, regex by default |
 | `bat` | `cat` | Syntax-highlighted file viewer with line numbers |
 | `eza` | `ls` | Modern listing with icons, git status, tree view |
-| `zoxide` (`z`) | `cd` | Learns habits; jump to dirs by partial name — `home.nix`'s `programs.zoxide` (Nix, home-manager module, handles shell init) |
-| `fzf` | — | Fuzzy finder for history, files, branches, processes — `home.nix`'s `programs.fzf` (Nix, home-manager module, handles shell integration) |
-| `delta` | `diff` pager | Syntax-highlighted, side-by-side git diffs; declared in `home.nix`'s `programs.git.settings` (home-manager, applied to `~/.config/git/config`) (nixpkgs package name is `delta`, not `git-delta`) |
+| `zoxide` (`z`) | `cd` | Learns habits; jump to dirs by partial name — shell init in `home.nix`'s `programs.zsh.initContent` |
+| `fzf` | — | Fuzzy finder for history, files, branches, processes — shell integration in `home.nix`'s `programs.zsh.initContent` |
+| `delta` | `diff` pager | Syntax-highlighted, side-by-side git diffs (formula `git-delta`); pager config declared in `home.nix`'s `programs.git.settings` (home-manager, applied to `~/.config/git/config`) |
 | `lazygit` (`lg`) | — | Full terminal UI for git |
 | `btop` | `top` / `htop` | Modern resource monitor with graphs |
 | `dust` | `du` | Tree-based disk usage visualizer |
-| `tldr` | `man` (common cases) | Simplified man pages with real examples |
-| `atuin` | `~/.zsh_history` | SQLite-backed shell history with search — `home.nix`'s `programs.atuin` (Nix, home-manager module) |
+| `tldr` | `man` (common cases) | Simplified man pages with real examples (formula `tlrc`; the `tldr` formula is disabled) |
+| `atuin` | `~/.zsh_history` | SQLite-backed shell history with search — shell init in `home.nix`'s `programs.zsh.initContent` |
 
 ### AI coding CLIs
 
 | Tool | Installed via | Description |
 |------|---------------|-------------|
-| `claude` | `configuration.nix` (homebrew.casks: `claude-code`) | Anthropic Claude Code CLI |
+| `claude` | Anthropic's native installer (`bootstrap.sh`, into `~/.local/bin`) | Anthropic Claude Code CLI. Auto-updates in the background (channel: `autoUpdatesChannel` in `home/.claude/settings.json`); `claude update` on the spot. Global config (`CLAUDE.md` from `home/AGENTS.md`, `settings.json`, `statusline-command.sh`) symlinked via home-manager into `~/.claude/` |
 | `codex` | `configuration.nix` (homebrew.casks: `codex`) | OpenAI Codex CLI — coding agent in terminal |
-| `opencode` | `home.nix` (home.packages) | AI coding agent, built for the terminal |
-| `pi` | `home.nix` (home.packages: `pi-coding-agent`) | Minimal coding agent harness ([pi.dev](https://pi.dev)); global instructions at `~/.pi/agent/AGENTS.md` |
-| `agent` / `cursor-agent` | Installed independently by Cursor (not via this repo) | Cursor's agent CLI, under `~/.local/bin` — aliased to `aa` in `home.nix`'s `programs.zsh.shellAliases` |
+| `opencode` | `configuration.nix` (homebrew.brews) | AI coding agent, built for the terminal |
+| `pi` | npm (`@earendil-works/pi-coding-agent` in `home/npm-globals.txt`, installed by `./npm-globals.sh` into `~/.local/share/npm-global`) | Minimal coding agent harness ([pi.dev](https://pi.dev)); global instructions at `~/.pi/agent/AGENTS.md` |
+| `agent` / `cursor-agent` | Cursor's native installer (`bootstrap.sh`, into `~/.local/bin`) | Cursor's agent CLI; self-updating, `agent update` on the spot — aliased to `aa` in `home.nix`'s `programs.zsh.shellAliases` |
+
+#### Agent-facing npm CLIs
+
+All declared in `home/npm-globals.txt` and installed by `./npm-globals.sh` into `~/.local/share/npm-global`.
+
+| Tool | Description |
+|------|-------------|
+| `gh-axi`, `lavish-axi`, `tasks-axi`, `quota-axi`, `chrome-devtools-axi` | Agent-facing CLIs; the Claude Code `SessionStart` hooks in `home/.claude/settings.json` call these |
+| `chrome-devtools-mcp` | Chrome DevTools MCP server for agents |
+| `acpx` | Agent Client Protocol (ACP) CLI |
 
 #### Shared agent skills
 
@@ -121,12 +130,14 @@ See [git cheatsheet — Code smell review](cheatsheets/git-cheatsheet.md), [git 
 |------|---------------|-------------|
 | `terraform` | `configuration.nix` (homebrew.brews, tap: `hashicorp/tap`) | Infrastructure-as-code CLI |
 | `stripe` | `configuration.nix` (homebrew.brews, tap: `stripe/stripe-cli`) | Stripe CLI: webhook testing, API calls |
+| `firebase` | npm (`firebase-tools` in `home/npm-globals.txt`) | Firebase CLI |
+| `posthog-cli` | npm (`@posthog/cli` in `home/npm-globals.txt`) | PostHog CLI |
 
 ### Shell productivity
 
 | Tool | Installed via | Description |
 |------|---------------|-------------|
-| `starship` | `home.nix` (programs.starship) | Cross-shell prompt (replaces Powerlevel10k) |
+| `starship` | `configuration.nix` (homebrew.brews) | Cross-shell prompt (replaces Powerlevel10k); config generated by `home.nix`'s `xdg.configFile."starship.toml"` |
 
 Zsh plugin management (autosuggestions, syntax-highlighting, completion) is native to home-manager now — see [Zsh plugins](#zsh-plugins) below. Antidote and `.zsh_plugins.txt` were retired.
 
@@ -150,7 +161,7 @@ Zsh plugin management (autosuggestions, syntax-highlighting, completion) is nati
 
 | Tool | Installed via | Description |
 |------|---------------|-------------|
-| fzf key bindings | `home.nix`'s `programs.fzf.enableZshIntegration` (Nix, home-manager module) | Wires `Ctrl+T`, `Ctrl+R`, `Alt+C` into Zsh — no separate install script needed anymore |
+| fzf key bindings | `source <(fzf --zsh)` in `home.nix`'s `programs.zsh.initContent` | Wires `Ctrl+T`, `Ctrl+R`, `Alt+C` into Zsh — no separate install script needed anymore |
 
 ### Build & compilation support
 

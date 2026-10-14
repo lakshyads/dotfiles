@@ -19,8 +19,9 @@
 #   6. Registers asdf plugins and installs runtimes from .tool-versions
 #      (per-project .tool-versions overrides don't fit Nix's model, so
 #      runtimes stay asdf-managed by design).
-#   7. Installs the Cursor CLI (`agent`) via Cursor's own installer — not
-#      Nix/Homebrew-managed.
+#      Then installs global npm CLIs (e.g. pi) from home/npm-globals.txt.
+#   7. Installs the Claude Code CLI (`claude`) and Cursor CLI (`agent`) via
+#      their own self-updating installers — not Nix/Homebrew-managed.
 #   8. Prompts for git identity (still written directly to ~/.gitconfig —
 #      pager/merge/delta config is now nix-managed separately via
 #      ~/.config/git/config).
@@ -101,6 +102,10 @@ info "Running first darwin-rebuild switch (this will prompt for your password)..
 sudo nix run nix-darwin/nix-darwin-26.05#darwin-rebuild -- switch --flake "$DOTFILES_DIR#${HOST_LABEL}"
 done_ "nix-darwin bootstrapped — packages installed, dotfiles symlinked."
 
+# This shell predates the switch, so pick up what it just installed.
+eval "$(/opt/homebrew/bin/brew shellenv)"
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH:$HOME/.local/bin"
+
 # ── 6. Language Runtimes (asdf) ───────────────────────────────────────────────
 # asdf itself just got installed via configuration.nix's homebrew.brews.
 # Plugins and the actual runtime installs from .tool-versions aren't Nix's job.
@@ -115,7 +120,26 @@ if command -v asdf >/dev/null 2>&1; then
   asdf install
   done_ "Language runtimes installed"
 else
-  warn "asdf not found on PATH yet — open a new terminal and re-run this script."
+  warn "asdf not found after the switch — check configuration.nix's homebrew.brews, then re-run this script."
+fi
+
+# ── 6b. Global npm CLIs ───────────────────────────────────────────────────────
+# Needs Node from step 6. Unpinned entries in home/npm-globals.txt install at
+# latest; pinned ones at their exact version.
+section "Global npm CLIs"
+"$DOTFILES_DIR/npm-globals.sh" sync || warn "Some npm globals failed — re-run: ./npm-globals.sh"
+
+# ── 7a. Claude Code CLI ───────────────────────────────────────────────────────
+# Native installer, not the Homebrew cask: it auto-updates in the background
+# (channel set by autoUpdatesChannel in home/.claude/settings.json), and
+# `claude update` works on the spot.
+section "Claude Code CLI"
+if [[ ! -x "$HOME/.local/bin/claude" ]]; then
+  info "Installing Claude Code (native)..."
+  curl --proto '=https' --tlsv1.2 -fsSL https://claude.ai/install.sh | bash
+  done_ "Claude Code installed (claude)"
+else
+  done_ "Claude Code already installed (claude)"
 fi
 
 # ── 7. Cursor CLI ─────────────────────────────────────────────────────────────

@@ -19,6 +19,7 @@ Official docs: <https://docs.brew.sh>
 ## Table of Contents
 
 - [Why Homebrew?](#why-homebrew)
+  - [Homebrew vs Nix in this repo](#homebrew-vs-nix-in-this-repo)
 - [Installation](#installation)
 - [Essential Daily Commands](#essential-daily-commands)
 - [Installing GUI Apps with Cask](#installing-gui-apps-with-cask)
@@ -39,6 +40,12 @@ Homebrew installs packages into their own directories and symlinks them into `/o
 - **Dependency management** handled automatically
 
 For GUI applications, Homebrew Cask extends this same philosophy to apps like VS Code, Docker, and Ghostty.
+
+### Homebrew vs Nix in this repo
+
+- **Homebrew installs everything:** every CLI tool (`homebrew.brews`) and GUI app (`homebrew.casks`) is declared in `configuration.nix` and applied by nix-homebrew on `./rebuild.sh`. Nix doesn't install CLI tools, so `brew upgrade <tool>` on the spot and `./update.sh` converge on the same state, with no shadowing Nix copy.
+- **Nix configures:** `home.nix` only writes config (zsh, Starship, git, dotfile symlinks) plus fonts — see [[nix-cheatsheet]].
+- **Rebuild never upgrades:** activation installs what's missing and never downgrades something you `brew upgrade`d. `onActivation.autoUpdate` only refreshes Homebrew's metadata — it doesn't keep packages at latest. Versions move forward via `./update.sh` (`brew update` + `brew upgrade --greedy` + `brew cleanup`) or `brew upgrade <tool>`.
 
 ---
 

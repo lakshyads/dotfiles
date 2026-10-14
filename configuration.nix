@@ -52,23 +52,44 @@
       "kunchenguid/tap"
     ];
 
-    # CLI tools that exist in nixpkgs (ripgrep, fd, bat, eza, zoxide, fzf,
-    # delta, lazygit, btop, dust, tldr, atuin, neovim, starship, jq,
-    # tree, wget, git, gh, opencode) are now installed via home.nix's
-    # home.packages / programs.* instead of here — see home.nix. antidote is
-    # dropped entirely (native home-manager zsh plugins replace it). Only
-    # things genuinely still Homebrew's job stay in this list: asdf itself
-    # (runtimes stay asdf-managed by design) and its build-support libs, plus
-    # the two tapped tools not worth moving.
+    # Every CLI tool lives here, not in Nix, so `brew upgrade <tool>` on the
+    # spot and ./update.sh converge on the same state. Activation only
+    # installs what's missing — it never downgrades a tool you upgraded.
+    # Their config stays declarative in home.nix (starship.toml, git, zsh).
     brews = [
+      # asdf + runtime build-support libs
       "asdf"
       "coreutils"
       "openssl@3"
       "readline"
       "xz"
+      # Shell & modern CLI
+      "starship"
+      "zoxide"
+      "atuin"
+      "fzf"
+      "ripgrep"
+      "fd"
+      "bat"
+      "eza"
+      "git-delta"
+      "dust"
+      "btop"
+      "tlrc"            # binary: tldr (the `tldr` formula is disabled)
+      "jq"
+      "tree"
+      "wget"
+      # Git & editors
+      "git"
+      "gh"
+      "lazygit"
+      "neovim"
+      "tree-sitter-cli" # CLI nvim-treesitter shells out to for compiling parsers
+      # Agents & cloud
+      "opencode"
+      "herdr"           # agent multiplexer for the terminal (config in home/.config/herdr)
       "hashicorp/tap/terraform"
       "stripe/stripe-cli/stripe"
-      "herdr" # agent multiplexer for the terminal (tmux-style, config in home/.config/herdr)
     ];
 
     casks = [
@@ -82,8 +103,7 @@
       "visual-studio-code"
       "cursor"
       # AI coding tools
-      "claude"
-      "claude-code"
+      "claude"          # desktop app; the claude CLI uses Anthropic's native installer (bootstrap.sh)
       "codex"
       "codex-app"
       # Browsers

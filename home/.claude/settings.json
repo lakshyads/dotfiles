@@ -38,6 +38,7 @@
     "type": "command",
     "command": "bash ~/.claude/statusline-command.sh"
   },
+  "autoUpdatesChannel": "latest",
   "effortLevel": "high",
   "modelSettings": {
     "claude-opus-5-5": {

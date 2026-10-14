@@ -10,7 +10,7 @@ related:
 
 # Pi Coding Agent Cheat Sheet
 
-Reference for Pi, a minimal terminal coding harness. Installed via nixpkgs package `pi-coding-agent` (binary `pi`) in `home.nix`'s `home.packages`. Global instructions are symlinked from `home/AGENTS.md` to `~/.pi/agent/AGENTS.md`. Shared skills under `~/.agents/skills` are discovered natively.
+Reference for Pi, a minimal terminal coding harness. Installed from npm (`@earendil-works/pi-coding-agent`, binary `pi`) via `home/npm-globals.txt` and `./npm-globals.sh`, so it tracks upstream releases directly rather than waiting on nixpkgs. Global instructions are symlinked from `home/AGENTS.md` to `~/.pi/agent/AGENTS.md`. Shared skills under `~/.agents/skills` are discovered natively.
 
 Official docs: <https://pi.dev/> · source: <https://github.com/earendil-works/pi>
 
@@ -31,9 +31,13 @@ Official docs: <https://pi.dev/> · source: <https://github.com/earendil-works/p
 
 ## Installation & Authentication
 
-Managed by this repo (Nix). After editing `home.nix`, run `./rebuild.sh`.
+Managed by this repo as a global npm CLI in `~/.local/share/npm-global` (asdf-independent, so it survives Node upgrades). `./bootstrap.sh` installs it at latest; pin a version by writing `@earendil-works/pi-coding-agent@<version>` in `home/npm-globals.txt`.
 
 ```bash
+pi update --self             # update just pi, any time
+./update.sh                  # upgrades all unpinned npm globals (and everything else)
+./npm-globals.sh             # install missing / enforce pins
+./npm-globals.sh check       # report drift (also run by ./verify.sh)
 pi --version
 pi                 # first run: /login to pick a provider, or export an API key
 ```
@@ -201,6 +205,7 @@ herdr agent start pi --cwd ~/proj --split right -- pi
 
 - **No permission prompts by default** — treat the sandbox (or your own confirmation extension) as the safety layer.
 - Project `.pi/` and project `.agents/skills` require a trust decision (`/trust`, `-a`, or `defaultProjectTrust` in settings).
-- Nix installs pin a nixpkgs version; `pi update --self` updates the npm-style install path, not the Nix package — bump via flake/nixpkgs update instead.
+- Pi runs on whatever `node` asdf resolves in the current directory (needs Node >= 22.19). A project whose `.tool-versions` pins an older Node will break `pi` there.
+- If Pi is pinned in `home/npm-globals.txt`, `pi update --self` moves it off the pin; `./npm-globals.sh` (or `./rebuild.sh`) puts it back.
 - Opt out of install telemetry: `PI_TELEMETRY=0` or `enableInstallTelemetry: false` in `~/.pi/agent/settings.json`.
 - Offline startup: `PI_OFFLINE=1` or `--offline`.

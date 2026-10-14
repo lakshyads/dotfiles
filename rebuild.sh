@@ -16,4 +16,6 @@ else
   # sudo resets PATH and won't find darwin-rebuild on it, so use the full
   # path — same reason bootstrap.sh's first switch needs it.
   sudo /run/current-system/sw/bin/darwin-rebuild switch --flake "$DOTFILES_DIR#${HOST_LABEL}"
+  # Installs anything newly added to home/npm-globals.txt; never upgrades unpinned ones.
+  "$DOTFILES_DIR/npm-globals.sh" sync || echo "npm globals sync had failures — re-run: ./npm-globals.sh" >&2
 fi
