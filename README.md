@@ -262,6 +262,7 @@ This repo is meant to be forked and personalized. The files worth editing:
 | `configuration.nix` | System defaults, and every Homebrew package: all CLI tools (`homebrew.brews`, including asdf + its build deps) and GUI apps (`homebrew.casks`). Run `./rebuild.sh` after editing. |
 | `home.nix` | Config only: zsh aliases/keybinds/plugins and shell init (`programs.zsh`), Starship prompt (`xdg.configFile."starship.toml"`), git config (`programs.git`), every dotfile symlink (`home.file`), plus fonts. Run `./rebuild.sh` after editing. |
 | `home/npm-globals.txt` | Global npm CLIs (e.g. `pi`, the `*-axi` agent CLIs). `./rebuild.sh` installs anything new; `./update.sh` upgrades unpinned ones. |
+| `home/agent-skills.txt` | Third-party agent skills installed with `npx skills` (e.g. `lavish`). `./rebuild.sh` installs anything new; `./update.sh` updates them all. |
 | `home/.tool-versions` | Language runtime versions. Edit and run `./bootstrap.sh` (registers asdf plugins + runs `asdf install`). |
 | `home/.config/wezterm/wezterm.lua` | WezTerm terminal appearance. Edit-in-place, no rebuild needed. |
 | `home/.config/ghostty/config` | Ghostty terminal appearance and keybindings. Edit-in-place, no rebuild needed. Reload in-app with `Cmd+Shift+,`. |
@@ -286,7 +287,7 @@ git pull
 ./rebuild.sh
 ```
 
-`darwin-rebuild switch` (what `./rebuild.sh` runs) re-applies `configuration.nix` and `home.nix` in one atomic step: any newly declared Homebrew packages, any config or dotfile symlink changes; `./rebuild.sh` then installs anything new in `home/npm-globals.txt`. There's no separate "install new Brewfile entries" step anymore — `Brewfile` is a retired stub; `configuration.nix`'s `homebrew` block is what `darwin-rebuild switch` reads. Rebuild only installs what's missing and never upgrades or downgrades — it does **not** keep packages at latest (`onActivation.autoUpdate` only refreshes Homebrew's metadata). Versions move forward via `./update.sh` or an on-the-spot `brew upgrade <tool>`.
+`darwin-rebuild switch` (what `./rebuild.sh` runs) re-applies `configuration.nix` and `home.nix` in one atomic step: any newly declared Homebrew packages, any config or dotfile symlink changes; `./rebuild.sh` then installs anything new in `home/npm-globals.txt` and `home/agent-skills.txt`. There's no separate "install new Brewfile entries" step anymore — `Brewfile` is a retired stub; `configuration.nix`'s `homebrew` block is what `darwin-rebuild switch` reads. Rebuild only installs what's missing and never upgrades or downgrades — it does **not** keep packages at latest (`onActivation.autoUpdate` only refreshes Homebrew's metadata). Versions move forward via `./update.sh` or an on-the-spot `brew upgrade <tool>`.
 
 For runtime version changes:
 
@@ -294,7 +295,7 @@ For runtime version changes:
 ./bootstrap.sh    # re-registers asdf plugins and runs `asdf install` for anything new in .tool-versions
 ```
 
-To bump the Nix flake's own pins (nixpkgs, nix-darwin, home-manager, nix-homebrew) and upgrade Homebrew packages, the self-updating CLIs (`claude`, `agent`), asdf plugins, and global npm CLIs (`home/npm-globals.txt`) all in one pass:
+To bump the Nix flake's own pins (nixpkgs, nix-darwin, home-manager, nix-homebrew) and upgrade Homebrew packages, the self-updating CLIs (`claude`, `agent`), asdf plugins, global npm CLIs (`home/npm-globals.txt`), and third-party agent skills (`home/agent-skills.txt`) all in one pass:
 
 ```bash
 ./update.sh    # nix flake update (then ./rebuild.sh to apply), brew upgrade --greedy, claude/agent update, asdf plugins, unpinned npm globals
@@ -464,6 +465,7 @@ dotfiles/
 ├── flake.nix                  # Nix flake entry point (inputs, darwinConfigurations)
 ├── flake.lock                 # pinned input versions
 ├── npm-globals.sh              # install/upgrade/check global npm CLIs from home/npm-globals.txt
+├── agent-skills.sh             # install/update/check third-party agent skills from home/agent-skills.txt
 ├── configuration.nix           # system defaults + Homebrew (every CLI tool and GUI app)
 ├── home.nix                    # home-manager: config only — zsh/starship/git config, dotfile symlinks, fonts
 ├── Brewfile                    # RETIRED — pointer stub, superseded by configuration.nix
@@ -471,6 +473,7 @@ dotfiles/
 │   ├── AGENTS.md                # shared agent instructions (Claude, Codex, opencode, Pi, Cursor)
 │   ├── .tool-versions            # asdf runtime versions (Node, Python, Go, Java)
 │   ├── npm-globals.txt          # global npm CLIs (pi, *-axi, …)
+│   ├── agent-skills.txt         # third-party agent skills (npx skills)
 │   ├── .claude/
 │   │   └── settings.json        # Claude Code settings (theme, statusline)
 │   ├── .baby-menu/              # Baby Menu extensions + preferences + agents.json

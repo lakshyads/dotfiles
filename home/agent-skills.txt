@@ -1,0 +1,9 @@
+# Third-party agent skills, installed by ./agent-skills.sh with
+# `npx skills add <source> --skill <name> -g` into ~/.agents/skills (Codex,
+# Cursor, OpenCode, Pi), symlinked into ~/.claude/skills (Claude Code).
+# Always latest: ./update.sh runs `npx skills update -g`.
+#
+# <source: github owner/repo>   <skill name>
+kunchenguid/lavish-axi          lavish
+vercel-labs/agent-skills        web-design-guidelines
+vercel-labs/agent-skills        vercel-react-best-practices
