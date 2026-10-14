@@ -41,6 +41,20 @@ check_command() {
   fi
 }
 
+# Verify a command resolves to the install channel that declares it, so a
+# stray copy from another channel can't silently shadow it.
+check_from() {
+  local cmd="$1" dir="$2" label="${3:-$1}" got
+  got="$(command -v "$cmd" 2>/dev/null)"
+  if [[ -z "$got" ]]; then
+    fail "$label not found on PATH"
+  elif [[ "$got" == "$dir"/* ]]; then
+    pass "$label ($got)"
+  else
+    fail "$label resolves to $got, expected under $dir"
+  fi
+}
+
 # Verify a path resolves (through any number of symlink hops, e.g. the
 # mkOutOfStoreSymlink -> nix-store -> repo chain home-manager creates) back
 # into this repo. Used for "edit-in-place" files whose real content lives here.
@@ -172,8 +186,6 @@ if [[ "$SHELL" == *zsh* ]]; then
 else
   warn_m "Login shell is $SHELL (expected zsh) — run: chsh -s $(which zsh 2>/dev/null || echo zsh)"
 fi
-check_command starship "Starship"
-
 # Native home-manager zsh plugins — antidote was retired in favor of these.
 check_contains "$HOME/.zshrc" "zsh-autosuggestions"     ".zshrc: autosuggestion enabled"
 check_contains "$HOME/.zshrc" "zsh-syntax-highlighting" ".zshrc: syntax-highlighting enabled"
@@ -182,24 +194,27 @@ check_contains "$HOME/.zshrc" "asdf"                    ".zshrc: initializes asd
 check_contains "$HOME/.zshrc" "zoxide"                  ".zshrc: initializes zoxide"
 check_contains "$HOME/.zshrc" "atuin"                   ".zshrc: initializes atuin"
 
-# ── 4. Modern CLI Tools ───────────────────────────────────────────────────────
-info "4. Modern CLI Tools"
-for tool in rg fd bat eza zoxide fzf delta lazygit btop dust tldr atuin nvim tree-sitter; do
-  check_command "$tool" "$tool"
+# ── 4. CLI Tools (Homebrew: configuration.nix's homebrew.brews) ───────────────
+info "4. CLI Tools (Homebrew)"
+for tool in starship zoxide atuin fzf rg fd bat eza delta dust btop tldr jq tree wget \
+            git gh lazygit nvim tree-sitter opencode herdr terraform stripe; do
+  check_from "$tool" /opt/homebrew/bin
 done
 
 # ── 4b. AI Coding CLIs ────────────────────────────────────────────────────────
 info "4b. AI Coding CLIs"
-check_command claude  "claude (Claude Code CLI)"
-check_command codex   "codex (OpenAI Codex CLI)"
-check_command opencode "opencode (AI coding agent)"
-check_command pi      "pi (Pi coding agent)"
-check_command agent   "agent (Cursor CLI)"
+check_from claude "$HOME/.local/bin" "claude (Claude Code, native installer)"
+check_from agent  "$HOME/.local/bin" "agent (Cursor CLI, native installer)"
+check_command codex "codex (OpenAI Codex CLI, cask)"
+check_from pi "$HOME/.local/share/npm-global/bin" "pi (npm-globals)"
+if "$DOTFILES_DIR/npm-globals.sh" check >/dev/null 2>&1; then
+  pass "home/npm-globals.txt: all installed, pins match"
+else
+  fail "home/npm-globals.txt out of sync — run: ./npm-globals.sh check"
+fi
 
 # ── 5. Git & GitHub ───────────────────────────────────────────────────────────
 info "5. Git & GitHub"
-check_command git  "git"
-check_command gh   "GitHub CLI"
 if command -v git >/dev/null 2>&1; then
   name=$(git config --get user.name  2>/dev/null || echo "")
   email=$(git config --get user.email 2>/dev/null || echo "")
@@ -213,8 +228,6 @@ fi
 # ── 6. Cloud Tools ────────────────────────────────────────────────────────────
 info "6. Cloud Tools"
 check_command gcloud "gcloud (Google Cloud CLI)"
-check_command terraform "terraform"
-check_command stripe "stripe"
 
 # ── 7. Dotfile Wiring ─────────────────────────────────────────────────────────
 info "7. Dotfile Wiring"
@@ -314,7 +327,6 @@ done
 
 # ── 11. fzf Integration ────────────────────────────────────────────────────────
 info "11. fzf Integration"
-check_command fzf "fzf"
 check_contains "$HOME/.zshrc" "FZF_CTRL_T_OPTS" ".zshrc: fzf preview options configured"
 
 # ── Summary ───────────────────────────────────────────────────────────────────

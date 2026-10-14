@@ -201,7 +201,7 @@ claude          # first run opens browser for OAuth login
 claude doctor   # verifies installation + auth
 ```
 
-Requires a paid Anthropic account (Pro, Max, Team, Enterprise, or Console with API credits). Claude Code is installed via the `claude-code` Homebrew cask (declared in `configuration.nix`), not a native installer — Homebrew's `onActivation.autoUpdate` keeps it current on every `./rebuild.sh`.
+Requires a paid Anthropic account (Pro, Max, Team, Enterprise, or Console with API credits). The `claude` CLI is installed by `bootstrap.sh` with Anthropic's native installer and updates itself — see the [Claude Code cheat sheet](docs/cheatsheets/claude-code-cheatsheet.md#installation--authentication).
 
 ### 8. Optional: Enable Atuin History Sync
 
@@ -226,7 +226,7 @@ The defaults are chosen carefully, but if you want to customize:
 
 - **Ghostty theme:** edit `home/.config/ghostty/config`, change the `theme = ...` line. Preview options with `ghostty +list-themes`.
 - **Font:** Hack Nerd Font is the primary system font (Ghostty + WezTerm). JetBrains Mono and Fira Code are also installed (via `home.nix`'s `home.packages`) as alternatives — to switch, change `font-family` in `home/.config/ghostty/config` and `config.font`/`config.window_frame.font` in `home/.config/wezterm/wezterm.lua` to `JetBrainsMono Nerd Font` or `FiraCode Nerd Font`, then run `./rebuild.sh`.
-- **Starship prompt:** edit `home.nix`'s `programs.starship.settings`, then run `./rebuild.sh`.
+- **Starship prompt:** edit `home.nix`'s `xdg.configFile."starship.toml"` block, then run `./rebuild.sh`.
 - **Shell aliases:** edit `home.nix`'s `programs.zsh.shellAliases`, then run `./rebuild.sh`.
 
 `home/.config/{wezterm,ghostty,nvim,herdr}/` and `home/.baby-menu/` files are edit-in-place — home-manager symlinks them directly into place (`mkOutOfStoreSymlink`), so editing them takes effect immediately, no rebuild needed. Everything else (packages, shell aliases, Starship settings) requires `./rebuild.sh` to apply.
@@ -259,8 +259,9 @@ This repo is meant to be forked and personalized. The files worth editing:
 
 | File | What it controls |
 |---|---|
-| `configuration.nix` | System defaults, and Homebrew packages: GUI apps (casks), asdf + its build deps, and the two tapped tools (`terraform`, `stripe`) not worth moving to Nix. Run `./rebuild.sh` after editing. |
-| `home.nix` | CLI tools available in nixpkgs (`home.packages`), zsh aliases/keybinds/plugins (`programs.zsh`), Starship prompt (`programs.starship`), and every dotfile symlink (`home.file`). Run `./rebuild.sh` after editing. |
+| `configuration.nix` | System defaults, and every Homebrew package: all CLI tools (`homebrew.brews`, including asdf + its build deps) and GUI apps (`homebrew.casks`). Run `./rebuild.sh` after editing. |
+| `home.nix` | Config only: zsh aliases/keybinds/plugins and shell init (`programs.zsh`), Starship prompt (`xdg.configFile."starship.toml"`), git config (`programs.git`), every dotfile symlink (`home.file`), plus fonts. Run `./rebuild.sh` after editing. |
+| `home/npm-globals.txt` | Global npm CLIs (e.g. `pi`, the `*-axi` agent CLIs). `./rebuild.sh` installs anything new; `./update.sh` upgrades unpinned ones. |
 | `home/.tool-versions` | Language runtime versions. Edit and run `./bootstrap.sh` (registers asdf plugins + runs `asdf install`). |
 | `home/.config/wezterm/wezterm.lua` | WezTerm terminal appearance. Edit-in-place, no rebuild needed. |
 | `home/.config/ghostty/config` | Ghostty terminal appearance and keybindings. Edit-in-place, no rebuild needed. Reload in-app with `Cmd+Shift+,`. |
@@ -285,7 +286,7 @@ git pull
 ./rebuild.sh
 ```
 
-`darwin-rebuild switch` (what `./rebuild.sh` runs) re-applies `configuration.nix` and `home.nix` in one atomic step: any new Homebrew packages, any new `home.packages` entries, any dotfile symlink changes. There's no separate "install new Brewfile entries" step anymore — `Brewfile` is a retired stub; `configuration.nix`'s `homebrew` block is what `darwin-rebuild switch` reads, and it applies unconditionally on every switch (`onActivation.autoUpdate = true`).
+`darwin-rebuild switch` (what `./rebuild.sh` runs) re-applies `configuration.nix` and `home.nix` in one atomic step: any newly declared Homebrew packages, any config or dotfile symlink changes; `./rebuild.sh` then installs anything new in `home/npm-globals.txt`. There's no separate "install new Brewfile entries" step anymore — `Brewfile` is a retired stub; `configuration.nix`'s `homebrew` block is what `darwin-rebuild switch` reads. Rebuild only installs what's missing and never upgrades or downgrades — it does **not** keep packages at latest (`onActivation.autoUpdate` only refreshes Homebrew's metadata). Versions move forward via `./update.sh` or an on-the-spot `brew upgrade <tool>`.
 
 For runtime version changes:
 
@@ -293,10 +294,10 @@ For runtime version changes:
 ./bootstrap.sh    # re-registers asdf plugins and runs `asdf install` for anything new in .tool-versions
 ```
 
-To bump the Nix flake's own pins (nixpkgs, nix-darwin, home-manager, nix-homebrew — this is how Nix-packaged CLI tool *versions* move forward, since `home.packages` doesn't pin exact versions itself) and update Homebrew/asdf all in one pass:
+To bump the Nix flake's own pins (nixpkgs, nix-darwin, home-manager, nix-homebrew) and upgrade Homebrew packages, the self-updating CLIs (`claude`, `agent`), asdf plugins, and global npm CLIs (`home/npm-globals.txt`) all in one pass:
 
 ```bash
-./update.sh    # nix flake update, then a reminder to ./rebuild.sh; also upgrades Homebrew packages and asdf plugins
+./update.sh    # nix flake update (then ./rebuild.sh to apply), brew upgrade --greedy, claude/agent update, asdf plugins, unpinned npm globals
 ```
 
 ### Update just Homebrew packages
@@ -462,12 +463,14 @@ dotfiles/
 ├── verify.sh                  # end-to-end smoke test (run after bootstrap.sh)
 ├── flake.nix                  # Nix flake entry point (inputs, darwinConfigurations)
 ├── flake.lock                 # pinned input versions
-├── configuration.nix           # system defaults + Homebrew (casks, asdf, tapped tools)
-├── home.nix                    # home-manager: CLI packages, zsh/starship, dotfile symlinks
+├── npm-globals.sh              # install/upgrade/check global npm CLIs from home/npm-globals.txt
+├── configuration.nix           # system defaults + Homebrew (every CLI tool and GUI app)
+├── home.nix                    # home-manager: config only — zsh/starship/git config, dotfile symlinks, fonts
 ├── Brewfile                    # RETIRED — pointer stub, superseded by configuration.nix
 ├── home/                       # edit-in-place source for home-manager's mkOutOfStoreSymlink files
 │   ├── AGENTS.md                # shared agent instructions (Claude, Codex, opencode, Pi, Cursor)
 │   ├── .tool-versions            # asdf runtime versions (Node, Python, Go, Java)
+│   ├── npm-globals.txt          # global npm CLIs (pi, *-axi, …)
 │   ├── .claude/
 │   │   └── settings.json        # Claude Code settings (theme, statusline)
 │   ├── .baby-menu/              # Baby Menu extensions + preferences + agents.json
@@ -502,13 +505,13 @@ dotfiles/
 A few choices that drive the rest of the setup. Full context is in the cheat sheets, but the gist:
 
 - **nix-darwin + home-manager over plain Homebrew + shell scripts**: declarative, atomically-applied config with one-command rollback (`darwin-rebuild --rollback`) beats an imperative install script with no undo. See [`docs/cheatsheets/nix-cheatsheet.md`](docs/cheatsheets/nix-cheatsheet.md).
-- **Homebrew kept, not replaced**: GUI `.app` bundles and a few tools not worth repackaging (asdf, terraform, stripe) stay Homebrew-managed via nix-homebrew, declared in `configuration.nix`. CLI tools available in nixpkgs moved to `home.nix`'s `home.packages`.
+- **Homebrew installs, Nix configures**: every CLI tool and GUI app is a Homebrew formula/cask declared in `configuration.nix` (via nix-homebrew), so an on-the-spot `brew upgrade <tool>` and `./update.sh` converge on the same state. Nix copies couldn't be upgraded individually and got shadowed by stray Homebrew copies. `home.nix` only manages config (zsh, Starship, git, symlinks) plus fonts.
 - **Ghostty and WezTerm, both kept**: rather than picking one, both stay maintained in parallel (`rose-pine-moon` theme, Hack Nerd Font, matching split keybindings) since both had real, independent customization worth preserving.
 - **Native home-manager zsh plugins over Antidote**: `programs.zsh.autosuggestion`/`syntaxHighlighting` replace the Antidote plugin manager entirely — fewer moving parts, same behavior.
 - **Starship over Powerlevel10k**: P10k is on life support; Starship is actively maintained and cross-shell
 - **asdf over pyenv/nvm/rbenv, and over Nix for runtimes**: one tool replaces all of them; single `.tool-versions` file per project. Kept outside Nix's management deliberately — asdf's per-project override (walking up the directory tree) is a workflow Nix doesn't replicate without a heavier devshell/direnv setup.
 - **Zsh kept as login shell**: POSIX-compatible (unlike Fish) and already the macOS default
-- **Claude Code via Homebrew cask, not the native installer**: `configuration.nix`'s `homebrew.onActivation.autoUpdate` keeps it current on every switch, consistent with how every other package in this repo updates.
+- **Claude Code via the native installer, not the Homebrew cask**: it auto-updates in the background (channel set by `autoUpdatesChannel` in `home/.claude/settings.json`) and `claude update` works on the spot. The `claude` cask is only the desktop app.
 - **Docker for all local databases**: `configuration.nix` intentionally omits `postgresql` / `redis` so they don't conflict with container-based local environments
 
 <p align="right"><a href="#table-of-contents">↑ Back to top</a></p>

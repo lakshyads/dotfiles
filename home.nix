@@ -9,26 +9,9 @@ in
   home.homeDirectory = "/Users/${user}";
   home.stateVersion = "26.05";
 
+  # CLI tools are Homebrew-managed (configuration.nix's homebrew.brews) so they
+  # can be upgraded individually; Nix only owns config, completions, and fonts.
   home.packages = with pkgs; [
-    # Modern CLI replacements & utilities not covered by a programs.* module
-    ripgrep     # fast search
-    fd          # fast find
-    bat         # 
-    lazygit
-    eza         #
-    btop
-    delta
-    dust
-    tldr
-    neovim
-    tree-sitter  # CLI nvim-treesitter shells out to for compiling parsers
-    jq
-    tree
-    wget
-    git
-    gh
-    opencode
-    pi-coding-agent  # binary: pi — minimal coding agent harness (https://pi.dev)
     zsh-completions
     # Fonts — Hack is the primary system font (Ghostty/WezTerm); JetBrains
     # Mono and Fira Code stay installed as alternatives. See README.md
@@ -39,7 +22,12 @@ in
   ];
   fonts.fontconfig.enable = true;
 
-  home.sessionVariables.EDITOR = "nvim";
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    # Global npm CLIs (home/npm-globals.txt, installed by ./npm-globals.sh) live
+    # outside asdf's per-Node-version dir so they survive Node upgrades.
+    NPM_CONFIG_PREFIX = "${config.home.homeDirectory}/.local/share/npm-global";
+  };
 
   programs.zsh = {
     enable = true;
@@ -102,17 +90,25 @@ in
         # asdf shims — must come before any tool that might invoke node/python/go.
         export PATH="''${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
-        # ~/.local/bin: user-installed tools not managed by Nix/Homebrew (e.g.
-        # Cursor's `agent`/`cursor-agent` CLI, pip --user scripts). Appended
-        # AFTER Homebrew's path on purpose — a stale ~/.local/bin/claude
-        # symlink from Claude's old native installer lives here too, and it
-        # must never shadow the current claude-code cask binary.
+        # Global npm CLIs (e.g. pi) — see ./npm-globals.sh.
+        export PATH="$HOME/.local/share/npm-global/bin:$PATH"
+
+        # ~/.local/bin: self-updating native installers (Claude Code's `claude`,
+        # Cursor's `agent`/`cursor-agent`) and pip --user scripts.
         export PATH="$PATH:$HOME/.local/bin"
 
         # zsh-completions extra definitions (git, docker, kubectl, etc.) — must load before compinit.
         fpath+=(${pkgs.zsh-completions}/share/zsh/site-functions)
       '')
       ''
+        # Shell integrations for the Homebrew-installed tools. home-manager's
+        # programs.{zoxide,fzf,starship,atuin} modules would hardcode a Nix
+        # store binary here, so they're initialized by name instead.
+        (( $+commands[zoxide] ))   && eval "$(zoxide init zsh)"
+        (( $+commands[fzf] ))      && source <(fzf --zsh)
+        (( $+commands[starship] )) && eval "$(starship init zsh)"
+        (( $+commands[atuin] ))    && eval "$(atuin init zsh)"
+
         # wtnew <branch> [base-branch] [target-path]: create a git worktree
         # inside a bare-repo-pattern project (one with a .bare/ dir), as a
         # sibling of .bare, and attach a herdr session to it if herdr is
@@ -216,63 +212,44 @@ in
     ];
   };
 
-  programs.starship = {
-    enable = true;
-    enableZshIntegration = true;
-    settings = {
-      format = "$directory$git_branch$git_status$nodejs$python$golang$cmd_duration$line_break$character";
-      # Character colors match reference; segments (nodejs/python/golang)
-      # kept from the pre-migration config since they're actively useful here.
-      character = {
-        success_symbol = "[❯](purple)";
-        error_symbol = "[❯](red)";
-      };
-      directory = {
-        truncation_length = 3;
-        truncate_to_repo = true;
-        style = "bold cyan";
-      };
-      git_branch = {
-        symbol = " ";
-        style = "bold purple";
-      };
-      git_status.style = "bold red";
-      cmd_duration = {
-        min_time = 2000;
-        format = "[$duration]($style) ";
-        style = "yellow";
-      };
-      python = {
-        symbol = " ";
-        format = "[$symbol$pyenv_prefix($version )(\\($virtualenv\\) )]($style)";
-        style = "yellow";
-      };
-      nodejs = {
-        symbol = " ";
-        format = "[$symbol($version )]($style)";
-        style = "green";
-      };
-      golang = {
-        symbol = " ";
-        format = "[$symbol($version )]($style)";
-        style = "cyan";
-      };
+  xdg.configFile."starship.toml".source = (pkgs.formats.toml { }).generate "starship.toml" {
+    format = "$directory$git_branch$git_status$nodejs$python$golang$cmd_duration$line_break$character";
+    # Character colors match reference; segments (nodejs/python/golang)
+    # kept from the pre-migration config since they're actively useful here.
+    character = {
+      success_symbol = "[❯](purple)";
+      error_symbol = "[❯](red)";
     };
-  };
-
-  programs.zoxide = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-
-  programs.atuin = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-
-  programs.fzf = {
-    enable = true;
-    enableZshIntegration = true;
+    directory = {
+      truncation_length = 3;
+      truncate_to_repo = true;
+      style = "bold cyan";
+    };
+    git_branch = {
+      symbol = " ";
+      style = "bold purple";
+    };
+    git_status.style = "bold red";
+    cmd_duration = {
+      min_time = 2000;
+      format = "[$duration]($style) ";
+      style = "yellow";
+    };
+    python = {
+      symbol = " ";
+      format = "[$symbol$pyenv_prefix($version )(\\($virtualenv\\) )]($style)";
+      style = "yellow";
+    };
+    nodejs = {
+      symbol = " ";
+      format = "[$symbol($version )]($style)";
+      style = "green";
+    };
+    golang = {
+      symbol = " ";
+      format = "[$symbol($version )]($style)";
+      style = "cyan";
+    };
   };
 
   # programs.git writes its generated config to the XDG path
@@ -284,6 +261,7 @@ in
   # instead of in a separate configs/gitconfig file.
   programs.git = {
     enable = true;
+    package = null;  # git itself comes from Homebrew; this only writes ~/.config/git/config
     settings = {
       core.pager = "delta";
       interactive.diffFilter = "delta --color-only";

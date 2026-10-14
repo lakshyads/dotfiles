@@ -1,0 +1,22 @@
+# Global npm CLIs managed by ./npm-globals.sh (installed into ~/.local/share/npm-global).
+#
+# One package per line:
+#   <name>            → latest: installed if missing, upgraded by ./update.sh
+#   <name>@<version>  → pinned: kept at exactly this version
+#
+# Removing a line does not uninstall it — run `npm rm -g <name>` too.
+
+@earendil-works/pi-coding-agent   # binary: pi — https://pi.dev
+
+# Agent-facing CLIs (Claude Code SessionStart hooks in home/.claude/settings.json call the *-axi ones)
+gh-axi
+lavish-axi
+tasks-axi
+quota-axi
+chrome-devtools-axi
+chrome-devtools-mcp
+acpx
+
+# Cloud / analytics
+firebase-tools
+@posthog/cli

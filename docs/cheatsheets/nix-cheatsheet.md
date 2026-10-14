@@ -34,9 +34,9 @@ Three files, three jobs:
 
 | File | Owns |
 |---|---|
-| `flake.nix` | Inputs (nixpkgs, nix-darwin, nix-homebrew, home-manager) and the `darwinConfigurations."mac"` output |
-| `configuration.nix` | macOS system defaults (`system.defaults`), and Homebrew — GUI apps (casks), asdf + its build deps, and the two tapped CLI tools not worth moving to Nix |
-| `home.nix` | User-level: CLI tools available in nixpkgs (`home.packages`), shell/prompt/fzf/zoxide/atuin config (`programs.*`), and every dotfile symlink |
+| `flake.nix` | Inputs (nixpkgs 26.05, nix-darwin, nix-homebrew, home-manager) and the `darwinConfigurations."mac"` output |
+| `configuration.nix` | macOS system defaults (`system.defaults`), and Homebrew — every CLI tool (`homebrew.brews`, including asdf + its build deps) and GUI app (`homebrew.casks`) |
+| `home.nix` | User-level config only: zsh (`programs.zsh`, including shell init for zoxide/fzf/starship/atuin), Starship prompt (`xdg.configFile."starship.toml"`), git config (`programs.git`, `package = null`), every dotfile symlink, plus fonts and `zsh-completions` (the only `home.packages` entries) |
 
 `bootstrap.sh` is the one-time entry point for a fresh Mac (installs Nix, does the first switch, then registers asdf runtimes and prompts for git identity). `rebuild.sh` is what you reach for day-to-day after editing config.
 
@@ -71,7 +71,7 @@ nix flake check --no-build
 
 # Full dry-run build — actually resolves and would-build every derivation,
 # without touching the live system. Slower, but catches real package-name
-# typos (e.g. "git-delta" instead of nixpkgs' actual name "delta").
+# typos (e.g. a misspelled nerd-fonts attribute in home.packages).
 nix build .#darwinConfigurations.mac.system --dry-run
 ```
 
@@ -100,17 +100,19 @@ Compare this to the old `setup.sh` + `Brewfile` model: there was no equivalent o
 
 ## Adding a Package
 
-**GUI app, or a tool that isn't in nixpkgs / not worth moving:** add it to `configuration.nix`'s `homebrew.casks` (GUI apps) or `homebrew.brews` (CLI, including anything tapped from a third-party repo like `hashicorp/tap/terraform`).
+**CLI tool:** add it to `configuration.nix`'s `homebrew.brews` (including anything tapped from a third-party repo like `hashicorp/tap/terraform`, plus a `homebrew.taps` entry). Not `home.packages` — a Nix copy can't be upgraded on the spot with `brew upgrade <tool>` and gets shadowed by stray Homebrew copies. If it needs config, declare that in `home.nix` (e.g. shell init in `programs.zsh.initContent`, by command name).
 
-**CLI tool that exists in nixpkgs:** add it to `home.nix`'s `home.packages` list. Check it exists first — the nixpkgs name doesn't always match the Homebrew formula name (e.g. Homebrew's `git-delta` is just `delta` in nixpkgs; `nix build --dry-run` will tell you immediately with `error: undefined variable '<name>'` if you guess wrong).
+**GUI app:** add it to `configuration.nix`'s `homebrew.casks`.
 
-Either way:
+**Global npm CLI:** add a line to `home/npm-globals.txt` (installed by `./npm-globals.sh`).
+
+Then:
 
 ```bash
 ./rebuild.sh
 ```
 
-No separate "install" step — the switch both builds and applies.
+No separate "install" step — the switch both builds and applies. It only installs what's missing, though; it never upgrades (`onActivation.autoUpdate` just refreshes Homebrew metadata). Versions move forward via `./update.sh` or `brew upgrade <tool>`.
 
 ---
 
@@ -146,7 +148,7 @@ mv ~/.zshrc ~/.zshrc.hm-backup
 
 **Q: How do I know if a package should go in `configuration.nix` or `home.nix`?**
 
-If it's a `.app` bundle, or a CLI tool that isn't in nixpkgs (or isn't worth moving), it's Homebrew (`configuration.nix`). If it's a CLI tool available in nixpkgs, it's `home.packages` in `home.nix`. See [[homebrew-cheatsheet]] for the general Homebrew-vs-Nix package boundary this repo draws.
+If it's something you install — a CLI tool or a `.app` bundle — it's Homebrew (`configuration.nix`). If it's config for that tool (shell init, prompt, git settings, a dotfile symlink), it's `home.nix`. Fonts and `zsh-completions` are the only packages still in `home.packages`. See [[homebrew-cheatsheet]] for the general Homebrew-vs-Nix boundary this repo draws.
 
 **Q: What does `darwin-rebuild switch --flake .#mac` mean, exactly?**
 
@@ -158,4 +160,4 @@ Nix pins global versions much like asdf's fallback, but loses asdf's effortless 
 
 **Q: `nix build --dry-run` says `error: undefined variable 'some-package'` — now what?**
 
-The nixpkgs attribute name doesn't match what you typed. Search <https://search.nixos.org/packages> for the real name before adding it to `home.packages`.
+The nixpkgs attribute name doesn't match what you typed (e.g. a font in `home.packages`, or a `pkgs.*` reference in `home.nix`). Search <https://search.nixos.org/packages> for the real name. CLI tools don't belong in `home.packages` — add them to `configuration.nix`'s `homebrew.brews` instead.

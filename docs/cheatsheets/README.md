@@ -12,7 +12,7 @@ Every cheat sheet here has frontmatter `tag:`/`related:` for Obsidian's tag pane
 
 ## Package Management
 
-- [[homebrew-cheatsheet]] — GUI apps (casks), the handful of CLI tools still installed via Homebrew, Brewfile mechanics
+- [[homebrew-cheatsheet]] — every CLI tool (formulae) and GUI app (casks), the Homebrew-vs-Nix boundary, Brewfile mechanics
 - [[nix-cheatsheet]] — nix-darwin/home-manager daily workflow, validation, rollback, the `cleanup = "none"` gotcha
 - [[asdf-cheatsheet]] — language runtime versions via `.tool-versions`
 

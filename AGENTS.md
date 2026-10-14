@@ -11,7 +11,7 @@ Before answering any question about this Mac dev setup, shell tools, CLI tools, 
 | What is installed / how | `docs/inventory.md` |
 | How-to / CLI reference | `docs/cheatsheets/` (see index below) |
 | Bootstrap / wiring | `flake.nix`, `configuration.nix`, `home.nix`, `bootstrap.sh`, `rebuild.sh`, `verify.sh` |
-| Live config / "what is set?" | `home/.config/{wezterm,ghostty,nvim,herdr,linearmouse}/`, `home/.baby-menu/`, `home.nix`'s `programs.starship`/`programs.zsh` blocks |
+| Live config / "what is set?" | `home/.config/{wezterm,ghostty,nvim,herdr,linearmouse}/`, `home/.baby-menu/`, `home.nix`'s `programs.zsh` block and `starship.toml` |
 | Setup walkthrough / daily commands | `README.md` |
 
 ### docs/ index
@@ -50,9 +50,11 @@ Never duplicate these. Every other place must link, not repeat.
 
 | Data | Authoritative file | What goes here |
 |------|--------------------|----------------|
-| GUI apps (casks), asdf itself + build deps, tapped tools (terraform, stripe) | `configuration.nix`'s `homebrew` block | Every `homebrew.brews` / `homebrew.casks` entry. Rule of thumb: `.app` bundles and things not sensibly packaged in nixpkgs stay here. |
-| CLI tools available in nixpkgs | `home.nix`'s `home.packages` | Everything installable straight from nixpkgs (ripgrep, fd, bat, lazygit, etc.) |
-| Zsh plugins, aliases, keybinds, Starship prompt | `home.nix`'s `programs.zsh` / `programs.starship` blocks | Antidote is retired — native home-manager zsh plugin toggles replace it. There is no more standalone plugin-list file. |
+| Every CLI tool and GUI app (formulae + casks) | `configuration.nix`'s `homebrew` block | Every `homebrew.brews` / `homebrew.casks` entry. CLI tools live here, not in Nix, so `brew upgrade <tool>` on the spot and `./update.sh` converge. |
+| Global npm CLIs (e.g. `pi`, `*-axi`) | `home/npm-globals.txt` | One package per line; bare name = latest, `name@version` = pinned. Installed by `./npm-globals.sh` into `~/.local/share/npm-global`, so on-the-spot `npm i -g` lands there too. |
+| Self-updating native installers (Claude Code `claude`, Cursor `agent`) | `bootstrap.sh` (install), `update.sh` (`claude update`, `agent update`) | Live in `~/.local/bin`; they update themselves. |
+| Nix-managed content (config only, plus fonts and zsh completion definitions) | `home.nix` | Config files, shell setup, symlinks. **No CLI tools in `home.packages`** — a Nix copy can't be upgraded individually and gets shadowed by stray Homebrew copies. |
+| Zsh plugins, aliases, keybinds, Starship prompt | `home.nix`'s `programs.zsh` block and `xdg.configFile."starship.toml"` | Antidote is retired — native home-manager zsh plugin toggles replace it. There is no more standalone plugin-list file. |
 | Dotfile symlink targets | `home.nix`'s `home.file` / `mkOutOfStoreSymlink` entries | Every path under `~` that should point back into this repo |
 | Language runtime versions | `.tool-versions` | Version numbers only — never written in docs. Runtimes stay asdf-managed by design (not Nix-managed) — see README's Design Decisions. |
 | Human-readable inventory | `docs/inventory.md` | What's installed, how, one row per item |
@@ -68,7 +70,7 @@ Never duplicate these. Every other place must link, not repeat.
 - If a table, code block, or list already exists in one doc, all other docs must link to it — never copy it.
 - `README.md` is orientation only: it describes categories and links out. It does not contain tool lists, keybinding tables, command blocks, or version numbers.
 - Version numbers appear only in `.tool-versions`. Docs name the language (e.g. "Node.js") but never the version.
-- Package lists appear only in `configuration.nix` (Homebrew) and `home.nix` (Nix packages). Docs say "see `configuration.nix`" / "see `home.nix`" rather than listing packages.
+- Package lists appear only in `configuration.nix` (Homebrew) and `home/npm-globals.txt` (npm). Docs say "see `configuration.nix`" rather than listing packages.
 - When adding content from the web: place it in the single most relevant `docs/cheatsheets/*-cheatsheet.md`. Do not add it to README as well.
 
 ---
@@ -76,6 +78,8 @@ Never duplicate these. Every other place must link, not repeat.
 ## 4. Adding a new tool, app, or runtime — full checklist
 
 Work through every applicable item. Skipping any item leaves the repo inconsistent.
+
+**Update convergence:** a tool must end up in the same state whether it's updated on the spot (`brew upgrade X`, `npm i -g X@latest`, `claude update`) or in bulk via `./update.sh`. Declarations state *presence* (plus optional pins), never minimum versions — so pick the channel whose own update command you'd naturally run.
 
 ### Adding a Homebrew cask (GUI app)
 
@@ -85,19 +89,19 @@ Work through every applicable item. Skipping any item leaves the repo inconsiste
 - [ ] If the app writes back to a config file, add a `home.file` entry in `home.nix` using `config.lib.file.mkOutOfStoreSymlink` (NOT plain `home.file`, which symlinks from the read-only Nix store) plus a `home.activation` script that backs up any pre-existing real file before the symlink lands — see the `linearmouse.json` pattern in `home.nix` (`home.activation.backupLinearMouseConfig`)
 - [ ] Run `./rebuild.sh`
 
-### Adding a Homebrew formula (only for things that must stay Homebrew — e.g. asdf, build-support libs, tapped tools)
+### Adding a CLI tool (Homebrew formula — the default for any CLI)
 
 - [ ] Add to `configuration.nix`'s `homebrew.brews` (add a `homebrew.taps` entry too if it's from a third-party tap)
+- [ ] If it needs shell init, add it by command name to `programs.zsh.initContent` — never via a home-manager `programs.<tool>` module, which installs a second, Nix-store copy
 - [ ] Add a row to the appropriate CLI tools section in `docs/inventory.md` (include "Installed via: `brew install`")
+- [ ] Add to the `check_from … /opt/homebrew/bin` loop in `verify.sh`
 - [ ] Run `./rebuild.sh`
 
-### Adding a Nix-native CLI package (tools available in nixpkgs — the default choice for new CLI tools)
+### Adding a global npm CLI (tools distributed on npm)
 
-- [ ] Check it exists in nixpkgs first (`nix search nixpkgs <name>`), not `brew search`
-- [ ] Add to `home.nix`'s `home.packages`
-- [ ] Add a row to the appropriate CLI tools section in `docs/inventory.md` (include "Installed via: Nix (home.packages)")
-- [ ] Add to the `check_command` loop in `verify.sh` if it provides a binary
-- [ ] Run `./rebuild.sh`
+- [ ] Add the package to `home/npm-globals.txt` (bare name for latest, `name@version` to pin)
+- [ ] Add a row to the appropriate CLI tools section in `docs/inventory.md` (include "Installed via: npm (`home/npm-globals.txt`)")
+- [ ] Run `./npm-globals.sh` (or `./rebuild.sh`, which calls it) — `verify.sh` runs `./npm-globals.sh check`
 
 ### Adding a language runtime (asdf)
 
@@ -113,7 +117,7 @@ Work through every applicable item. Skipping any item leaves the repo inconsiste
 
 ### Removing anything
 
-- [ ] Remove from `configuration.nix` / `home.nix` / `.tool-versions`
+- [ ] Remove from `configuration.nix` / `home.nix` / `.tool-versions` / `home/npm-globals.txt` (npm: also `npm rm -g <name>`)
 - [ ] Remove the corresponding row from `docs/inventory.md`
 - [ ] Remove from `verify.sh` (`check_command` loop, `APPS` array, or `check_contains`/`check_resolves_to_repo` calls as applicable)
 - [ ] Run `./rebuild.sh` — note `homebrew.onActivation.cleanup = "none"` means removed Homebrew packages are left installed but undeclared, not force-uninstalled; `brew uninstall` manually if you want it gone from disk too
@@ -127,7 +131,7 @@ Work through every applicable item. Skipping any item leaves the repo inconsiste
 - Keybinding tables (link to `docs/cheatsheets/ghostty-cheatsheet.md` or `docs/cheatsheets/modern-cli-cheatsheet.md`)
 - Command examples that are already in a cheatsheet (link to the cheatsheet)
 - Version numbers (link to `.tool-versions`)
-- Package lists (link to `configuration.nix` / `home.nix`)
+- Package lists (link to `configuration.nix` / `home/npm-globals.txt`)
 
 When editing README, ask: "does this content already exist in a cheatsheet or inventory?" If yes, replace with a link.
 
@@ -144,7 +148,7 @@ When editing README, ask: "does this content already exist in a cheatsheet or in
 - LinearMouse JSON content integrity (a write-back file, worth sanity-checking regardless of installer mechanism)
 
 Keep `verify.sh` in sync:
-- New CLI binary installed → add to the `check_command` loop
+- New CLI binary installed → add to the `check_from` loop for its channel (`/opt/homebrew/bin`, `~/.local/bin`, or the npm-global prefix), which also catches a copy from another channel shadowing it
 - New GUI app installed → add to the `APPS` array
 - New symlink added in `home.nix` → add a `check_resolves_to_repo` call (for edit-in-place files) or `check_nonempty` (for home-manager-generated files like `.zshrc`/`starship.toml`)
 - New config file added → add `check_contains` or `check_json` assertions for its critical settings

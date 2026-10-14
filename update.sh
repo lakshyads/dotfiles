@@ -47,16 +47,23 @@ else
 fi
 
 # ── Homebrew ──────────────────────────────────────────────────────────────────
-# What's INSTALLED is declared by configuration.nix's `homebrew` block — this
-# doesn't change that. It just upgrades those already-declared packages to
-# their latest available version right now, same as `onActivation.autoUpdate
-# = true` already does on every ./rebuild.sh — this is just a faster path
-# when you want it done immediately without a full switch.
+# What's INSTALLED is declared by configuration.nix's `homebrew` block; this
+# only moves versions forward — the bulk form of `brew upgrade <tool>`.
+# --greedy also covers casks that self-update (Cursor, Chrome, Codex, …).
 section "Homebrew"
-run "Update formulae metadata"  brew update
-run "Upgrade formulae"          brew upgrade
-run "Upgrade casks"             brew upgrade --cask
-run "Cleanup old versions"      brew cleanup
+if command -v brew >/dev/null 2>&1; then
+  run "Update formulae metadata"  brew update
+  run "Upgrade formulae + casks"  brew upgrade --greedy
+  run "Cleanup old versions"      brew cleanup
+else
+  warn "brew not found — skipping (run ./bootstrap.sh first)"
+fi
+
+# ── Self-updating CLIs ───────────────────────────────────────────────────────
+# Same commands you'd run when the tool itself says it's outdated.
+section "Self-updating CLIs"
+command -v claude >/dev/null 2>&1 && run "Claude Code" claude update
+command -v agent  >/dev/null 2>&1 && run "Cursor CLI"  agent update
 
 # ── asdf plugins ─────────────────────────────────────────────────────────────
 # Runtimes stay outside Nix's view by design (per-project .tool-versions
@@ -67,6 +74,11 @@ if command -v asdf >/dev/null 2>&1; then
 else
   warn "asdf not found — skipping"
 fi
+
+# ── Global npm CLIs ──────────────────────────────────────────────────────────
+# Upgrades unpinned entries in home/npm-globals.txt to latest; pinned ones stay.
+section "Global npm CLIs"
+run "Upgrade npm globals" "$DOTFILES_DIR/npm-globals.sh" update
 
 # ── Summary ───────────────────────────────────────────────────────────────────
 printf "\n${G}${W}Done.${R}\n"

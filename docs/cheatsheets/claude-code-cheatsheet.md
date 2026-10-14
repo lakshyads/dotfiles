@@ -9,7 +9,7 @@ related:
 
 # Claude Code Cheat Sheet
 
-Reference for Claude Code, Anthropic's agentic CLI. Current as of April 2026, covering through v2.1.116 (the version installed via the `claude-code` Homebrew cask).
+Reference for Claude Code, Anthropic's agentic CLI. Current as of April 2026, covering through v2.1.116.
 
 Official docs: <https://code.claude.com/docs>
 
@@ -36,12 +36,12 @@ Official docs: <https://code.claude.com/docs>
 
 ## Installation & Authentication
 
-Claude Code is installed via the `claude-code` Homebrew cask, declared in `configuration.nix`'s `homebrew.casks` and kept up to date by Homebrew's `onActivation.autoUpdate` (not a native installer). Basic management:
+Claude Code uses Anthropic's native installer (`curl -fsSL https://claude.ai/install.sh | bash`), run by `bootstrap.sh` into `~/.local/bin/claude` — not the Homebrew cask (the `claude` cask in `configuration.nix` is the desktop app). It auto-updates in the background on the channel set by `autoUpdatesChannel` in `home/.claude/settings.json` (`"latest"` or `"stable"`); `./update.sh` also runs `claude update`. Basic management:
 
 ```bash
 claude doctor              # verify installation health
 claude --version           # check installed version
-claude update              # manually update (auto-updates by default)
+claude update              # update on the spot (auto-updates in the background anyway)
 
 # Authentication
 claude auth login          # log in / switch accounts
