@@ -1,1 +1,1 @@
-/Users/lakshyadevsingh/.dotfiles/AGENTS.md
+@AGENTS.md
