@@ -3,17 +3,17 @@ name: smell
 description: Scans a git diff (committed + working-tree changes) against a base branch for code smells using a Clean Code + Gang of Four + Python-specific catalog, and emits a severity-ranked findings report. Use this skill when the user asks for a code smell review, a pre-merge quality check, mentions "code smells"/"smell test", or invokes /smell.
 ---
 
-# Smell — Code smell review
+# Smell: Code smell review
 
-You are running a 5-step code-smell review. Follow the steps **in order**. Do not skip any. Do not invent findings. Cite catalog IDs verbatim from the lists below.
+You are running a 5-step code-smell review. Follow the steps in order. Report only findings you can point to in the diff, citing catalog IDs verbatim from the lists below.
 
 If the user gave a target/base branch, use it. Otherwise default to the repo's `origin/HEAD` (e.g. `git symbolic-ref refs/remotes/origin/HEAD`, stripped of `refs/remotes/`), falling back to `main` if that doesn't resolve.
 
 ---
 
-## Step 1 — Ingest
+## Step 1: Ingest
 
-Using the Bash tool, gather the diff before proceeding:
+Run these in a shell to gather the diff before proceeding:
 
 ```bash
 BASE="<resolved base branch>"
@@ -21,27 +21,31 @@ git diff --stat "$BASE"...HEAD
 git diff --stat HEAD
 git diff -U10 "$BASE"...HEAD
 git diff -U10 HEAD
+git status --short
+git ls-files --others --exclude-standard -z
 ```
 
-Read the full output carefully. It contains both the committed changes vs the base (3-dot `base...HEAD`) **and** the working-tree changes (staged + unstaged).
+Read the full output carefully. It contains both the committed changes vs the base (3-dot `base...HEAD`) **and** the working-tree changes (staged + unstaged). Read each untracked file from the NUL-delimited listing as a newly added file and include it in the review; ordinary diffs do not include these files. Apply the same lockfile, generated-code and vendored-file exclusions below to untracked files, and report any skipped files in the Summary.
+
+If the `--stat` output shows a large diff (roughly 2,000+ changed lines), don't load it all at once: review it file by file (`git diff -U10 "$BASE"...HEAD -- <path>`), skipping lockfiles, generated code, and vendored files, and say in the Summary which files you skipped.
 
 ---
 
-## Step 2 — Classify
+## Step 2: Classify
 
 Pick **exactly one** category for the overall change and justify in **one sentence**:
 
-- `feature` — new user-visible behavior, endpoints, UI, or capability
-- `refactor` — internal restructure, no behavior change
-- `bugfix` — corrects incorrect behavior
-- `test` — tests-only
-- `docs` — docs/comments only
-- `config` — config / build / infra only
-- `mixed` — multiple of the above; name the dominant one
+- `feature`: new user-visible behavior, endpoints, UI, or capability
+- `refactor`: internal restructure, no behavior change
+- `bugfix`: corrects incorrect behavior
+- `test`: tests-only
+- `docs`: docs/comments only
+- `config`: config / build / infra only
+- `mixed`: multiple of the above; name the dominant one
 
 ---
 
-## Step 3 — Weight the lens
+## Step 3: Weight the lens
 
 Decide whether to emphasize **Clean Code**, **Gang of Four**, or **Mixed**. State your choice and a one-sentence rationale.
 
@@ -55,7 +59,7 @@ Heuristic:
 - **Names**: reveal intent (N1), unambiguous (N4), longer for longer scopes (N5), describe side effects (N7).
 - **Comments**: explain *why* not *what*; delete obsolete (C2), redundant (C3), commented-out (C5).
 - **General**: duplication is the worst smell (G5); polymorphism over switch (G23); encapsulate conditionals (G28); avoid Law-of-Demeter violations (G36); replace magic numbers with named constants (G25).
-- **Tests**: F.I.R.S.T. — Fast, Independent, Repeatable, Self-validating, Timely; test boundary conditions (T5).
+- **Tests**: F.I.R.S.T.: Fast, Independent, Repeatable, Self-validating, Timely; test boundary conditions (T5).
 
 ### Gang of Four reminder (Gamma/Helm/Johnson/Vlissides, 1994; design smells from Martin)
 - **23 patterns** in three groups:
@@ -79,9 +83,11 @@ Heuristic:
 
 ---
 
-## Step 4 — Analyze
+## Step 4: Analyze
 
-Walk every hunk. For each issue you find, cite **exactly one** catalog ID from the lists below. Quote the smallest possible code excerpt. One-sentence *why*. One-sentence *fix*. Don't invent IDs that aren't in this list.
+Walk every hunk. For each issue you find, cite **exactly one** catalog ID from the lists below. Quote the smallest possible code excerpt. One-sentence *why*. One-sentence *fix*. Don't invent IDs that aren't in this list; if a correctness or security issue fits none of them (common in TypeScript/React, which the language-specific IDs don't cover), report it as `UNCATALOGED` rather than dropping it or forcing a poor fit.
+
+Report a `GOF.*-MISSING` finding only when the pattern's signal is already repeated (about three or more occurrences) or the diff is actively extending it. A single occurrence isn't worth an abstraction; adding one there is itself `DS.NEEDLESS-COMPLEXITY`.
 
 ### Clean Code IDs (language-agnostic)
 - **CC.C1** Inappropriate Information (non-technical info in comments)
@@ -118,70 +124,70 @@ Walk every hunk. For each issue you find, cite **exactly one** catalog ID from t
 - **CC.T5** Test Boundary Conditions
 - **CC.T9** Tests Should Be Fast
 
-### Gang of Four IDs — missing-pattern signals
-- **GOF.STRATEGY-MISSING** — long if/elif/match on type-code or enum, repeated across methods.
-- **GOF.FACTORY-MISSING** — client `new`s concrete classes from a hierarchy.
-- **GOF.DECORATOR-MISSING** — subclass explosion combining orthogonal traits.
-- **GOF.OBSERVER-MISSING** — polling, or hand-rolled `for listener in listeners`.
-- **GOF.TEMPLATE-MISSING** — two near-identical methods differing in 1–2 steps.
-- **GOF.COMPOSITE-MISSING** — recursive container w/ `isinstance(x, list)` branches.
-- **GOF.ADAPTER-MISSING** — inline call-translation to a foreign API.
-- **GOF.COMMAND-MISSING** — ad-hoc tuples/dicts as deferred actions; ad-hoc undo stacks.
-- **GOF.ITERATOR-MISSING** — `for i in range(c.size())` over a custom collection.
-- **GOF.FACADE-MISSING** — clients touch many internals of one subsystem.
+### Gang of Four IDs: missing-pattern signals
+- **GOF.STRATEGY-MISSING**: long if/elif/match on type-code or enum, repeated across methods.
+- **GOF.FACTORY-MISSING**: client `new`s concrete classes from a hierarchy.
+- **GOF.DECORATOR-MISSING**: subclass explosion combining orthogonal traits.
+- **GOF.OBSERVER-MISSING**: polling, or hand-rolled `for listener in listeners`.
+- **GOF.TEMPLATE-MISSING**: two near-identical methods differing in 1–2 steps.
+- **GOF.COMPOSITE-MISSING**: recursive container w/ `isinstance(x, list)` branches.
+- **GOF.ADAPTER-MISSING**: inline call-translation to a foreign API.
+- **GOF.COMMAND-MISSING**: ad-hoc tuples/dicts as deferred actions; ad-hoc undo stacks.
+- **GOF.ITERATOR-MISSING**: `for i in range(c.size())` over a custom collection.
+- **GOF.FACADE-MISSING**: clients touch many internals of one subsystem.
 
-### Gang of Four IDs — design smells (Martin, *Agile Software Development*)
-- **DS.RIGIDITY** — one change cascades widely
-- **DS.FRAGILITY** — changes break unrelated parts
-- **DS.IMMOBILITY** — components hard to extract for reuse
-- **DS.VISCOSITY** — hacks are easier than correct fixes
-- **DS.NEEDLESS-COMPLEXITY** — infrastructure not justified by current need
-- **DS.NEEDLESS-REPETITION** — same logic in multiple places
-- **DS.OPACITY** — hard to understand
+### Gang of Four IDs: design smells (Martin, *Agile Software Development*)
+- **DS.RIGIDITY**: one change cascades widely
+- **DS.FRAGILITY**: changes break unrelated parts
+- **DS.IMMOBILITY**: components hard to extract for reuse
+- **DS.VISCOSITY**: hacks are easier than correct fixes
+- **DS.NEEDLESS-COMPLEXITY**: infrastructure not justified by current need
+- **DS.NEEDLESS-REPETITION**: same logic in multiple places
+- **DS.OPACITY**: hard to understand
 
 ### Python-specific IDs (apply only to `.py` files; tool codes for cross-reference)
-- **PY.MUTABLE-DEFAULT** — `def f(x=[])` / `={}` shares one object across calls (B006)
-- **PY.CALL-IN-DEFAULT** — `def f(x=time.now())` evaluated once at def-time (B008)
-- **PY.BARE-EXCEPT** — `except:` swallows `KeyboardInterrupt`/`SystemExit` (E722)
-- **PY.BROAD-EXCEPT** — `except Exception:` hides bugs (BLE001)
-- **PY.EXCEPT-PASS** — silent swallow (S110 / TRY203)
-- **PY.RAISE-WITHOUT-FROM** — `raise X()` in except loses chain (B904)
-- **PY.NONE-EQ** — `== None` instead of `is None` (E711)
-- **PY.BOOL-EQ** — `== True` / `== False` (E712)
-- **PY.TYPE-EQ** — `type(x) == T` instead of `isinstance` (E721)
-- **PY.RANGE-LEN** — `for i in range(len(x))` (PLR1736)
-- **PY.STAR-IMPORT** — `from x import *` (F403)
+- **PY.MUTABLE-DEFAULT**: `def f(x=[])` / `={}` shares one object across calls (B006)
+- **PY.CALL-IN-DEFAULT**: `def f(x=time.now())` evaluated once at def-time (B008)
+- **PY.BARE-EXCEPT**: `except:` swallows `KeyboardInterrupt`/`SystemExit` (E722)
+- **PY.BROAD-EXCEPT**: `except Exception:` hides bugs (BLE001)
+- **PY.EXCEPT-PASS**: silent swallow (S110 / TRY203)
+- **PY.RAISE-WITHOUT-FROM**: `raise X()` in except loses chain (B904)
+- **PY.NONE-EQ**: `== None` instead of `is None` (E711)
+- **PY.BOOL-EQ**: `== True` / `== False` (E712)
+- **PY.TYPE-EQ**: `type(x) == T` instead of `isinstance` (E721)
+- **PY.RANGE-LEN**: `for i in range(len(x))` (PLR1736)
+- **PY.STAR-IMPORT**: `from x import *` (F403)
 - **PY.UNUSED-IMPORT** (F401)
 - **PY.UNUSED-VAR** (F841)
-- **PY.LAMBDA-NAMED** — `f = lambda: ...` (E731)
-- **PY.AMBIG-NAME** — `l`, `O`, `I` (E741)
-- **PY.BUILTIN-SHADOW** — rebinding `list`, `dict`, `id`, etc. (A001/A002)
-- **PY.MUTABLE-CLASS-ATTR** — `class C: items = []` (RUF012)
-- **PY.FILE-NO-WITH** — open() without context manager (SIM115)
-- **PY.EVAL** — `eval()` on user input (S307)
-- **PY.EXEC** — `exec()` (S102)
-- **PY.ASSERT-RUNTIME** — `assert` for runtime validation (stripped under `-O`) (S101)
-- **PY.SHELL-TRUE** — `subprocess(..., shell=True)` (S602)
-- **PY.PICKLE-LOAD** — `pickle.load` on untrusted data (S301)
-- **PY.YAML-LOAD** — `yaml.load` without `SafeLoader` (S506)
-- **PY.LATE-BIND** — late-binding closure in loop (B023)
-- **PY.IS-LITERAL** — `is` with non-singleton literal (F632)
-- **PY.UNUSED-LOOP-VAR** — loop variable never used (B007)
-- **PY.PRINT-IN-LIB** — `print()` in non-CLI library code (T201)
-- **PY.BLOCKING-IN-ASYNC** — blocking I/O inside `async def` (ASYNC101)
-- **PY.DICT-KEYS-ITER** — `for k in d.keys():` (SIM118)
-- **PY.LOG-NO-EXC** — `except: logger.error(...)` without `.exception` (TRY400)
+- **PY.LAMBDA-NAMED**: `f = lambda: ...` (E731)
+- **PY.AMBIG-NAME**: `l`, `O`, `I` (E741)
+- **PY.BUILTIN-SHADOW**: rebinding `list`, `dict`, `id`, etc. (A001/A002)
+- **PY.MUTABLE-CLASS-ATTR**: `class C: items = []` (RUF012)
+- **PY.FILE-NO-WITH**: open() without context manager (SIM115)
+- **PY.EVAL**: `eval()` on user input (S307)
+- **PY.EXEC**: `exec()` (S102)
+- **PY.ASSERT-RUNTIME**: `assert` for runtime validation (stripped under `-O`) (S101)
+- **PY.SHELL-TRUE**: `subprocess(..., shell=True)` (S602)
+- **PY.PICKLE-LOAD**: `pickle.load` on untrusted data (S301)
+- **PY.YAML-LOAD**: `yaml.load` without `SafeLoader` (S506)
+- **PY.LATE-BIND**: late-binding closure in loop (B023)
+- **PY.IS-LITERAL**: `is` with non-singleton literal (F632)
+- **PY.UNUSED-LOOP-VAR**: loop variable never used (B007)
+- **PY.PRINT-IN-LIB**: `print()` in non-CLI library code (T201)
+- **PY.BLOCKING-IN-ASYNC**: blocking I/O inside `async def` (ASYNC101)
+- **PY.DICT-KEYS-ITER**: `for k in d.keys():` (SIM118)
+- **PY.LOG-NO-EXC**: `except: logger.error(...)` without `.exception` (TRY400)
 
 ---
 
-## Step 5 — Prioritize & report
+## Step 5: Prioritize & report
 
 ### Severity definitions
-- **BLOCKER** — security, correctness, data-loss, or runtime-crash risk
-- **HIGH** — clearly wrong; will regress maintainability or behavior
-- **MEDIUM** — design weakness worth fixing now
-- **LOW** — minor; in-passing fix
-- **NIT** — style preference, no real cost
+- **BLOCKER**: security, correctness, data-loss, or runtime-crash risk
+- **HIGH**: clearly wrong; will regress maintainability or behavior
+- **MEDIUM**: design weakness worth fixing now
+- **LOW**: minor; in-passing fix
+- **NIT**: style preference, no real cost
 
 Sort findings by severity (desc), then by file path. Emit **exactly this structure** as your final response:
 
@@ -198,14 +204,14 @@ Sort findings by severity (desc), then by file path. Emit **exactly this structu
 
 ## Findings
 
-### [BLOCKER] `PY.BARE-EXCEPT` — `path/file.py:142`
+### [BLOCKER] `PY.BARE-EXCEPT` at `path/file.py:142`
 ```python
 <smallest meaningful excerpt>
 ```
 **Why:** <one sentence>
 **Fix:** <one sentence>
 
-### [HIGH] `GOF.STRATEGY-MISSING` — `path/file.py:55-90`
+### [HIGH] `GOF.STRATEGY-MISSING` at `path/file.py:55-90`
 ...
 
 ## Synthesis
