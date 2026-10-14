@@ -381,7 +381,7 @@ lg      # lazygit (full TUI)
 
 ## Code Smell Review
 
-A shared `smell` skill (Clean Code + Gang of Four + Python-specific catalog) is symlinked into Claude Code, Codex CLI, and Cursor from a single canonical source — see [inventory.md — Shared agent skills](../inventory.md#shared-agent-skills) for how the symlinks are wired.
+A shared `smell` skill (Clean Code + Gang of Four + Python-specific catalog) is symlinked into `~/.claude/skills` and `~/.agents/skills` (read by Claude Code, Codex, Cursor, OpenCode, and Pi) from a single canonical source — see [inventory.md — Shared agent skills](../inventory.md#shared-agent-skills) for how the symlinks are wired.
 
 Ask any of the three agents to run a smell review (it triggers on phrases like "check for code smells" or "review this before I merge"), optionally naming a base branch:
 
@@ -397,7 +397,7 @@ Canonical source: `home/skills/smell/SKILL.md` in this repo. Edit it there — t
 
 ## Commit Message Conventions
 
-A shared `commit-message` skill is symlinked into Claude Code, Codex CLI, and Cursor from a single canonical source — see [inventory.md — Shared agent skills](../inventory.md#shared-agent-skills) for how the symlinks are wired.
+A shared `commit-message` skill is symlinked into `~/.claude/skills` and `~/.agents/skills` (read by Claude Code, Codex, Cursor, OpenCode, and Pi) from a single canonical source — see [inventory.md — Shared agent skills](../inventory.md#shared-agent-skills) for how the symlinks are wired.
 
 It formats commit subjects as Conventional Commits with a lowercase scope (`type(scope): summary`), prefixing the Jira ticket ID when the current branch name contains one (e.g. `ABC-123 feat(billing): ...`).
 
@@ -407,7 +407,7 @@ Canonical source: `home/skills/commit-message/SKILL.md` in this repo. Edit it th
 
 ## Pull Request Description Conventions
 
-A shared `pr-description` skill is symlinked into Claude Code, Codex CLI, and Cursor from a single canonical source — see [inventory.md — Shared agent skills](../inventory.md#shared-agent-skills) for how the symlinks are wired.
+A shared `pr-description` skill is symlinked into `~/.claude/skills` and `~/.agents/skills` (read by Claude Code, Codex, Cursor, OpenCode, and Pi) from a single canonical source — see [inventory.md — Shared agent skills](../inventory.md#shared-agent-skills) for how the symlinks are wired.
 
 It formats PR titles the same way as commit subjects, and bodies as `# Summary` / `# Changes` / `# Why` / `# Test plan` sections wrapped in a fenced markdown code block.
 

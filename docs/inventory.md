@@ -30,7 +30,7 @@ All declared in `configuration.nix`'s `homebrew.casks` (applied via `darwin-rebu
 | Ghostty | `configuration.nix` (homebrew.casks) | Terminal | GPU-accelerated; replaces iTerm2 |
 | WezTerm | `configuration.nix` (homebrew.casks) | Terminal | GPU-accelerated, cross-platform terminal emulator |
 | Visual Studio Code | `configuration.nix` (homebrew.casks) | Editor | |
-| Cursor | `configuration.nix` (homebrew.casks) | Editor | AI-native code editor; global instructions symlinked from `home/AGENTS.md` to `~/.cursor/rules/master-rules.md` |
+| Cursor | `configuration.nix` (homebrew.casks) | Editor | AI-native code editor. Cursor can read personal rules from `~/.cursor/rules/*.mdc`; `home/AGENTS.md` is deliberately not wired there. It does scan `~/.agents/skills` |
 | Docker Desktop | `configuration.nix` (homebrew.casks) | Containers | Provides `docker` and `docker compose` CLIs — see [Docker cheat sheet](cheatsheets/docker-cheatsheet.md) |
 | Google Chrome | `configuration.nix` (homebrew.casks) | Browser | |
 | Firefox | `configuration.nix` (homebrew.casks) | Browser | |
