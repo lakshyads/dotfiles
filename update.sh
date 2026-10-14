@@ -80,6 +80,12 @@ fi
 section "Global npm CLIs"
 run "Upgrade npm globals" "$DOTFILES_DIR/npm-globals.sh" update
 
+# ── Agent skills ─────────────────────────────────────────────────────────────
+# `npx skills update -g` moves every npx-installed skill to latest, then
+# installs anything in home/agent-skills.txt that's missing.
+section "Agent skills"
+run "Update agent skills" "$DOTFILES_DIR/agent-skills.sh" update
+
 # ── Summary ───────────────────────────────────────────────────────────────────
 printf "\n${G}${W}Done.${R}\n"
 printf "If flake.lock changed above, run ${W}./rebuild.sh${R} to apply it.\n"

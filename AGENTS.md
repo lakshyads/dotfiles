@@ -52,6 +52,7 @@ Never duplicate these. Every other place must link, not repeat.
 |------|--------------------|----------------|
 | Every CLI tool and GUI app (formulae + casks) | `configuration.nix`'s `homebrew` block | Every `homebrew.brews` / `homebrew.casks` entry. CLI tools live here, not in Nix, so `brew upgrade <tool>` on the spot and `./update.sh` converge. |
 | Global npm CLIs (e.g. `pi`, `*-axi`) | `home/npm-globals.txt` | One package per line; bare name = latest, `name@version` = pinned. Installed by `./npm-globals.sh` into `~/.local/share/npm-global`, so on-the-spot `npm i -g` lands there too. |
+| Third-party agent skills (e.g. `lavish`) | `home/agent-skills.txt` | One `<owner/repo> <skill>` per line, always latest. Installed by `./agent-skills.sh` via `npx skills add -g`, so on-the-spot `npx skills add`/`update` converge. The repo's own skills (`home/skills/`) are linked by `home.nix` instead. |
 | Self-updating native installers (Claude Code `claude`, Cursor `agent`) | `bootstrap.sh` (install), `update.sh` (`claude update`, `agent update`) | Live in `~/.local/bin`; they update themselves. |
 | Nix-managed content (config only, plus fonts and zsh completion definitions) | `home.nix` | Config files, shell setup, symlinks. **No CLI tools in `home.packages`** — a Nix copy can't be upgraded individually and gets shadowed by stray Homebrew copies. |
 | Zsh plugins, aliases, keybinds, Starship prompt | `home.nix`'s `programs.zsh` block and `xdg.configFile."starship.toml"` | Antidote is retired — native home-manager zsh plugin toggles replace it. There is no more standalone plugin-list file. |
@@ -103,6 +104,12 @@ Work through every applicable item. Skipping any item leaves the repo inconsiste
 - [ ] Add a row to the appropriate CLI tools section in `docs/inventory.md` (include "Installed via: npm (`home/npm-globals.txt`)")
 - [ ] Run `./npm-globals.sh` (or `./rebuild.sh`, which calls it) — `verify.sh` runs `./npm-globals.sh check`
 
+### Adding a third-party agent skill
+
+- [ ] Add `<owner/repo> <skill>` to `home/agent-skills.txt`
+- [ ] Add a row to the third-party skills table in `docs/inventory.md`
+- [ ] Run `./agent-skills.sh` (or `./rebuild.sh`, which calls it); `verify.sh` runs `./agent-skills.sh check`
+
 ### Adding a language runtime (asdf)
 
 - [ ] Add to `.tool-versions` (version number goes here and nowhere else)
@@ -117,7 +124,7 @@ Work through every applicable item. Skipping any item leaves the repo inconsiste
 
 ### Removing anything
 
-- [ ] Remove from `configuration.nix` / `home.nix` / `.tool-versions` / `home/npm-globals.txt` (npm: also `npm rm -g <name>`)
+- [ ] Remove from `configuration.nix` / `home.nix` / `.tool-versions` / `home/npm-globals.txt` (npm: also `npm rm -g <name>`) / `home/agent-skills.txt` (also `npx skills remove -g <name>`)
 - [ ] Remove the corresponding row from `docs/inventory.md`
 - [ ] Remove from `verify.sh` (`check_command` loop, `APPS` array, or `check_contains`/`check_resolves_to_repo` calls as applicable)
 - [ ] Run `./rebuild.sh` — note `homebrew.onActivation.cleanup = "none"` means removed Homebrew packages are left installed but undeclared, not force-uninstalled; `brew uninstall` manually if you want it gone from disk too

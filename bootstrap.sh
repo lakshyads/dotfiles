@@ -19,7 +19,8 @@
 #   6. Registers asdf plugins and installs runtimes from .tool-versions
 #      (per-project .tool-versions overrides don't fit Nix's model, so
 #      runtimes stay asdf-managed by design).
-#      Then installs global npm CLIs (e.g. pi) from home/npm-globals.txt.
+#      Then installs global npm CLIs (e.g. pi) from home/npm-globals.txt
+#      and third-party agent skills from home/agent-skills.txt.
 #   7. Installs the Claude Code CLI (`claude`) and Cursor CLI (`agent`) via
 #      their own self-updating installers — not Nix/Homebrew-managed.
 #   8. Prompts for git identity (still written directly to ~/.gitconfig —
@@ -128,6 +129,12 @@ fi
 # latest; pinned ones at their exact version.
 section "Global npm CLIs"
 "$DOTFILES_DIR/npm-globals.sh" sync || warn "Some npm globals failed — re-run: ./npm-globals.sh"
+
+# ── 6c. Agent skills ──────────────────────────────────────────────────────────
+# Needs npx from step 6. Third-party skills from home/agent-skills.txt; the
+# repo's own skills were already linked by the switch.
+section "Agent skills"
+"$DOTFILES_DIR/agent-skills.sh" sync || warn "Some agent skills failed; re-run: ./agent-skills.sh"
 
 # ── 7a. Claude Code CLI ───────────────────────────────────────────────────────
 # Native installer, not the Homebrew cask: it auto-updates in the background

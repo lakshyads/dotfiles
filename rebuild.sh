@@ -18,4 +18,6 @@ else
   sudo /run/current-system/sw/bin/darwin-rebuild switch --flake "$DOTFILES_DIR#${HOST_LABEL}"
   # Installs anything newly added to home/npm-globals.txt; never upgrades unpinned ones.
   "$DOTFILES_DIR/npm-globals.sh" sync || echo "npm globals sync had failures — re-run: ./npm-globals.sh" >&2
+  # Installs anything newly added to home/agent-skills.txt; never updates existing ones.
+  "$DOTFILES_DIR/agent-skills.sh" sync || echo "agent skills sync had failures; re-run: ./agent-skills.sh" >&2
 fi

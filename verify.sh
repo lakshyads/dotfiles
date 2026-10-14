@@ -259,6 +259,11 @@ check_resolves_to_repo "$HOME/.agents/skills/pr-description"        "~/.agents/s
 check_resolves_to_repo "$HOME/.claude/skills/pr-description"        "~/.claude/skills/pr-description (-> home/skills/pr-description)"
 check_resolves_to_repo "$HOME/.agents/skills/architecture-plan"      "~/.agents/skills/architecture-plan (-> home/skills/architecture-plan)"
 check_resolves_to_repo "$HOME/.claude/skills/architecture-plan"      "~/.claude/skills/architecture-plan (-> home/skills/architecture-plan)"
+if "$DOTFILES_DIR/agent-skills.sh" check >/dev/null 2>&1; then
+  pass "home/agent-skills.txt: all installed"
+else
+  fail "home/agent-skills.txt out of sync; run: ./agent-skills.sh check"
+fi
 
 # home-manager-generated: real content is a Nix-store-managed file, not
 # something in this repo — just check it exists.
