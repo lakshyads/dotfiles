@@ -5,6 +5,9 @@ description: Formats git commit subjects as Conventional Commits with a lowercas
 
 # Commit Messages
 
+If the repository defines its own commit conventions (commitlint config,
+CONTRIBUTING guide, project AGENTS.md), follow those instead.
+
 Write commit subjects as Conventional Commits with a scope. If the current
 branch name contains a Jira ticket ID, prefix the subject with that ID:
 
@@ -23,7 +26,7 @@ branch name contains a Jira ticket ID, prefix the subject with that ID:
 - Keep the whole subject line (including `<type>(<scope>):` and any JIRA-ID prefix) to 50 chars where possible, 72 chars hard cap. Trim the summary first if it runs long.
 - Add a blank line then a body when the change needs context (why, not what), wrapped at 72 chars per line.
 - Keep each commit focused: split unrelated changes into separate, meaningful commits rather than one catch-all commit.
-- NEVER auto-add your agent name as co-author to any commit.
+- Don't add agent co-author trailers.
 
 Examples:
 - `refactor(billing): unify billing_category resolution`

@@ -1,11 +1,13 @@
 ---
 name: pr-description
-description: Formats GitHub pull request titles (Conventional Commits style) and bodies (Summary/Changes/Why/Test plan, wrapped in a markdown code block). Use this skill whenever drafting or writing up a pull request description/title, or running `gh pr create`.
+description: Formats GitHub pull request titles (Conventional Commits style) and bodies (Summary/Changes/Why/Test plan). Use when drafting a pull request title or description, or running `gh pr create`.
 ---
 
 # Pull Request Descriptions
 
-**Title**: same Conventional Commits format as the commit subject line.
+If the repository has a PR template (`.github/pull_request_template.md` or `.github/PULL_REQUEST_TEMPLATE/`), fill that in instead of the structure below.
+
+**Title**: the same format as a commit subject, per the `commit-message` skill (including the Jira ID prefix when the branch has one).
 
 **Body** - use `#` for top-level section headings and `##` for subsection headings. Structure:
 
@@ -31,8 +33,6 @@ One short paragraph. Omit if the title makes it obvious.
 ```
 
 Rules:
-- Always use `#` for top-level sections (Summary, Changes, Why, Test plan) - never `##` for these, as `##` renders as bold text rather than a heading in many tools
-- Use `##` only for subsection groupings within a section
-- No emojis, no em-dashes
-- No "Generated with" footer lines
-- ALWAYS wrap the entire PR description body in a fenced markdown code block (` ```markdown `) when outputting it, so the raw `#` syntax is visible and copyable rather than being rendered
+- Use `#` for the top-level sections (Summary, Changes, Why, Test plan) and `##` only for subsection groupings within a section.
+- No emojis and no "Generated with" footer lines.
+- When showing a draft in chat, wrap the whole body in a fenced ` ```markdown ` block so the raw `#` syntax stays visible and copyable. Pass the body to `gh pr create --body` (or a body file) unfenced, so GitHub renders it.
