@@ -24,13 +24,19 @@ in
 
   home.sessionVariables = {
     EDITOR = "nvim";
-    # Global npm CLIs (home/npm-globals.txt, installed by ./npm-globals.sh) live
-    # outside asdf's per-Node-version dir so they survive Node upgrades.
-    NPM_CONFIG_PREFIX = "${config.home.homeDirectory}/.local/share/npm-global";
   };
 
   programs.zsh = {
     enable = true;
+    # Global npm CLIs (home/npm-globals.txt, installed by ./npm-globals.sh) live
+    # outside asdf's per-Node-version dir so they survive Node upgrades. Set here
+    # rather than in home.sessionVariables: that file is sourced once per session
+    # tree, so shells under a long-running parent (herdr, tmux) that predates a
+    # rebuild never see new values. envExtra runs in every zsh. The *-axi CLIs
+    # also read it to detect an npm-global install for their `update` command.
+    envExtra = ''
+      export NPM_CONFIG_PREFIX="$HOME/.local/share/npm-global"
+    '';
     autosuggestion.enable = true;      # ghost text from history (replaces zsh-autosuggestions)
     syntaxHighlighting.enable = true;  # commands turn green when valid (replaces zsh-syntax-highlighting)
     enableCompletion = true;           # replaces zsh-completions plugin + manual compinit
