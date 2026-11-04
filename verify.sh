@@ -304,7 +304,7 @@ APPS=(
   "Postman"
   "Baby Menu"
   "Claude"
-  "Codex"
+  "ChatGPT"
 )
 for app in "${APPS[@]}"; do
   if [[ -d "/Applications/$app.app" ]]; then

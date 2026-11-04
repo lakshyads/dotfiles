@@ -105,7 +105,7 @@
       # AI coding tools
       "claude"          # desktop app; the claude CLI uses Anthropic's native installer (bootstrap.sh)
       "codex"
-      "codex-app"
+      "chatgpt"         # ChatGPT + Codex desktop app (replaces the discontinued codex-app cask)
       # Browsers
       "google-chrome"
       "firefox"

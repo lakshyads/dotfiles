@@ -45,7 +45,7 @@ All declared in `configuration.nix`'s `homebrew.casks` (applied via `darwin-rebu
 | Postman | `configuration.nix` (homebrew.casks) | API Testing | REST client |
 | Baby Menu | `configuration.nix` (homebrew.casks: `kunchenguid/tap/baby-menu`) | Productivity | Agent-editable macOS menu bar — ask Claude/Codex (or a custom ACP agent) to add widgets. Extensions, `preferences.json`, and `agents.json` are edit-in-place via `home.nix`'s `mkOutOfStoreSymlink` + `home.activation.backupBabyMenuConfig` (`home/.baby-menu/`); SQLite DB and caches stay machine-local under `~/.baby-menu/` |
 | Claude (desktop) | `configuration.nix` (homebrew.casks: `claude`) | AI | Anthropic Claude desktop app |
-| Codex (desktop) | `configuration.nix` (homebrew.casks: `codex-app`) | AI | OpenAI Codex desktop app for managing coding agents; global instructions symlinked from `home/AGENTS.md` to `~/.codex/AGENTS.md` |
+| ChatGPT (desktop, includes Codex) | `configuration.nix` (homebrew.casks: `chatgpt`) | AI | OpenAI desktop app with ChatGPT and Codex (replaced the `codex-app` cask); global instructions symlinked from `home/AGENTS.md` to `~/.codex/AGENTS.md` |
 ---
 
 ## CLI Tools & Utilities
