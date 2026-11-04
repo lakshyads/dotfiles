@@ -34,7 +34,6 @@ All declared in `configuration.nix`'s `homebrew.casks` (applied via `darwin-rebu
 | Docker Desktop | `configuration.nix` (homebrew.casks) | Containers | Provides `docker` and `docker compose` CLIs — see [Docker cheat sheet](cheatsheets/docker-cheatsheet.md) |
 | Google Chrome | `configuration.nix` (homebrew.casks) | Browser | |
 | Firefox | `configuration.nix` (homebrew.casks) | Browser | |
-| ChatGPT Atlas | `configuration.nix` (homebrew.casks) | Browser | OpenAI's browser with ChatGPT built in; requires arm64 + macOS 14 |
 | Google Cloud CLI | `configuration.nix` (homebrew.casks) | Cloud | Includes `gcloud`, `gsutil`, `bq`; kubectl installed on demand |
 | Rectangle | `configuration.nix` (homebrew.casks) | Productivity | Keyboard-driven window tiling |
 | AppCleaner | `configuration.nix` (homebrew.casks) | Productivity | Clean app uninstalls |

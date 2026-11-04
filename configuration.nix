@@ -109,7 +109,6 @@
       # Browsers
       "google-chrome"
       "firefox"
-      "chatgpt-atlas"
       # Productivity & utilities
       "rectangle"
       "appcleaner"

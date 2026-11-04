@@ -294,7 +294,6 @@ APPS=(
   "Docker"
   "Google Chrome"
   "Firefox"
-  "ChatGPT Atlas"
   "Rectangle"
   "AppCleaner"
   "Maccy"
