@@ -12,10 +12,12 @@ result-*
 home/.config/herdr/*.log
 home/.config/herdr/*.log.*
 home/.config/herdr/*.sock
+home/.config/herdr/*.sock.*
 home/.config/herdr/session.json
 home/.config/herdr/session.json.bak-*
 home/.config/herdr/session-history.json
 home/.config/herdr/sessions/
+home/.config/herdr/session-snapshots/
 home/.config/herdr/release-notes.json
 home/.config/herdr/product-announcements.json
 home/.config/herdr/plugins.json
