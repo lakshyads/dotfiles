@@ -168,6 +168,10 @@ fi
 # programs.git.settings, applied to ~/.config/git/config.
 section "Git Configuration"
 
+# `git config --global` writes to ~/.config/git/config (a read-only Nix
+# store symlink) when ~/.gitconfig doesn't exist yet, so create it first.
+touch "$HOME/.gitconfig"
+
 _branch=main
 if ! $FULL; then
   _cur_branch=$(git config --global init.defaultBranch 2>/dev/null || echo "main")
