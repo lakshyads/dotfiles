@@ -1,29 +1,24 @@
-type QuotaWindow = {
-  id: "included_usage" | "auto_usage" | "api_usage";
+export type PoolWindow = {
+  id: "cursor_models" | "other_models" | "grok_bot";
   label: string;
-  kind?: "monthly";
   percentUsed: number;
-  percentRemaining?: number;
   resetAt?: string;
 };
 
-type OnDemandUsage = {
+export type OnDemandUsage = {
   usedCents: number;
-  limitCents?: number;
-  remainingCents?: number;
-  percentUsed?: number;
-  limitType?: string;
+  limitCents: number;
+  percentUsed: number;
 };
 
 export type CursorQuotaSnapshot = {
   source: "api";
-  accountEmail?: string;
   plan?: string;
-  windows: QuotaWindow[];
+  windows: PoolWindow[];
   onDemand?: OnDemandUsage;
+  resetAt?: string;
   refreshedAt: string;
   stale: boolean;
-  status?: string;
 };
 
 export type QuotaResult =
@@ -60,6 +55,24 @@ export function fetchQuota(): Promise<QuotaResult> {
   return inFlight;
 }
 
-export function findWindow(snapshot: CursorQuotaSnapshot, id: QuotaWindow["id"]): QuotaWindow | undefined {
-  return snapshot.windows.find((w) => w.id === id);
+export function toneForRemaining(percentRemaining: number): "live" | "warn" | "danger" {
+  if (percentRemaining <= 10) return "danger";
+  if (percentRemaining <= 30) return "warn";
+  return "live";
+}
+
+export function formatUsd(cents: number): string {
+  return `$${(cents / 100).toFixed(2)}`;
+}
+
+export function formatResetAt(resetAt?: string): string | undefined {
+  if (!resetAt) return undefined;
+  const ms = Date.parse(resetAt);
+  if (Number.isNaN(ms)) return undefined;
+  return new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(ms));
 }

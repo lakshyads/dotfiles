@@ -1,7 +1,7 @@
 import type { BabyMenuLayoutProps } from "@babymenu/contracts";
 
 const TOP_ROW = ["codex-quota", "claude-code-quota"];
-const FULL_WIDTH = ["cursor-quota"];
+const FULL_WIDTH: string[] = [];
 
 export default function Layout({ widgets, renderWidget }: BabyMenuLayoutProps) {
   const known = new Set([...TOP_ROW, ...FULL_WIDTH]);

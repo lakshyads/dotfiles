@@ -1,87 +1,49 @@
 import { execFile } from "node:child_process";
-import { homedir } from "node:os";
-import { join } from "node:path";
 import type { BabyMenuServerContext } from "@babymenu/contracts";
 
-type QuotaWindowId = "included_usage" | "auto_usage" | "api_usage";
+type PoolId = "cursor_models" | "other_models" | "grok_bot";
 
-type QuotaWindow = {
-  id: QuotaWindowId;
+type PoolWindow = {
+  id: PoolId;
   label: string;
-  kind?: "monthly";
   percentUsed: number;
-  percentRemaining?: number;
   resetAt?: string;
 };
 
 type OnDemandUsage = {
   usedCents: number;
-  limitCents?: number;
-  remainingCents?: number;
-  percentUsed?: number;
-  limitType?: string;
+  limitCents: number;
+  percentUsed: number;
 };
 
 type CursorQuotaSnapshot = {
   source: "api";
-  accountEmail?: string;
   plan?: string;
-  windows: QuotaWindow[];
+  windows: PoolWindow[];
   onDemand?: OnDemandUsage;
+  resetAt?: string;
   refreshedAt: string;
   stale: boolean;
-  status?: string;
 };
 
 type QuotaResult<T> = { ok: true; data: T } | { ok: false; error: string; sourceTried: string[] };
 
-const SQLITE_CANDIDATES = ["sqlite3", "/usr/bin/sqlite3", "/opt/homebrew/bin/sqlite3", "/usr/local/bin/sqlite3"];
+// Cursor keeps a working bearer token in the macOS Keychain; the copy in state.vscdb is encrypted.
+const KEYCHAIN_SERVICE = "cursor-access-token";
+const KEYCHAIN_ACCOUNT = "cursor-user";
 
-function dbPath(): string {
-  return join(homedir(), "Library", "Application Support", "Cursor", "User", "globalStorage", "state.vscdb");
-}
-
-function runSqlite(binary: string, args: string[]): Promise<{ ok: true; stdout: string } | { ok: false; error: string }> {
+function readToken(): Promise<string | undefined> {
   return new Promise((resolve) => {
-    execFile(binary, args, { timeout: 5_000 }, (error, stdout) => {
-      if (error) {
-        resolve({ ok: false, error: error.message });
-        return;
-      }
-      resolve({ ok: true, stdout });
-    });
+    execFile(
+      "/usr/bin/security",
+      ["find-generic-password", "-s", KEYCHAIN_SERVICE, "-a", KEYCHAIN_ACCOUNT, "-w"],
+      { timeout: 5_000 },
+      (error, stdout) => {
+        const token = stdout.trim();
+        resolve(error || !token ? undefined : token);
+      },
+    );
   });
-}
-
-async function findSqlite(): Promise<string | undefined> {
-  for (const candidate of SQLITE_CANDIDATES) {
-    const result = await runSqlite(candidate, ["-version"]);
-    if (result.ok) return candidate;
-  }
-  return undefined;
-}
-
-type AuthRow = { accessToken?: string; cachedEmail?: string; stripeMembershipType?: string };
-
-async function readAuthFromDb(sqliteBin: string): Promise<{ ok: true; row: AuthRow } | { ok: false; busy: boolean }> {
-  const query =
-    "SELECT key, value FROM ItemTable WHERE key IN ('cursorAuth/accessToken', 'cursorAuth/cachedEmail', 'cursorAuth/stripeMembershipType');";
-  const result = await runSqlite(sqliteBin, ["-readonly", "-cmd", ".timeout 1000", dbPath(), query]);
-  if (!result.ok) {
-    const busy = /locked|busy/i.test(result.error);
-    return { ok: false, busy };
-  }
-  const row: AuthRow = {};
-  for (const line of result.stdout.split("\n")) {
-    const sep = line.indexOf("|");
-    if (sep === -1) continue;
-    const key = line.slice(0, sep);
-    const value = line.slice(sep + 1);
-    if (key === "cursorAuth/accessToken") row.accessToken = value;
-    else if (key === "cursorAuth/cachedEmail") row.cachedEmail = value;
-    else if (key === "cursorAuth/stripeMembershipType") row.stripeMembershipType = value;
-  }
-  return { ok: true, row };
 }
 
 async function callDashboard(
@@ -99,80 +61,80 @@ async function callDashboard(
     signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) return { status: res.status };
-  const body = (await res.json()) as Record<string, unknown>;
-  return { status: res.status, body };
+  return { status: res.status, body: (await res.json()) as Record<string, unknown> };
 }
 
-function parseResetAt(epochMsString: unknown): string | undefined {
-  if (typeof epochMsString !== "string" && typeof epochMsString !== "number") return undefined;
-  const ms = Number(epochMsString);
+function parseResetAt(epochMs: unknown): string | undefined {
+  if (typeof epochMs !== "string" && typeof epochMs !== "number") return undefined;
+  const ms = Number(epochMs);
   if (!Number.isFinite(ms) || ms <= 0) return undefined;
   const date = new Date(ms);
-  if (Number.isNaN(date.getTime())) return undefined;
-  return date.toISOString();
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
 }
 
-function clampPercent(value: unknown): number | undefined {
-  if (typeof value !== "number" || !Number.isFinite(value)) return undefined;
-  return Math.min(100, Math.max(0, value));
-}
-
-function clampCents(value: unknown): number | undefined {
+function finite(value: unknown): number | undefined {
   return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
 
-// "On-demand usage" is Cursor's usage-based billing beyond the included plan quota,
-// capped by a user-configurable spend limit (Cursor's dashboard "Spend limits" setting).
-// The API reports it as spendLimitUsage.individualUsed/individualLimit in integer cents.
-function normalizeOnDemand(usageBody: Record<string, unknown>): OnDemandUsage | undefined {
-  const spendLimitUsage = usageBody.spendLimitUsage as Record<string, unknown> | undefined;
-  if (!spendLimitUsage) return undefined;
-  const usedCents = clampCents(spendLimitUsage.individualUsed) ?? clampCents(spendLimitUsage.totalSpend);
+function clampPercent(value: unknown): number | undefined {
+  const n = finite(value);
+  return n === undefined ? undefined : Math.min(100, Math.max(0, n));
+}
+
+// On-demand is usage billed past the included plan, capped by the user's spend limit (cents).
+// The API omits individualUsed when nothing is spent, so derive it from limit - remaining.
+function normalizeOnDemand(body: Record<string, unknown>): OnDemandUsage | undefined {
+  const spend = body.spendLimitUsage as Record<string, unknown> | undefined;
+  const limitCents = finite(spend?.individualLimit);
+  if (!limitCents || limitCents <= 0) return undefined;
+  const remaining = finite(spend?.individualRemaining);
+  const usedCents = finite(spend?.individualUsed) ?? (remaining !== undefined ? limitCents - remaining : undefined);
   if (usedCents === undefined) return undefined;
-  const limitCents = clampCents(spendLimitUsage.individualLimit);
-  const remainingCents = clampCents(spendLimitUsage.individualRemaining);
-  const percentUsed = limitCents && limitCents > 0 ? Math.min(100, Math.max(0, (usedCents / limitCents) * 100)) : undefined;
+  const clampedUsed = Math.max(0, usedCents);
   return {
-    usedCents,
+    usedCents: clampedUsed,
     limitCents,
-    remainingCents,
-    percentUsed,
-    limitType: typeof spendLimitUsage.limitType === "string" ? spendLimitUsage.limitType : undefined,
+    percentUsed: Math.min(100, (clampedUsed / limitCents) * 100),
   };
 }
 
-function normalizeUsage(
-  usageBody: Record<string, unknown>,
-  planName: string | undefined,
-  fallbackPlan: string | undefined,
-): CursorQuotaSnapshot {
-  const planUsage = usageBody.planUsage as Record<string, unknown> | undefined;
-  const resetAt = parseResetAt(usageBody.billingCycleEnd);
-  const windows: QuotaWindow[] = [];
+// Grok Bot has its own weekly allowance, reported by GetSandUsageStatus (usagePercent is 0-100, used).
+function normalizeGrokBot(body: Record<string, unknown> | undefined): PoolWindow | undefined {
+  const percentUsed = clampPercent(body?.usagePercent);
+  if (percentUsed === undefined) return undefined;
+  const resetMs = typeof body?.nextResetTimestampUtc === "string" ? Date.parse(body.nextResetTimestampUtc) : NaN;
+  return {
+    id: "grok_bot",
+    label: "grok bot",
+    percentUsed,
+    resetAt: Number.isNaN(resetMs) ? undefined : new Date(resetMs).toISOString(),
+  };
+}
 
-  const specs: Array<{ id: QuotaWindowId; label: string; field: string }> = [
-    { id: "included_usage", label: "included usage", field: "totalPercentUsed" },
-    { id: "auto_usage", label: "auto usage", field: "autoPercentUsed" },
-    { id: "api_usage", label: "API usage", field: "apiPercentUsed" },
+function normalize(
+  body: Record<string, unknown>,
+  plan: string | undefined,
+  grokBot: PoolWindow | undefined,
+): CursorQuotaSnapshot {
+  const planUsage = body.planUsage as Record<string, unknown> | undefined;
+  const resetAt = parseResetAt(body.billingCycleEnd);
+  const windows: PoolWindow[] = [];
+  const specs: Array<{ id: PoolId; label: string; field: string }> = [
+    { id: "cursor_models", label: "cursor models", field: "autoPercentUsed" },
+    { id: "other_models", label: "other models", field: "apiPercentUsed" },
   ];
   for (const spec of specs) {
     const percentUsed = clampPercent(planUsage?.[spec.field]);
     if (percentUsed === undefined) continue;
-    windows.push({
-      id: spec.id,
-      label: spec.label,
-      kind: "monthly",
-      percentUsed,
-      percentRemaining: 100 - percentUsed,
-      resetAt,
-    });
+    windows.push({ id: spec.id, label: spec.label, percentUsed, resetAt });
   }
-
+  if (grokBot) windows.push(grokBot);
   return {
     source: "api",
-    plan: planName ?? fallbackPlan,
+    plan,
     windows,
-    onDemand: normalizeOnDemand(usageBody),
+    onDemand: normalizeOnDemand(body),
+    resetAt,
     refreshedAt: new Date().toISOString(),
     stale: false,
   };
@@ -192,14 +154,12 @@ function persistSnapshot(context: BabyMenuServerContext, snapshot: CursorQuotaSn
   );
 }
 
-function readLastSnapshot(context: BabyMenuServerContext): CursorQuotaSnapshot | undefined {
+function readStale(context: BabyMenuServerContext): CursorQuotaSnapshot | undefined {
   ensureSnapshotTable(context);
-  const row = context.db.get<{ snapshot_json: string }>(
-    "SELECT snapshot_json FROM cursor_quota_snapshot WHERE id = 1",
-  );
+  const row = context.db.get<{ snapshot_json: string }>("SELECT snapshot_json FROM cursor_quota_snapshot WHERE id = 1");
   if (!row) return undefined;
   try {
-    return JSON.parse(row.snapshot_json) as CursorQuotaSnapshot;
+    return { ...(JSON.parse(row.snapshot_json) as CursorQuotaSnapshot), stale: true };
   } catch {
     return undefined;
   }
@@ -210,63 +170,47 @@ export const actions = {
     _input: unknown,
     context: BabyMenuServerContext,
   ): Promise<QuotaResult<CursorQuotaSnapshot>> => {
-    const sourceTried: string[] = ["local-db"];
+    const sourceTried = ["keychain"];
+    const unavailable = (): QuotaResult<CursorQuotaSnapshot> => {
+      const stale = readStale(context);
+      return stale
+        ? { ok: true, data: stale }
+        : { ok: false, error: "Cursor quota unavailable", sourceTried };
+    };
 
-    const sqliteBin = await findSqlite();
-    if (!sqliteBin) {
-      return { ok: false, error: "Cursor quota unavailable", sourceTried };
-    }
-
-    const authResult = await readAuthFromDb(sqliteBin);
-    if (!authResult.ok) {
-      if (authResult.busy) {
-        const stale = readLastSnapshot(context);
-        if (stale) return { ok: true, data: { ...stale, stale: true } };
-      }
-      return { ok: false, error: "Cursor quota unavailable", sourceTried };
-    }
-
-    const token = authResult.row.accessToken;
-    if (!token) {
-      return { ok: false, error: "Cursor sign-in required", sourceTried };
-    }
+    const token = await readToken();
+    if (!token) return { ok: false, error: "Cursor sign-in required", sourceTried };
 
     sourceTried.push("dashboard-api");
-    let usageResponse: { status: number; body?: Record<string, unknown> };
+    let usage: { status: number; body?: Record<string, unknown> };
     try {
-      usageResponse = await callDashboard("GetCurrentPeriodUsage", token);
+      usage = await callDashboard("GetCurrentPeriodUsage", token);
     } catch {
-      const stale = readLastSnapshot(context);
-      if (stale) return { ok: true, data: { ...stale, stale: true } };
-      return { ok: false, error: "Cursor quota unavailable", sourceTried };
+      return unavailable();
     }
-
-    if (usageResponse.status === 401 || usageResponse.status === 403) {
+    if (usage.status === 401 || usage.status === 403) {
       return { ok: false, error: "Cursor sign-in required", sourceTried };
     }
-    if (usageResponse.status !== 200 || !usageResponse.body) {
-      const stale = readLastSnapshot(context);
-      if (stale) return { ok: true, data: { ...stale, stale: true } };
-      return { ok: false, error: "Cursor quota unavailable", sourceTried };
-    }
+    if (usage.status !== 200 || !usage.body) return unavailable();
 
-    let planName: string | undefined;
+    let plan: string | undefined;
     try {
-      const planResponse = await callDashboard("GetPlanInfo", token);
-      if (planResponse.status === 200 && planResponse.body) {
-        const planInfo = planResponse.body.planInfo as Record<string, unknown> | undefined;
-        if (typeof planInfo?.planName === "string") planName = planInfo.planName;
-      }
+      const info = await callDashboard("GetPlanInfo", token);
+      const planInfo = info.body?.planInfo as Record<string, unknown> | undefined;
+      if (typeof planInfo?.planName === "string") plan = planInfo.planName;
     } catch {
-      // optional call - ignore failures
+      // optional call
     }
 
-    const fallbackPlan = authResult.row.stripeMembershipType
-      ? authResult.row.stripeMembershipType.charAt(0).toUpperCase() + authResult.row.stripeMembershipType.slice(1)
-      : undefined;
+    let grokBot: PoolWindow | undefined;
+    try {
+      grokBot = normalizeGrokBot((await callDashboard("GetSandUsageStatus", token)).body);
+    } catch {
+      // optional call
+    }
 
-    const snapshot = normalizeUsage(usageResponse.body, planName, fallbackPlan);
-    snapshot.accountEmail = authResult.row.cachedEmail;
+    const snapshot = normalize(usage.body, plan, grokBot);
+    if (snapshot.windows.length === 0 && !snapshot.onDemand) return unavailable();
     persistSnapshot(context, snapshot);
     return { ok: true, data: snapshot };
   },
