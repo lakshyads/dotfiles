@@ -41,6 +41,7 @@ All declared in `configuration.nix`'s `homebrew.casks` (applied via `darwin-rebu
 | LinearMouse | `configuration.nix` (homebrew.casks) | Productivity | Mouse customization: side buttons, scroll, acceleration. Config write-back handled by `home.nix`'s `mkOutOfStoreSymlink` + `home.activation.backupLinearMouseConfig` |
 | OpenSuperWhisper | `configuration.nix` (homebrew.casks) | Productivity | Open-source AI voice-to-text dictation (system-wide) |
 | Obsidian | `configuration.nix` (homebrew.casks) | Productivity | Markdown-based knowledge base / note-taking. `docs/cheatsheets/` doubles as a vault folder — see `home.nix`'s `Documents/workspace/my-matrix/a-utils/cheatsheets` symlink |
+| Bitwarden | `configuration.nix` (homebrew.casks) | Productivity | Password manager desktop app; unlocks the browser extensions with Touch ID. The Firefox native messaging manifest is seeded by `home.nix`'s `home.activation.bitwardenFirefoxManifest` when missing |
 | Granola | `configuration.nix` (homebrew.casks) | Productivity | AI-powered notepad for meetings |
 | Postman | `configuration.nix` (homebrew.casks) | API Testing | REST client |
 | Baby Menu | `configuration.nix` (homebrew.casks: `kunchenguid/tap/baby-menu`) | Productivity | Agent-editable macOS menu bar — ask Claude/Codex (or a custom ACP agent) to add widgets. Extensions, `preferences.json`, and `agents.json` are edit-in-place via `home.nix`'s `mkOutOfStoreSymlink` + `home.activation.backupBabyMenuConfig` (`home/.baby-menu/`); SQLite DB and caches stay machine-local under `~/.baby-menu/` |

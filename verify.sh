@@ -280,6 +280,7 @@ check_contains "$GHOSTTY_CFG" "theme"                 "ghostty-config: theme set
 check_json "$HOME/.config/linearmouse/linearmouse.json" "linearmouse.json"
 check_json "$HOME/.baby-menu/preferences.json" "baby-menu preferences.json"
 check_json "$HOME/.baby-menu/agents.json" "baby-menu agents.json"
+check_contains "$HOME/Library/Application Support/Mozilla/NativeMessagingHosts/com.8bit.bitwarden.json" "desktop_proxy" "Bitwarden Firefox manifest points at desktop_proxy"
 check_nonempty "$HOME/.baby-menu/extensions/layout.tsx" "~/.baby-menu/extensions/layout.tsx"
 
 check_contains "$HOME/.config/git/config" 'pager = "delta"' "~/.config/git/config: delta pager configured (home-manager)"
@@ -298,6 +299,7 @@ APPS=(
   "AppCleaner"
   "Maccy"
   "LinearMouse"
+  "Bitwarden"
   "OpenSuperWhisper"
   "Obsidian"
   "Granola"

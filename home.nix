@@ -387,4 +387,31 @@ in
       fi
     done
   '';
+
+  # Bitwarden: Firefox's native messaging manifest, needed for Touch ID unlock
+  # in the Firefox extension. The desktop app writes this file itself but skips
+  # Firefox when ~/Library/Application Support/Mozilla doesn't exist yet
+  # (bitwarden/clients#22027). Seed it only when missing, as a real writable
+  # file: a read-only home.file symlink would make the app's own write fail,
+  # which aborts its browser setup for every browser (bitwarden/clients#24211).
+  home.activation.bitwardenFirefoxManifest = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    DIR="$HOME/Library/Application Support/Mozilla/NativeMessagingHosts"
+    FILE="$DIR/com.8bit.bitwarden.json"
+    if [[ ! -e "$FILE" ]]; then
+      $DRY_RUN_CMD mkdir -p "$DIR"
+      if [[ -z "$DRY_RUN_CMD" ]]; then
+        cat > "$FILE" <<'EOF'
+    {
+      "name": "com.8bit.bitwarden",
+      "description": "Bitwarden desktop <-> browser bridge",
+      "path": "/Applications/Bitwarden.app/Contents/MacOS/desktop_proxy",
+      "type": "stdio",
+      "allowed_extensions": [
+        "{446900e4-71c2-419f-a6a7-df9c091e268b}"
+      ]
+    }
+    EOF
+      fi
+    fi
+  '';
 }

@@ -116,6 +116,7 @@
       "linearmouse"
       "opensuperwhisper"
       "obsidian"
+      "bitwarden"       # password manager; Firefox Touch ID manifest seeded by home.nix
       "kunchenguid/tap/baby-menu"  # agent-editable menu bar (https://github.com/kunchenguid/baby-menu)
       # API testing
       "granola"
