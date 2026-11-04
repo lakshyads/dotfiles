@@ -302,7 +302,6 @@ APPS=(
   "Obsidian"
   "Granola"
   "Postman"
-  "Whimsical"
   "Baby Menu"
   "Claude"
   "Codex"

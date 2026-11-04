@@ -5,5 +5,3 @@
 #
 # <source: github owner/repo>   <skill name>
 kunchenguid/lavish-axi          lavish
-vercel-labs/agent-skills        web-design-guidelines
-vercel-labs/agent-skills        vercel-react-best-practices

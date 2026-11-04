@@ -120,7 +120,6 @@
       # API testing
       "granola"
       "postman"
-      "whimsical"
     ];
   };
 }

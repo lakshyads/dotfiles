@@ -16,7 +16,3 @@ quota-axi
 chrome-devtools-axi
 chrome-devtools-mcp
 acpx
-
-# Cloud / analytics
-firebase-tools
-@posthog/cli
